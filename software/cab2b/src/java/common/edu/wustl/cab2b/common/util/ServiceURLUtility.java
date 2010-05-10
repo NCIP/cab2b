@@ -25,7 +25,8 @@ public class ServiceURLUtility {
         Collection<EntityGroupInterface> filteredGroups = new ArrayList<EntityGroupInterface>();
         for (EntityGroupInterface entityGroup : entityGroups) {
             if (Constants.CATEGORY_ENTITY_GROUP_NAME.equalsIgnoreCase(entityGroup.getLongName())
-                    || Constants.DATALIST_ENTITY_GROUP_NAME.equalsIgnoreCase(entityGroup.getLongName())) {
+                    || Constants.DATALIST_ENTITY_GROUP_NAME.equalsIgnoreCase(entityGroup.getLongName())
+                    || Constants.MULTIMODELCATEGORY_ENTITY_GROUP.equalsIgnoreCase(entityGroup.getLongName())) {
                 continue;
             }
             filteredGroups.add(entityGroup);

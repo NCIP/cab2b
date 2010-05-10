@@ -21,7 +21,7 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
 
     private EntityInterface outputEntity;
 
-    private QUERY_TYPE queryType = QUERY_TYPE.ANDed;
+    protected QueryType queryType = QueryType.ANDed;
 
     /**
      * Default constructor
@@ -36,6 +36,8 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
      */
     public Cab2bQuery(ICab2bQuery query) {
         super(query);
+        createdDate = query.getCreatedDate();
+        createdBy = query.getCreatedBy();
         outputEntity = query.getOutputEntity();
         outputClassUrls = query.getOutputUrls();
     }
@@ -111,9 +113,9 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
      */
     public Boolean isKeywordSearch() {
         Boolean isKeywordSearch = Boolean.FALSE;
-        if (QUERY_TYPE.ORed == queryType) {
+        if (QueryType.ORed == queryType) {
             isKeywordSearch = Boolean.TRUE;
-        } else if (QUERY_TYPE.ANDed == queryType) {
+        } else if (QueryType.ANDed == queryType) {
             isKeywordSearch = Boolean.FALSE;
         }
         return isKeywordSearch;
@@ -125,9 +127,9 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
      */
     public void setIsKeywordSearch(Boolean isKeywordSearch) {
         if (isKeywordSearch) {
-            queryType = QUERY_TYPE.ORed;
+            queryType = QueryType.ORed;
         } else {
-            queryType = QUERY_TYPE.ANDed;
+            queryType = QueryType.ANDed;
         }
         type = queryType.toString();
     }
@@ -135,10 +137,10 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
     /* This setter method is required for Hibernate */
     public void setType(String type) {
         this.type = type;
-        if (QUERY_TYPE.ORed.toString().equals(type)) {
-            queryType = QUERY_TYPE.ORed;
-        } else if (QUERY_TYPE.ANDed.toString().equals(type)) {
-            queryType = QUERY_TYPE.ANDed;
+        if (QueryType.ORed.toString().equals(type)) {
+            queryType = QueryType.ORed;
+        } else if (QueryType.ANDed.toString().equals(type)) {
+            queryType = QueryType.ANDed;
         }
     }
 }

@@ -9,6 +9,7 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.category.CategoryPopularity;
+import edu.wustl.cab2b.common.multimodelcategory.MultiModelCategory;
 import edu.wustl.common.querysuite.metadata.category.Category;
 
 /**
@@ -73,4 +74,8 @@ public interface CategoryBusinessInterface extends BusinessInterface {
      * @throws RemoteException
      */
     Collection<CategoryPopularity> getPopularCategories() throws RemoteException;
+    
+    MultiModelCategory getMultiModelCategoryById(Long mmcID) throws RemoteException;
+    
+    MultiModelCategory getMultiModelCategoryByEntity(EntityInterface entity) throws  RemoteException;
 }

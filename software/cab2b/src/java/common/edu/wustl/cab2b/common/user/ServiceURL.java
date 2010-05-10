@@ -58,7 +58,7 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
      * @return hostingCenterName
      * @hibernate.id name="hostingResearchCenter" column="HOSTING_CENTER" type="String" length="254" not-null="false"
      */
-    private String getHostingResearchCenter() {
+    public String getHostingResearchCenter() {
         return hostingResearchCenter;
     }
 
@@ -212,7 +212,7 @@ public class ServiceURL implements ServiceURLInterface, Serializable {
     
     /**
      * This method gets the Name of contact Person
-     * @hibernate.property column="CONTACT_NAME" type="String" length="1024" not-null="true"
+     * @hibernate.property column="CONTACT_NAME" type="string" length="1024" not-null="true"
      * @return contact name
      */
     public String getContactName() {

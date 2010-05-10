@@ -1,10 +1,12 @@
 <%@ page errorPage="failure.jsp" %>
+<%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
 <HEAD>
 <TITLE><bean:message key="application.title"/></TITLE>
+<LINK rel="shortcut icon" href="../images/favicon.ico">
 <META http-equiv="Content-Type" content="text/html">
 <LINK rel="stylesheet" href="stylesheet/addlimit.css" type="text/css">
 <SCRIPT language="JavaScript" src="javascript/ajax.js"></SCRIPT>
@@ -12,11 +14,11 @@
 <SCRIPT language="JavaScript" src="javascript/calendar.js"></SCRIPT>
 </HEAD>
 <BODY onLoad="showAddLimitForm();if(navigator.appName.indexOf('Netscape')==-1)document.getElementById('savedsearchespanelbody').style.width='100%'">
-<FORM method="post" action="ExecuteQuery.do" onSubmit="if(createQueryString()){return true;}else{alert('<bean:message key="alert.definecondition"/>');return false;}">
+<FORM method="post" action="PreExecuteQuery.do" onSubmit="if(createQueryString()){return true;}else{alert('<bean:message key="alert.definecondition"/>');return false;}">
 	<jsp:include page="header.jsp"/>
 	<DIV id="leftpanel" style="width: 24%;">
 		<DIV id="savedsearchespanel">
-			<DIV class="titlebar">
+			<DIV class="titlebar collapsible">
 				<DIV class="titlebarheader title">
 					<DIV class="titlebarleftcurve">
 						<DIV class="titlebarrightcurve">
@@ -41,6 +43,10 @@
 					<DIV class="titlebarleftcurve">
 						<DIV class="titlebarrightcurve">
 							<bean:message key="title.defineconditionsfor"/> <DIV id="queryname" style="font-style:italic;display:inline;"></DIV><INPUT type="hidden" name="queryId" id="queryId" value="<bean:parameter name="queryId" id="queryId"/><bean:write name="queryId"/>">
+							<bean:parameter name="modelGroups" id="modelGroupsArray" multiple="true"/>
+							<logic:iterate name="modelGroupsArray" id="modelGroup">	
+								<INPUT type="hidden" name="modelGroups" value="<bean:write name="modelGroup"/>">
+							</logic:iterate>
 						</DIV>
 					</DIV>
 				</DIV>

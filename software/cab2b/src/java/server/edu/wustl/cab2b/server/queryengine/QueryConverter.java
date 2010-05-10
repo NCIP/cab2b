@@ -5,10 +5,8 @@ import java.util.Collection;
 
 import edu.common.dynamicextensions.domain.StringAttributeTypeInformation;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
-import edu.common.dynamicextensions.util.DynamicExtensionsUtility;
 import edu.wustl.cab2b.common.exception.QueryConverterException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
-import edu.wustl.common.hibernate.HibernateCleanser;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 import edu.wustl.common.querysuite.queryobject.ICondition;
@@ -30,32 +28,23 @@ public class QueryConverter {
     /**
      * This method converts the query having ANDed conditions to Query having ORed conditions.
      *
-     * @param query
+     * @param oredQuery
      * @return
      */
-    public ICab2bQuery convertToKeywordQuery(ICab2bQuery query) {
-        ICab2bQuery oredQuery = query;
-        if (query.isKeywordSearch()) {
-            if (!isFeasibleToConvert(query)) {
-                throw new QueryConverterException(
-                        "Query must include at least one Condition having String Attribute.");
-            }
+    public ICab2bQuery convertToKeywordQuery(ICab2bQuery oredQuery) {
+        if (!isFeasibleToConvert(oredQuery)) {
+            throw new QueryConverterException("Query must include at least one Condition having String Attribute.");
+        }
+        oredQuery.setIsKeywordSearch(Boolean.TRUE);
 
-            oredQuery = (ICab2bQuery) DynamicExtensionsUtility.cloneObject(query);
-            if (oredQuery.getId() != null) {
-                new HibernateCleanser(oredQuery).clean();
-            }
-            oredQuery.setName(oredQuery.getName() + "#");
-
-            for (IExpression expression : oredQuery.getConstraints()) {
-                int noOfOperands = expression.numberOfOperands();
-                for (int index = 0; index < noOfOperands; index++) {
-                    IExpressionOperand operand = expression.getOperand(index);
-                    if (operand instanceof IRule) {
-                        convertRule((IRule) operand, index);
-                    } else if (operand instanceof IExpression) {
-                        convertSubExpression(expression, operand, index);
-                    }
+        for (IExpression expression : oredQuery.getConstraints()) {
+            int noOfOperands = expression.numberOfOperands();
+            for (int index = 0; index < noOfOperands; index++) {
+                IExpressionOperand operand = expression.getOperand(index);
+                if (operand instanceof IRule) {
+                    convertRule((IRule) operand, index);
+                } else if (operand instanceof IExpression) {
+                    convertSubExpression(expression, operand, index);
                 }
             }
         }
@@ -72,31 +61,19 @@ public class QueryConverter {
      */
     private void convertRule(IRule rule, int index) {
         IExpression expression = rule.getContainingExpression();
-        Collection<ICondition> conditions = getAllConditions(rule);
+        Collection<ICondition> conditions = getAllStringConditions(rule);
         expression.removeOperand(rule);
 
-        final int totalOperands = expression.numberOfOperands() + conditions.size() - 1;
+        IRule newRule = QueryObjectFactory.createRule();
         for (ICondition condition : conditions) {
-            AttributeInterface attribute = condition.getAttribute();
-            if (attribute.getAttributeTypeInformation() instanceof StringAttributeTypeInformation) {
-                condition.setRelationalOperator(RelationalOperator.Contains);
-                IRule newRule = QueryObjectFactory.createRule();
-                newRule.addCondition(condition);
-
-                if (index < totalOperands) {
-                    IConnector<LogicalOperator> connector = QueryObjectFactory.createLogicalConnector(
-                                                                                                      LogicalOperator.Or,
-                                                                                                      0);
-                    expression.addOperand(index++, newRule, connector);
-                } else {
-                    expression.addOperand(newRule);
-                }
-            }
+            condition.setRelationalOperator(RelationalOperator.Contains);
+            newRule.addCondition(condition);
         }
+        IConnector<LogicalOperator> connector = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or, 0);
+        expression.addOperand(index, newRule, connector);
     }
 
     private void convertSubExpression(IExpression expression, IExpressionOperand operand, int index) {
-
         IConnector<LogicalOperator> oldConnector = null;
         try {
             oldConnector = expression.getConnector(index, index + 1);
@@ -105,27 +82,28 @@ public class QueryConverter {
         }
 
         IConnector<LogicalOperator> orConnector = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or, 0);
-        IConnector<LogicalOperator> andConnector = QueryObjectFactory.createLogicalConnector(LogicalOperator.And,
-                                                                                             0);
-        if (andConnector.getOperator().equals(oldConnector.getOperator())) {
+        if (!LogicalOperator.Unknown.equals(oldConnector.getOperator())) {
             expression.removeOperand(operand);
             expression.addOperand(index, operand, orConnector);
         }
     }
 
     /**
-     * This method returns all the conditions from the given Rule.
+     * This method returns all the conditions having string type attribute from the given Rule.
      *
      * @param rule
      * @return
      */
-    private Collection<ICondition> getAllConditions(IRule rule) {
-        Collection<ICondition> conditions = new ArrayList<ICondition>(rule.size());
+    private Collection<ICondition> getAllStringConditions(IRule rule) {
+        Collection<ICondition> stringConditions = new ArrayList<ICondition>(rule.size());
         for (ICondition condition : rule) {
-            conditions.add(condition);
+            AttributeInterface attribute = condition.getAttribute();
+            if (attribute.getAttributeTypeInformation() instanceof StringAttributeTypeInformation) {
+                stringConditions.add(condition);
+            }
         }
 
-        return conditions;
+        return stringConditions;
     }
 
     /**
@@ -135,37 +113,25 @@ public class QueryConverter {
      * @return true if ORed; false otherwise
      */
     public Boolean isKeywordQuery(ICab2bQuery query) {
-        boolean isORedQuery = Boolean.TRUE;
-        final IConnector<LogicalOperator> connectorOR = QueryObjectFactory.createLogicalConnector(LogicalOperator.Or);
-
         IConstraints constraints = query.getConstraints();
-
-        IExpression rootExpression = null;
         try {
-            rootExpression = constraints.getRootExpression();
+            constraints.getRootExpression();
         } catch (MultipleRootsException e) {
             throw new QueryConverterException(e.getMessage(), e);
         }
 
-        if (rootExpression != null) {
-            LOOP: for (IExpression expression : constraints) {
-                int noOfOperands = expression.numberOfOperands();
-                for (int i = 0; i < noOfOperands; i++) {
-                    IExpressionOperand operand = expression.getOperand(i);
-                    if (operand instanceof IRule) {
-                        IRule rule = (IRule) expression.getOperand(i);
-                        if (rule.size() > 1) {
-                            isORedQuery = Boolean.FALSE;
-                            break LOOP;
-                        }
-                    }
+        Boolean isORedQuery = query.isKeywordSearch();
+        final IConnector<LogicalOperator> connectorOR =
+                QueryObjectFactory.createLogicalConnector(LogicalOperator.Or);
 
-                    if (i + 1 < noOfOperands) {
-                        IConnector<LogicalOperator> connector = expression.getConnector(i, i + 1);
-                        if (!connector.equals(connectorOR)) {
-                            isORedQuery = Boolean.FALSE;
-                            break LOOP;
-                        }
+        LOOP: for (IExpression expression : constraints) {
+            int noOfOperands = expression.numberOfOperands();
+            for (int i = 0; i < noOfOperands; i++) {
+                if ((i + 1) < noOfOperands) {
+                    IConnector<LogicalOperator> connector = expression.getConnector(i, i + 1);
+                    if (!connectorOR.equals(connector)) {
+                        isORedQuery = Boolean.FALSE;
+                        break LOOP;
                     }
                 }
             }
@@ -186,7 +152,7 @@ public class QueryConverter {
             for (IExpressionOperand operand : expression) {
                 if (operand instanceof IRule) {
                     final IRule rule = (IRule) operand;
-                    isFeasible = isAnyStringCondition(getAllConditions(rule));
+                    isFeasible = !getAllStringConditions(rule).isEmpty();
                     if (isFeasible) {
                         break LOOP;
                     }
@@ -195,23 +161,6 @@ public class QueryConverter {
         }
 
         return isFeasible;
-    }
-
-    /**
-     * This method checks if there is any condition with String type attribute in given list
-     * @param conditions
-     * @return
-     */
-    private Boolean isAnyStringCondition(final Collection<ICondition> conditions) {
-        Boolean hasStringCondition = Boolean.FALSE;
-        for (ICondition condition : conditions) {
-            final AttributeInterface attribute = condition.getAttribute();
-            if (attribute.getAttributeTypeInformation() instanceof StringAttributeTypeInformation) {
-                hasStringCondition = Boolean.TRUE;
-                break;
-            }
-        }
-        return hasStringCondition;
     }
 
 }

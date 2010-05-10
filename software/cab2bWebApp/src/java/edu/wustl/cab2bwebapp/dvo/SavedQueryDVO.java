@@ -22,6 +22,8 @@ public class SavedQueryDVO {
      * @param name
      */
     public void setName(String name) {
+        if (name.lastIndexOf("#") == name.length() - 1)
+            name = name.substring(0, name.length() - 1);
         this.name = name;
     }
 

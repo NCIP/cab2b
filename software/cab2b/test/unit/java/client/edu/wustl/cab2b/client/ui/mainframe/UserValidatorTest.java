@@ -11,48 +11,48 @@ import edu.wustl.cab2b.common.authentication.Authenticator;
 import edu.wustl.cab2b.common.authentication.exception.AuthenticationException;
 
 public class UserValidatorTest extends TestCase {
-    public void testValidateUserAndDelegate() {
-
-        StringBuffer userHome = new StringBuffer(System.getProperty("user.home"));
-        userHome.append(File.separatorChar).append("user.properties");
-        File file = new File(userHome.toString());
-        Properties p = new Properties();
-        try {
-            p.load(new FileInputStream(file));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Authenticator userValidator = new Authenticator(p.getProperty("username"));
-        userValidator.validateAndDelegate(p.getProperty("password"));
-        assertNotNull("serializedDCR in UserValidator might be null due to unappropriate certificates",
-                      Authenticator.getSerializedDCR());
-
-    }
-    public void testValidateUser() {
-        StringBuffer userHome = new StringBuffer(System.getProperty("user.home"));
-        userHome.append(File.separatorChar).append("user.properties");
-        File file = new File(userHome.toString());
-        Properties p = new Properties();
-        try {
-            p.load(new FileInputStream(file));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Authenticator userValidator = new Authenticator(p.getProperty("username"));
-        try{
-            userValidator.validateUser(p.getProperty("password"));
-        }catch(AuthenticationException ae) {
-            ae.printStackTrace();
-            fail("Unable to autheticate user");
-        }
-
-    }
+//    public void testValidateUserAndDelegate() {
+//
+//        StringBuffer userHome = new StringBuffer(System.getProperty("user.home"));
+//        userHome.append(File.separatorChar).append("user.properties");
+//        File file = new File(userHome.toString());
+//        Properties p = new Properties();
+//        try {
+//            p.load(new FileInputStream(file));
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        Authenticator userValidator = new Authenticator(p.getProperty("username"));
+//        userValidator.validateAndDelegate(p.getProperty("password"));
+//        assertNotNull("serializedDCR in UserValidator might be null due to unappropriate certificates",
+//                      Authenticator.getSerializedDCR());
+//
+//    }
+//    public void testValidateUser() {
+//        StringBuffer userHome = new StringBuffer(System.getProperty("user.home"));
+//        userHome.append(File.separatorChar).append("user.properties");
+//        File file = new File(userHome.toString());
+//        Properties p = new Properties();
+//        try {
+//            p.load(new FileInputStream(file));
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        Authenticator userValidator = new Authenticator(p.getProperty("username"));
+//        try{
+//            userValidator.validateUser(p.getProperty("password"));
+//        }catch(AuthenticationException ae) {
+//            ae.printStackTrace();
+//            fail("Unable to autheticate user");
+//        }
+//
+//    }
     public void testValidateUserForFail() {
         StringBuffer userHome = new StringBuffer(System.getProperty("user.home"));
         userHome.append(File.separatorChar).append("user.properties");

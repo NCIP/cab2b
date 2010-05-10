@@ -17,6 +17,8 @@ import edu.wustl.cab2b.common.cache.AbstractEntityCache;
  */
 public class ModelGroup implements ModelGroupInterface {
 
+    private static final long serialVersionUID = 4721277326615977457L;
+
     /** Unique Identifier for Model Group*/
     private Long modelGroupId;
 
@@ -38,7 +40,7 @@ public class ModelGroup implements ModelGroupInterface {
      *               unsaved-value="null" generator-class="native"
      * @hibernate.generator-param name="sequence" value="MODEL_GROUP_ID_SEQ"
      */
-    private Long getModelGroupId() {
+    public Long getModelGroupId() {
         return modelGroupId;
     }
 

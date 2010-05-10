@@ -8,9 +8,8 @@
     </adapters>
 
     <default-channels>
-        <channel ref="my-amf"/>
-         <channel ref="my-secure-amf"/>
-     </default-channels>
+        @channel_config@
+    </default-channels>
 
     <destination id="cdeService">
         <properties>
@@ -18,4 +17,6 @@
             <scope>session</scope>
         </properties>
     </destination>
+
+
 </service>

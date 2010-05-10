@@ -50,31 +50,27 @@ public class DisplaySavedSearchesAction extends Action {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
-        SavedQueryBizLogic savedQueryBizLogic =
-                (SavedQueryBizLogic) request.getSession().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
-        String modelGroupName = (String) request.getParameter(Constants.MODEL_GROUPS);
-        List<ModelGroupDVO> modelGroupDVOList =
-                (List<ModelGroupDVO>) request.getSession().getAttribute("modelGroupDVOList");
-        for (int i = 0; i < modelGroupDVOList.size(); i++) {
-            if (modelGroupDVOList.get(i).getModelGroupName().equals(modelGroupName)) {
-                modelGroupDVOList.get(i).setSelected(true);
-            }
-            else
-            {
-              modelGroupDVOList.get(i).setSelected(false);
-            }
-        }
-        request.getSession().setAttribute(Constants.MODEL_GROUP_DVO_LIST, modelGroupDVOList);
         String findForward = null;
         try {
+            SavedQueryBizLogic savedQueryBizLogic =
+                    (SavedQueryBizLogic) request.getSession().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
+            String modelGroupName = (String) request.getParameter(Constants.MODEL_GROUPS);
+            List<ModelGroupDVO> modelGroupDVOList =
+                    (List<ModelGroupDVO>) request.getSession().getAttribute(Constants.MODEL_GROUP_DVO_LIST);
+            for (int i = 0; i < modelGroupDVOList.size(); i++) {
+                if (modelGroupDVOList.get(i).getModelGroupName().equals(modelGroupName)) {
+                    modelGroupDVOList.get(i).setSelected(true);
+                } else {
+                    modelGroupDVOList.get(i).setSelected(false);
+                }
+            }
+            request.getSession().setAttribute(Constants.MODEL_GROUP_DVO_LIST, modelGroupDVOList);
             if (!modelGroupName.equals("")) {
                 Collection<EntityGroupInterface> entityGroups =
                         new ModelGroupBizLogic().getEntityGroupsForModel(modelGroupName);
-                Collection<ICab2bQuery> savedSearches = savedQueryBizLogic.getRegualarQueries(entityGroups);
+                Collection<ICab2bQuery> savedSearches = savedQueryBizLogic.getRegularQueries(entityGroups);
                 List savedSearchesList = new java.util.ArrayList(savedSearches);
                 Collections.sort(savedSearchesList, new SavedSearchComparator());
-           
-
                 if (request.getParameter(Constants.FORWARD_ADD_LIMIT) != null) {
                     request.setAttribute(Constants.FORWARD_ADD_LIMIT, Constants.FORWARD_ADD_LIMIT);
                 }
@@ -84,10 +80,9 @@ public class DisplaySavedSearchesAction extends Action {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
-            ActionError error = new ActionError("fatal.displaysavedsearches.failure");
+            ActionError error = new ActionError("fatal.displaysavedsearches.failure", e.getMessage());
             errors.add(Constants.FATAL_DISPLAY_SAVED_SEARCHES_FAILURE, error);
             saveErrors(request, errors);
-
             findForward = Constants.FORWARD_FAILURE;
         }
         return mapping.findForward(findForward);

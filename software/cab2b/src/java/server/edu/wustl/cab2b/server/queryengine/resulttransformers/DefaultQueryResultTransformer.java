@@ -13,8 +13,6 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-
-
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
@@ -39,7 +37,8 @@ import gov.nih.nci.cagrid.data.utilities.CQLQueryResultsIterator;
  * @author srinath_k
  */
 final class DefaultQueryResultTransformer extends AbstractQueryResultTransformer<IRecord, ICategorialClassRecord> {
-    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(DefaultQueryResultTransformer.class);
+    private static final Logger logger =
+            edu.wustl.common.util.logger.Logger.getLogger(DefaultQueryResultTransformer.class);
 
     /**
      * Parses the {@link gov.nih.nci.cagrid.cqlresultset.CQLQueryResults} xml
@@ -52,8 +51,9 @@ final class DefaultQueryResultTransformer extends AbstractQueryResultTransformer
     protected List<IRecord> createRecords(String url, CQLQueryResults cqlQueryResults, EntityInterface targetEntity) {
         List<IRecord> res = new ArrayList<IRecord>();
         CQLQueryResultsIterator itr = new CQLQueryResultsIterator(cqlQueryResults, true);
-        Set<AttributeInterface> attributes = new HashSet<AttributeInterface>(targetEntity.getAttributeCollection());
-
+        Set<AttributeInterface> attributes =
+                new HashSet<AttributeInterface>(targetEntity.getAttributeCollection());
+        Set<String> ids = new HashSet<String>(cqlQueryResults.getObjectResult().length);
         AttributeInterface idAttribute = Utility.getIdAttribute(targetEntity);
         while (itr.hasNext()) {
             String singleRecordXml = (String) itr.next();
@@ -70,12 +70,15 @@ final class DefaultQueryResultTransformer extends AbstractQueryResultTransformer
             }
             Element oneRec = parser.getDocument().getDocumentElement();
             String id = oneRec.getAttribute(idAttribute.getName());
-            IRecord record = createRecord(attributes, new RecordId(id, url));
-            for (AttributeInterface attr : attributes) {
-                String value = oneRec.getAttribute(attr.getName());
-                record.putStringValueForAttribute(attr, parseValueString(value));
+            if (!ids.contains(id)) {
+                ids.add(id);
+                IRecord record = createRecord(attributes, new RecordId(id, url));
+                for (AttributeInterface attr : attributes) {
+                    String value = oneRec.getAttribute(attr.getName());
+                    record.putStringValueForAttribute(attr, parseValueString(value));
+                }
+                res.add(record);
             }
-            res.add(record);
         }
         return res;
     }

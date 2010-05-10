@@ -48,13 +48,11 @@ public class SaveServiceInstancesAction extends Action {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
-
-        HttpSession session = request.getSession();
-        UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
-        String modelGroupName = (String) request.getParameter(Constants.MODEL_GROUP_NAME);
-        String[] urlArray = request.getParameterValues(Constants.SERVICE_INSTANCES);
-
         try {
+            HttpSession session = request.getSession();
+            UserInterface user = (UserInterface) session.getAttribute(Constants.USER);
+            String modelGroupName = (String) request.getParameter(Constants.MODEL_GROUP_NAME);
+            String[] urlArray = request.getParameterValues(Constants.SERVICE_INSTANCES);
             List<String> userSelectedURLs = Arrays.asList(urlArray);
             List<ServiceURLInterface> serviceInstances =
                     new ApplicationBizLogic().getApplicationInstances(user, modelGroupName);
@@ -62,20 +60,20 @@ public class SaveServiceInstancesAction extends Action {
                     new SaveServiceInstancesBizLogic().updateServiceInstanceSettings(user, userSelectedURLs,
                                                                                      serviceInstances,
                                                                                      modelGroupName);
+            //Updating user in session.
+            session.setAttribute(Constants.USER, user);
+            request.setAttribute(Constants.MODEL_GROUP_NAME, modelGroupName);
+            ActionForward actionForward = mapping.findForward(Constants.FORWARD_HOME);
+            ActionForward actionRedirect =
+                    new ActionForward(actionForward.getName(), actionForward.getPath(), false);
+            return actionRedirect;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();
-            ActionError error = new ActionError("fatal.addlimit.failure");
+            ActionError error = new ActionError("fatal.saveserviceinstances.failure", e.getMessage());
             errors.add(Constants.FATAL_ADD_LIMIT_FAILURE, error);
             saveErrors(request, errors);
             return mapping.findForward(Constants.FORWARD_FAILURE);
-
         }
-        //updating user in session
-        session.setAttribute(Constants.USER, user);
-        request.setAttribute(Constants.MODEL_GROUP_NAME, modelGroupName);
-        ActionForward actionForward = mapping.findForward(Constants.FORWARD_HOME);
-        ActionForward actionRedirect = new ActionForward(actionForward.getName(), actionForward.getPath(), false);
-        return actionRedirect;
     }
 }

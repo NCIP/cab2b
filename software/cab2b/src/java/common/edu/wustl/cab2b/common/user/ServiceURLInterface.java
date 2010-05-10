@@ -61,6 +61,10 @@ public interface ServiceURLInterface {
      * @return Returns the hosting center name.
      */
     String getHostingCenter();
+    /**
+     * @return Returns the hosting Center Name. But Do not use this method as it is used only by Hibernate. 
+     */
+    String getHostingResearchCenter();
 
     /**
      * Sets the Hosting Center Name.

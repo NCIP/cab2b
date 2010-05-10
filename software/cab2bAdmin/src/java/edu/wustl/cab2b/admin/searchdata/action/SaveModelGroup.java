@@ -3,12 +3,9 @@
  */
 package edu.wustl.cab2b.admin.searchdata.action;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import javax.servlet.ServletException;
 
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.admin.action.BaseAction;
@@ -117,7 +114,8 @@ public class SaveModelGroup extends BaseAction {
         EntityCache entityCache = EntityCache.getInstance();
 
         ModelGroupInterface modelGroup = new ModelGroup();
-
+        modelGroupName = modelGroupName.trim();
+        
         Collection<String> modelgroupName = new ModelGroupBizLogic().getAllModelGroupsName();
         if (modelgroupName.contains(modelGroupName)) {
             request.setAttribute("error", "Model Group name already exists");

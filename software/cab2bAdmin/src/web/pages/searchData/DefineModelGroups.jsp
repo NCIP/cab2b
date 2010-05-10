@@ -19,7 +19,7 @@ function validate() {
 		return true;
 		}
 	}
-	alert('Please select atleast one Entity Group');
+	alert('Please select at least one model');
 	return false;
 }
 </SCRIPT>
@@ -61,7 +61,7 @@ function validate() {
 								</TR></TABLE></TD>
 							</TR>	
 							<TR class="td_white" align="left">
-								<TD></BR></TD>
+
 								<Table width="99%" border="0" cellpadding="0" cellspacing="0">
 
 									<TD class="font_bl3_b" align="left" background="images/title_bg.gif" valign="middle"><img src="images/c1.gif" align="absmiddle" height="24" width="12">&nbsp;&nbsp;Available&nbsp;&nbsp;Models</TD>
@@ -70,27 +70,22 @@ function validate() {
 									<TR>
 									<TD colspan="3" class="td_orange" align="left" valign="top"><img src="images/spacer.gif" height="1" width="1"></TD>
 								</TR>
-								</table>
-								
-							</TR>
-							<TR>
-								<TD>
-									</br>
-								</TD>
-							</TR>
-							<Table align="left">
-							<TBody style="overflow:auto;overflow-x:hidden;height:320;padding-right:50em">
+								<TR>&nbsp;</TR>
 								<logic:present name="allLoadedModels">
-									<logic:iterate name="allLoadedModels" id="entityGroup" type="edu.common.dynamicextensions.domaininterface.EntityGroupInterface">
+									
 									<TR>
-										<TD>
-											&nbsp;&nbsp;<input type="checkbox" name="selectedEntityGroup" value="<bean:write name="entityGroup" property="longName"/>_v<bean:write name="entityGroup" property="version"/>"/>
-											<SPAN class="font_bl1_b"><bean:write name="entityGroup" property="longName"/>_v<bean:write name="entityGroup" property="version"/></SPAN>
-										</TD>
-									</TR>
-									<TR>
-										<TD style="padding-right:5">
-											&nbsp;&nbsp;<SPAN class="font_blk_s"><bean:write name="entityGroup" property="description"/></SPAN>
+										<TD style="padding-top:0.8em;">
+											<DIV style="overflow:auto;height:240;">
+												<logic:iterate name="allLoadedModels" id="entityGroup" type="edu.common.dynamicextensions.domaininterface.EntityGroupInterface">
+												<DIV style="padding:0.2em;">
+												&nbsp;&nbsp;<input type="checkbox" name="selectedEntityGroup" value="<bean:write name="entityGroup" property="longName"/>_v<bean:write name="entityGroup" property="version"/>"/>
+												<SPAN class="font_bl1_b"><bean:write name="entityGroup" property="longName"/>_v<bean:write name="entityGroup" property="version"/></SPAN>
+					`							</DIV>
+												<DIV style="padding:0.2em;margin-left:2em;">
+												<SPAN class="font_blk_s"><bean:write name="entityGroup" property="description"/></SPAN>
+												</DIV>
+												</logic:iterate>												
+											</DIV>
 										</TD>
 									</TR>
 									<TR>
@@ -98,7 +93,7 @@ function validate() {
 											</br>
 										</TD>
 									</TR>
-									</logic:iterate>
+									
 								</logic:present>
 							</TBODY>
 							</Table>

@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.util.TreeNode;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.category.CategoryCache;
@@ -138,8 +139,8 @@ public class CategoryPreprocessor {
 
         getResult().getOriginallyRootCatClasses().add(clonedCat.getRootClass());
 
-        List<CategorialClass> catClassesPath = findCategorialClassesPathFromRoot(clonedCat.getRootClass(),
-                                                                                 requiredRoot);
+        List<CategorialClass> catClassesPath =
+                findCategorialClassesPathFromRoot(clonedCat.getRootClass(), requiredRoot);
         if (catClassesPath.isEmpty()) {
             throw new RuntimeException("Problem in code; could not find entry point in category");
             // TODO this is a hack for single outputs.... ????
@@ -202,8 +203,8 @@ public class CategoryPreprocessor {
                 for (CategorialClass origChildCatClass : currOrigCatClass.getChildren()) {
                     CategorialClass clonedChildCatClass = cloneCategorialClass(origChildCatClass);
                     clonedChildCatClass.setCategory(clone);
-                    currClonedCatClass.addChildCategorialClass(clonedChildCatClass,
-                                                               origChildCatClass.getPathFromParent());
+                    currClonedCatClass.addChildCategorialClass(clonedChildCatClass, origChildCatClass
+                        .getPathFromParent());
 
                     nextOrigCatClasses.add(origChildCatClass);
                     nextClonedCatClasses.add(clonedChildCatClass);
@@ -308,12 +309,9 @@ public class CategoryPreprocessor {
                 for (int j = 1; j < catClassesPath.size(); j++) {
                     CategorialClass catClass = catClassesPath.get(j);
                     List<IAssociation> associations = catClass.getPathFromParent().getIntermediateAssociations();
-                    TreeNode<IExpression> newExprNode = createExpressionsForAssociations(
-                                                                                         lastExpr,
-                                                                                         associations,
-                                                                                         new HashSet<IExpression>(),
-                                                                                         catExpr.isInView(),
-                                                                                         lastExprNode);
+                    TreeNode<IExpression> newExprNode =
+                            createExpressionsForAssociations(lastExpr, associations, new HashSet<IExpression>(),
+                                                             catExpr.isInView(), lastExprNode);
                     IExpression newExpr = newExprNode.getValue();
                     getResult().getCatClassForExpr().put(newExpr, catClass);
 
@@ -334,7 +332,8 @@ public class CategoryPreprocessor {
                 Map<CategorialClass, IExpression> exprForCatClass = new HashMap<CategorialClass, IExpression>();
                 exprForCatClass.put(rootCatClass, rootExpr);
 
-                Map<CategorialClass, TreeNode<IExpression>> treeNodeForCatClass = new HashMap<CategorialClass, TreeNode<IExpression>>();
+                Map<CategorialClass, TreeNode<IExpression>> treeNodeForCatClass =
+                        new HashMap<CategorialClass, TreeNode<IExpression>>();
                 treeNodeForCatClass.put(rootCatClass, rootExprNode);
 
                 Set<CategorialClass> currCatClasses = new HashSet<CategorialClass>();
@@ -348,12 +347,12 @@ public class CategoryPreprocessor {
                         nextCatClasses.addAll(categorialClass.getChildren());
 
                         CategorialClass parentCatClass = categorialClass.getParent();
-                        TreeNode<IExpression> newExprNode = createExpressionsForAssociations(
-                                                                                             exprForCatClass.get(parentCatClass),
-                                                                                             categorialClass.getPathFromParent().getIntermediateAssociations(),
-                                                                                             possiblyRedundantExprs,
-                                                                                             catExpr.isInView(),
-                                                                                             treeNodeForCatClass.get(parentCatClass));
+                        TreeNode<IExpression> newExprNode =
+                                createExpressionsForAssociations(exprForCatClass.get(parentCatClass),
+                                                                 categorialClass.getPathFromParent()
+                                                                     .getIntermediateAssociations(),
+                                                                 possiblyRedundantExprs, catExpr.isInView(),
+                                                                 treeNodeForCatClass.get(parentCatClass));
 
                         IExpression newExpr = newExprNode.getValue();
                         addRuleToExpr(newExpr, gleanConditions(categorialClass, rule));
@@ -380,8 +379,9 @@ public class CategoryPreprocessor {
                 int followingConnNesting = catExpr.getConnector(i, i + 1).getNestingNumber();
                 // the nesting of operand equals the nesting of the adjacent
                 // connector with greater nesting.
-                int operandNesting = (precedingConnNesting > followingConnNesting) ? precedingConnNesting
-                        : followingConnNesting;
+                int operandNesting =
+                        (precedingConnNesting > followingConnNesting) ? precedingConnNesting
+                                : followingConnNesting;
                 // add operandNesting + 1 parantheses.
                 for (int j = 0; j <= operandNesting; j++) {
                     rootExpr.addParantheses(initialRootExprSize, initialRootExprSize + numOperandsAdded - 1);
@@ -510,7 +510,12 @@ public class CategoryPreprocessor {
 
     private void addOperandToExpr(IExpression parentExpr, IExpressionOperand operand) {
         if (parentExpr.numberOfOperands() > 0) {
-            parentExpr.addOperand(QueryObjectFactory.createLogicalConnector(LogicalOperator.And), operand);
+            LogicalOperator operator = LogicalOperator.And;
+            if (((ICab2bQuery) query).isKeywordSearch()) {
+                operator = LogicalOperator.Or;
+            }
+            IConnector<LogicalOperator> connector = QueryObjectFactory.createLogicalConnector(operator);
+            parentExpr.addOperand(connector, operand);
         } else {
             parentExpr.addOperand(operand);
         }

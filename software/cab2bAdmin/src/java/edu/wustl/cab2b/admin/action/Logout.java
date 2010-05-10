@@ -39,6 +39,7 @@ public class Logout implements SessionAware {
      */
     public String execute() {
         UtilityOperations.refreshCache();
+        session.clear();
         return AdminConstants.SUCCESS;
     }
 }

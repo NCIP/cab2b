@@ -16,6 +16,7 @@ create table ABSTRACT_CATEGORIAL_CLASS (
 create table ABSTRACT_CATEGORY (
    ID bigint not null auto_increment,
    PARENT_CATEGORY_ID bigint unique,
+   SYSTEM_GENERATED boolean default false not null,	
    primary key (ID)
 );
 create table CATEGORIAL_ATTRIBUTE (

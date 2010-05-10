@@ -52,7 +52,7 @@ function rtrim(str, chars) {
 	titleField.focus();
 	return false;
 	}	
-
+   document.forms[0].submit();
    return true;
  }
  
@@ -61,7 +61,7 @@ function rtrim(str, chars) {
 <body>
 
 <!--Begin content area -->
-      <form id="categoryInformation" name="form1" method="post" action="CreateCategory.action"  onsubmit="return submitForm();">
+      <form id="categoryInformation" name="form1" method="post" action="CreateCategory.action">
       <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	 
         
@@ -128,7 +128,7 @@ function rtrim(str, chars) {
               </tr>
             <tr>
              
-                <td height="35" align="right" class="td_grey"><input name="submit" type="submit" class="font_bl1_b"  value="Next &gt;&gt;" />
+                <td height="35" align="right" class="td_grey"><INPUT type="button" class="font_bl1_b" value="Next &gt;&gt;" onClick="return submitForm();"/>
                   &nbsp;&nbsp;&nbsp; </td>
                
               </tr>
