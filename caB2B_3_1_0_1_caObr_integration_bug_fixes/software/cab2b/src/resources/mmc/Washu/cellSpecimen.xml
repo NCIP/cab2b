@@ -1,0 +1,72 @@
+<MultiModelCategory name="Cell Specimen details" description="Cell Specimen Details" applicationGroup="Biospecimen Data">
+	<MultiModelCategoryAttributes>
+		<MultiModelCategoryAttribute name="Pathological Status" description="Pathological Status">
+			<Attribute name="pathologicalStatus" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.CellSpecimen" />
+			<Attribute name="pathologicalStatus" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.CellSpecimen" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Cell Specimen Type" description="Cell Specimen Type">
+			<Attribute name="type" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.CellSpecimen" />
+			<Attribute name="specimenType" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.CellSpecimen" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Cell Specimen Availability" description="Cell Specimen Available">
+			<Attribute name="available" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.CellSpecimen" />
+			<Attribute name="isAvailable" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.CellSpecimen" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Label" description="Label">
+			<Attribute name="label" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.CellSpecimen" />
+			<Attribute name="label" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.CellSpecimen" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Cell Specimen Identifier" description="Cell Specimen Identifier">
+			<Attribute name="id" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.CellSpecimen" />
+			<Attribute name="id" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.CellSpecimen" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Barcode" description="Barcode">
+			<Attribute name="barcode" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.CellSpecimen" />
+			<Attribute name="barcode" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.CellSpecimen" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Gender" description="Gender">
+			<Attribute name="gender" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.Participant" />
+			<Attribute name="gender" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.Participant" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Ethnicity" description="Ethnicity">
+			<Attribute name="ethnicity" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.Participant" />
+			<Attribute name="ethnicity" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.Participant" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Sex Genotype" description="Sex Genotype">
+			<Attribute name="sexGenotype" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.Participant" />
+			<Attribute name="sexGenotype" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.Participant" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Vital Status" description="Vital Status">
+			<Attribute name="vitalStatus" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.Participant" />
+			<Attribute name="vitalStatus" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.Participant" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Clinical Diagnosis" description="Clinical Diagnosis">
+			<Attribute name="clinicalDiagnosis" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.SpecimenCollectionGroup" />
+			<Attribute name="clinicalDiagnosis" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.SpecimenCollectionGroup" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Clinical Status" description="Clinical Status">
+			<Attribute name="clinicalStatus" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissueCore.domain.SpecimenCollectionGroup" />
+			<Attribute name="clinicalStatus" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.SpecimenCollectionGroup" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Tissue Side" description="Tissue side">
+			<Attribute name="tissueSide" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.SpecimenCharacteristics" />
+			<Attribute name="tissueSide" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.SpecimenCharacteristics" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Tissue Site" description="Tissue site">
+			<Attribute name="tissueSite" model="caTissue_Core_1_2_v1.2" class="edu.wustl.catissuecore.domain.SpecimenCharacteristics" />
+			<Attribute name="tissueSite" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.SpecimenCharacteristics" />
+		</MultiModelCategoryAttribute>
+		<MultiModelCategoryAttribute name="Race" description="Race">
+			<Attribute name="raceName" model="caTissue_Suite1_1_v1.1" class="edu.wustl.catissuecore.domain.Race" />
+		</MultiModelCategoryAttribute>
+	</MultiModelCategoryAttributes>
+	<Paths>
+		<Path id="171906" />
+		<Path id="185838" />
+		<Path id="171664" />
+		<Path id="265709" />
+		<Path id="296090" />
+		<Path id="268774" />
+		<Path id="266014" />
+	</Paths>
+</MultiModelCategory>
