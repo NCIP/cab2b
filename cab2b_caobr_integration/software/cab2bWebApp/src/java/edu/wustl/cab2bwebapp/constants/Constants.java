@@ -240,5 +240,8 @@ public interface Constants {
 
     /** Constant for index separator in session */
     public static final String INDEX_SEPEARATOR = "sep";
-
+    
+    /** Constant for word indicator  */
+    public static final String WORD_INDICATOR = "##WORD##";
+    
 }

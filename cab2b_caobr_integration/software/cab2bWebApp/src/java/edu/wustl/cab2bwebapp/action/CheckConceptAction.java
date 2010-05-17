@@ -1,7 +1,9 @@
 package edu.wustl.cab2bwebapp.action;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +22,7 @@ import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.cab2bwebapp.dvo.SearchResultDVO;
 import edu.wustl.cab2bwebapp.util.caObr.PropertyLoader;
 
-public class CheckConceptAction extends Action {
+public class CheckConceptAction extends Action { 
 
     private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(AddLimitAction.class);
 
@@ -37,39 +39,71 @@ public class CheckConceptAction extends Action {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
+    	
         String actionForward = null;
-        CaObrClient client = new CaObrClient(PropertyLoader.getCaObrServiceURL());
+        
+        List<List<SearchResultDVO>> searchResultview = null;
+        List<SearchResultDVO> searchResultDVOList =  null;        
+        String[] arWords = null;
+        Object values = null;
+        String strValue = null;
+        String strWithoutWord =  null;
+        String strURL = PropertyLoader.getCaObrServiceURL();
+        String tokens[] = null;
+        Set<String> setWihoutBlank = null;
+        boolean[] flags = null;
+        
+        logger.info(" CaObr Service URL :: " + strURL);
+        
+        CaObrClient client = new CaObrClient(strURL);
+                             
         try {
             String index = request.getParameter(Constants.INDEX);
             String[] indexs = index.split(Constants.INDEX_SEPEARATOR);
-
-            List<List<SearchResultDVO>> searchResultview = (List<List<SearchResultDVO>>) request.getSession().getAttribute(
-                                                                                                                           Constants.SEARCH_RESULTS_VIEW);
+            HashSet<String> conceptSet = null;
+            searchResultview = (List<List<SearchResultDVO>>) request.getSession().getAttribute(Constants.SEARCH_RESULTS_VIEW);
 
             for (String intex : indexs) {
-                List<SearchResultDVO> searchResultDVOList = searchResultview.get(Integer.parseInt(intex));
+                searchResultDVOList = searchResultview.get(Integer.parseInt(intex));                               
                 for (SearchResultDVO dvo : searchResultDVOList) {
-                    Object values = dvo.getValue();
-                    if (values instanceof String) {
-                        StringBuilder stb = new StringBuilder();
-                        String tokens[] = ((String) values).split(" ");
-                        boolean[] flags = client.isConceptsInAnyOntology(tokens);
+                    values = dvo.getValue();                                     
+                    if (values instanceof String) {                    	
+                    	strValue = (String) values;
+                    	conceptSet = new HashSet<String>();                    	                     
+                        strWithoutWord =  strValue.replaceAll("\\w+",Constants.WORD_INDICATOR);                        
+                        arWords =  strValue.split("\\W+");
+                                               
+                    	if(arWords != null){
+                    		setWihoutBlank = new HashSet<String>(); 
+                        	for(String  strWord : arWords){
+                        		if(strWord != null && !strWord.equalsIgnoreCase(" ") && !strWord.isEmpty()){
+                        			setWihoutBlank.add(strWord.trim());
+                        		}        		
+                        	}                         	     	        
+                        	tokens = setWihoutBlank.toArray(new String[setWihoutBlank.size()]);
+                    	}   	 
+                                                                    
+                        flags = client.isConceptsInAnyOntology(tokens);
 
-                        int i = 0;
-                        for (String token : tokens) {
-                            if (flags[i]) {
-                                token = (new StringBuilder(
-                                        "<a class='link' href='ShowLimitedAnnotationResult.do?token=")).append(
-                                                                                                               token).append(
-                                                                                                                             "' target='_blank' >").append(
-                                                                                                                                                           token).append(
-                                                                                                                                                                         "</a>").toString();
-                            }
-                            // removed check for white space 
-                            stb.append(token).append(" ");
-                            i++;
+                        for(int i = 0;i < tokens.length; i++){
+                        	if(flags[i]){
+                        		conceptSet.add(tokens[i]);
+                        	}                        	
                         }
-                        dvo.setValue(stb.toString());
+                        
+                        logger.debug(" Set of Concept  :: " + conceptSet);
+
+                        String strConceptURL = "";
+                        for(String strWord : arWords){
+                        	if(conceptSet.contains(strWord)){
+                        		strConceptURL = new StringBuilder("<a class='link' href='ShowLimitedAnnotationResult.do?token=").append(strWord).append(
+                                                "' target='_blank' >").append(strWord).append("</a>").toString();
+                        		strWithoutWord = strWithoutWord.replaceFirst(Constants.WORD_INDICATOR,strConceptURL);
+                        	}else{
+                        		strWithoutWord = strWithoutWord.replaceFirst(Constants.WORD_INDICATOR,strWord);
+                        	}                        	    		    			    		
+                    	}                    
+                        dvo.setValue(strWithoutWord);
                     }
                 }
                 actionForward = Constants.FORWARD_SEARCH_RESULTS_PANEL;
