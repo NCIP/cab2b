@@ -314,6 +314,14 @@
 				</if>
 			</else>
 		</if>
+		
+		
+		<replace dir="${software.dir}/cab2bWebApp/src/conf">
+			<include name="caObr-service.properties" />
+			<replacefilter token="@@caobr.service.url@@" value="${caobr.service.url}" />
+		</replace>
+		
+		
 		<!-- setting the property in the ant call overrides the property in the sub-project allowing the artifact to be produced where needed -->
 		<ant inheritAll="false" inheritRefs="true" antfile="${cab2b-webapp.build.file}" target="${cab2b-webapp.build.target}" dir="${cab2b-webapp.base.dir}">
 			<property name="dist.dir" value="${cab2b-webapp.dist.dir}" />
@@ -340,6 +348,8 @@
 			<property name="grid-key" value="${grid-key}" />
 			<property name="env.GLOBUS_LOCATION" value="${env.GLOBUS_LOCATION}" />
 		</ant>
+		
+		
 	</target>
 	<target name="dist" description="Makes all distributions: installer, upgrader and source" depends="
 		build:all,
