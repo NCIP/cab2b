@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 1.3//EN"
+"http://jakarta.apache.org/struts/dtds/struts-config_1_3.dtd">
+
+<struts-config>
+	<!-- ========================== Form Bean Definitions ========================== -->
+	<form-beans>
+		<form-bean name="keywordSearchForm"
+			type="edu.wustl.cab2bwebapp.actionform.KeywordSearchForm" />
+		<form-bean name="loginForm"
+			type="edu.wustl.cab2bwebapp.actionform.LoginForm" />
+	</form-beans>
+
+	<!-- ========================== Global Forwards ========================== -->
+	<global-forwards>
+		<forward name="failure" path="/pages/failure.jsp" />
+		<forward name="home" path="/pages/home.jsp" />
+		<forward name="login" path="/pages/login.jsp" />
+		<forward name="searchresults" path="/pages/searchresults.jsp" />
+		<forward name="searchresultspanel"
+			path="/pages/searchresultspanel.jsp" />
+	</global-forwards>
+
+	<!-- ========================== Action Mappings ========================== -->
+	<action-mappings>
+		<action path="/AddLimit"
+			type="edu.wustl.cab2bwebapp.action.AddLimitAction">
+			<forward name="addlimit" path="/pages/addlimit.jsp" />
+		</action>
+
+		<action path="/BackgroundQuery"
+			type="edu.wustl.cab2bwebapp.action.BackgroundQueryAction">
+			<forward name="dashboardaction" path="/DisplayDashboard.do" />
+		</action>
+
+		<action path="/DisplayDashboard"
+			type="edu.wustl.cab2bwebapp.action.DisplayDashboardAction">
+			<forward name="dashboard" path="/pages/dashboard.jsp" />
+			<forward name="dashboardpanel"
+				path="/pages/dashboardpanel.jsp" />
+		</action>
+
+		<action path="/DisplaySavedSearches"
+			type="edu.wustl.cab2bwebapp.action.DisplaySavedSearchesAction">
+			<forward name="savedsearches"
+				path="/pages/savedsearches.jsp" />
+		</action>
+
+		<action path="/DisplayServiceInstances"
+			type="edu.wustl.cab2bwebapp.action.DisplayServiceInstancesAction">
+			<forward name="serviceinstances"
+				path="/pages/serviceinstances.jsp" />
+		</action>
+
+		<action path="/ExecuteQuery"
+			type="edu.wustl.cab2bwebapp.action.ExecuteQueryAction">
+		</action>
+
+		<action path="/ExportResults"
+			type="edu.wustl.cab2bwebapp.action.ExportResultsAction">
+		</action>
+
+		<action path="/Home"
+			type="edu.wustl.cab2bwebapp.action.HomeAction">
+		</action>
+
+		<action path="/KeywordSearch"
+			type="edu.wustl.cab2bwebapp.action.KeywordSearchAction"
+			name="keywordSearchForm" scope="request" validate="false">
+		</action>
+
+		<action path="/Login"
+			type="edu.wustl.cab2bwebapp.action.LoginAction" name="loginForm"
+			scope="request" validate="false">
+		</action>
+
+		<action path="/Logout"
+			type="edu.wustl.cab2bwebapp.action.LogoutAction">
+		</action>
+
+		<action path="/MultiModelCategoryQueryAction"
+			type="edu.wustl.cab2bwebapp.action.MultiModelCategoryExecuteQueryAction">
+		</action>
+
+		<action path="/PreExecuteQuery"
+			type="edu.wustl.cab2bwebapp.action.PreExecuteQueryAction">
+			<forward name="MultiModelCategory"
+				path="/MultiModelCategoryQueryAction.do" />
+		</action>
+
+		<action path="/SaveServiceInstances"
+			type="edu.wustl.cab2bwebapp.action.SaveServiceInstancesAction">
+		</action>
+
+		<action path="/TransformQueryResultsAction"
+			type="edu.wustl.cab2bwebapp.action.TransformQueryResultsAction">
+		</action>
+	</action-mappings>
+
+	<!-- ========================== Message Resource ========================== -->
+	<message-resources parameter="ApplicationResources" />
+	<message-resources parameter="server" key="ServerResources" />
+</struts-config>

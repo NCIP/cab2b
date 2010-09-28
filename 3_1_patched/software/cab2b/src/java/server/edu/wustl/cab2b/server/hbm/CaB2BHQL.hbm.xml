@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<query name="getRootIdForDataList">
+		select dataListMetadata.rootEntityId from
+		edu.wustl.cab2b.common.domain.DataListMetadata dataListMetadata
+		where dataListMetadata.id = ?
+	</query>
+
+	<query name="getAllDataLists">
+		from edu.wustl.cab2b.common.domain.DataListMetadata
+	</query>
+
+	<query name="getExperimentSimilarDataList">
+		select experiement from Experiment experiement join
+		experiement.dataListMetadataCollection dataListMetadata where
+		dataListMetadata.id = ? and experiement.userId = ?
+	</query>
+
+	<query name="getQueriesByUserName">
+		from edu.wustl.cab2b.common.queryengine.Cab2bQuery cab2bQuery
+		where cab2bQuery.createdBy = (Select user.userId from
+		edu.wustl.cab2b.common.user.User user where user.userName = ?)
+	</query>
+
+	<query name="getLatestExperimentByUserName">
+		from edu.wustl.cab2b.common.domain.Experiment Exp where
+		Exp.userId = (Select user.userId from
+		edu.wustl.cab2b.common.user.User user where user.userName = ?)
+		order by Exp.lastUpdatedOn
+	</query>
+
+	<query name="getExperimentHierarchy">
+		from edu.wustl.cab2b.common.domain.ExperimentGroup as ExpGrp
+		where ExpGrp.parentGroup.id is null and ExpGrp.userId = (Select
+		user.userId from edu.wustl.cab2b.common.user.User user where
+		user.userName = ?)
+	</query>
+
+	<query name="getDataListIdByName">
+		Select datalist.id from
+		edu.wustl.cab2b.common.domain.DataListMetadata as datalist where
+		datalist.name = ?
+	</query>
+
+	<query name="getExperimentIdByName">
+		Select exp.id from
+		edu.wustl.cab2b.common.domain.Experiment as exp where
+		exp.name = ?
+	</query>
+
+	<query name="getExperimentGroupIdByName">
+		Select expGrp.id from
+		edu.wustl.cab2b.common.domain.ExperimentGroup as expGrp where
+		expGrp.name = ?
+	</query>
+
+	<query name="getUserQueriesDetails">
+		select new edu.wustl.cab2b.common.queryengine.Cab2bQuery (q.id, q.name, q.description, q.createdDate)
+		from edu.wustl.cab2b.common.queryengine.Cab2bQuery q
+		where q.createdBy = (Select u.userId from edu.wustl.cab2b.common.user.User u where u.userName = ?)
+		and q.id not in (select mmcq.subQueries.id from edu.wustl.cab2b.common.queryengine.MultiModelCategoryQueryImpl mmcq)
+		and q.id not in (select kq.id from edu.wustl.cab2b.common.queryengine.KeywordQueryImpl kq)
+	</query>
+
+	<query name="getServiceURLsByDomainModelnVersion">
+		from edu.wustl.cab2b.common.user.ServiceURL s
+		where s.domainModel = ? and s.version = ?)
+	</query>
+
+	<query name="getQueriesByTypeAndUserName">
+		from edu.wustl.cab2b.common.queryengine.Cab2bQuery cab2bQuery
+		where cab2bQuery.type = ? and cab2bQuery.createdBy = (Select user.userId from
+		edu.wustl.cab2b.common.user.User user where user.userName = ?)
+	</query>
+	
+	<query name="getKeywordQueriesByUserName">
+		from edu.wustl.cab2b.common.queryengine.KeywordQueryImpl query
+		where query.createdBy = (Select user.userId from
+		edu.wustl.cab2b.common.user.User user where user.userName = ?)
+	</query>
+	
+	<query name="getMMCQueriesByUserName">
+		from edu.wustl.cab2b.common.queryengine.MultiModelCategoryQueryImpl query
+		where query.createdBy = (Select user.userId from
+		edu.wustl.cab2b.common.user.User user where user.userName = ?)
+	</query>
+	
+	<query name="getKeywordQueriesByUserId">
+		from edu.wustl.cab2b.common.queryengine.KeywordQueryImpl query
+		where query.createdBy = ?
+	</query>
+	
+	<query name="getKeywordQueriesByModelGroupAndUserId">
+		from edu.wustl.cab2b.common.queryengine.KeywordQueryImpl query
+		where query.applicationGroup = ? and query.createdBy = ?
+	</query>
+</hibernate-mapping>
