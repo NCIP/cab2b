@@ -5,7 +5,7 @@
 	</DIV>
 	<DIV style="padding-bottom:0.3em">
 		<SPAN class="title">|</SPAN>
-		<A class="linkfooter" href="mailto:cab2bsupport@bmi.wustl.edu"><bean:message key="link.contactus"/></A>
+		<A class="linkfooter" href="mailto:cab2b_kc@bmi.wustl.edu"><bean:message key="link.contactus"/></A>
 		<SPAN class="title">|</SPAN>
 		<A class="linkfooter" href="http://www.nih.gov/about/privacy.htm" target="_blank"><bean:message key="link.privacynotice"/></A>
 		<SPAN class="title">|</SPAN>

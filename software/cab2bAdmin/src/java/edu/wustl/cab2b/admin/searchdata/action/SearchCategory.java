@@ -444,8 +444,10 @@ public class SearchCategory extends BaseAction {
 		StringTokenizer tokenizer = new StringTokenizer(textfieldValue);
 		String[] searchString = new String[tokenizer.countTokens()];
 		while (tokenizer.hasMoreTokens()) {
-			searchString[counter] = tokenizer.nextToken();
+			
+			searchString[counter] = "\\Q"+tokenizer.nextToken().replaceAll("\\\\E","")+"\\E";  //JJJ guards against reserved regEx chars like '['
 			counter++;
+
 		}
 		return searchString;
 	}

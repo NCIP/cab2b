@@ -31,7 +31,7 @@
 <DIV id="footer">
 	<DIV style="padding-bottom:0.4em">
 		<SPAN class="title">|</SPAN>
-		<A class="linkfooter" href="mailto:cab2bsupport@bmi.wustl.edu">Contact Us</A>
+		<A class="linkfooter" href="mailto:cab2b_kc@bmi.wustl.edu">Contact Us</A>
 		<SPAN class="title">|</SPAN>
 		<A class="linkfooter" href="http://www.nih.gov/about/privacy.htm" target="_blank">Privacy Notice</A>
 		<SPAN class="title">|</SPAN>
