@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.common.queryengine;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +19,8 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
     private static final long serialVersionUID = -3676549385071170949L;
 
     private List<String> outputClassUrls;
+    
+    private Collection<ServiceGroup> serviceGroups;
 
     private EntityInterface outputEntity;
 
@@ -143,4 +146,12 @@ public class Cab2bQuery extends ParameterizedQuery implements ICab2bQuery {
             queryType = QueryType.ANDed;
         }
     }
+
+	public Collection<ServiceGroup> getServiceGroups() {
+		return serviceGroups;
+	}
+
+	public void setServiceGroups(Collection<ServiceGroup> serviceGroups) {
+		this.serviceGroups = serviceGroups;
+	}
 }

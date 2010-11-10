@@ -4,6 +4,7 @@
 package edu.wustl.cab2b.common.queryengine;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -47,5 +48,9 @@ public interface ICab2bQuery extends IParameterizedQuery, Serializable {
      * @param isKeywordSearch true if marked for keyword search; false if not.
      */
     void setIsKeywordSearch(Boolean isKeywordSearch);
+    
+	public Collection<ServiceGroup> getServiceGroups();
+
+	public void setServiceGroups(Collection<ServiceGroup> serviceGroups);
     
 }
