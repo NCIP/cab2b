@@ -9,6 +9,7 @@ public class ServiceGroupItem implements Serializable {
 	private static final long serialVersionUID = 9084583500302186326L;
 	private Long id;
 	private String targetObject;
+	private ServiceGroup serviceGroup;
 	private ServiceURL serviceUrl;
 	
 	public Long getId() {
@@ -28,6 +29,12 @@ public class ServiceGroupItem implements Serializable {
 	}
 	public void setServiceUrl(ServiceURL serviceUrl) {
 		this.serviceUrl = serviceUrl;
+	}
+	public ServiceGroup getServiceGroup() {
+		return serviceGroup;
+	}
+	public void setServiceGroup(ServiceGroup serviceGroup) {
+		this.serviceGroup = serviceGroup;
 	}
 	
 	

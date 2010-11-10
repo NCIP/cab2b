@@ -8,6 +8,7 @@ public class ServiceGroup implements Serializable {
 	private static final long serialVersionUID = -897722669252090017L;
 	private Long id;
 	private String name;
+	private Cab2bQuery query;
 	private Collection<ServiceGroupItem> items;
 	
 	public Long getId() {
@@ -27,6 +28,12 @@ public class ServiceGroup implements Serializable {
 	}
 	public void setItems(Collection<ServiceGroupItem> items) {
 		this.items = items;
+	}
+	public Cab2bQuery getQuery() {
+		return query;
+	}
+	public void setQuery(Cab2bQuery query) {
+		this.query = query;
 	}
 
 }
