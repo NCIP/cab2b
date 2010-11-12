@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.globus.gsi.GlobusCredential;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
@@ -20,18 +21,21 @@ import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
 import edu.wustl.cab2b.common.authentication.util.AuthenticationUtility;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
+import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.Cab2bQueryObjectFactory;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.KeywordQuery;
 import edu.wustl.cab2b.common.queryengine.KeywordQueryImpl;
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.common.queryengine.QueryType;
+import edu.wustl.cab2b.common.queryengine.ServiceGroup;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.category.PopularCategoryOperations;
 import edu.wustl.cab2b.server.util.UtilityOperations;
 import edu.wustl.common.hibernate.HibernateDatabaseOperations;
+import edu.wustl.common.hibernate.HibernateUtil;
 import edu.wustl.common.querysuite.bizlogic.QueryBizLogic;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.querysuite.utils.ConstraintsObjectBuilder;
@@ -244,6 +248,17 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         saveInKeywordQuery(query, userId);
     }
 
+    public Cab2bQuery addServiceGroupsToQuery(Long queryId, Collection<ServiceGroup> groups) {
+    	Session session = HibernateUtil.currentSession();
+    	HibernateDatabaseOperations<ServiceGroup> dbopr =
+            new HibernateDatabaseOperations<ServiceGroup>(DBUtil.currentSession());
+    	Cab2bQuery query = (Cab2bQuery)session.get(Cab2bQuery.class, queryId);
+    	for(ServiceGroup group : groups) {
+    		group.setQuery(query);
+    		dbopr.insert(group);
+    	}
+    	return query;
+    }
     /**
      * This method saves the given query as a subquery of the appropriate keyword query present in the system.
      * @param query

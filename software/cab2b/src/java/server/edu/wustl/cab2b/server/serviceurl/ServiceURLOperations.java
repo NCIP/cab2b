@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
+import edu.wustl.cab2b.common.user.ServiceURL;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.Utility;
@@ -168,6 +169,11 @@ public class ServiceURLOperations {
             session.flush();
             session.close();
         }
+    }
+    
+    public ServiceURL findById(Long id) {
+        Session session = HibernateUtil.newSession();
+        return (ServiceURL) session.load(ServiceURL.class, id);
     }
 
     /**

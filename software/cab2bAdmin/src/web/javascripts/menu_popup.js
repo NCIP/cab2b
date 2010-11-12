@@ -9,6 +9,8 @@ function mmLoadMenus() {
   mm_menu_1203113257_0.addMenuSeparator();
   mm_menu_1203113257_0.addMenuItem("Curate&nbsp;Paths","location='CuratePaths.action'");
   mm_menu_1203113257_0.addMenuItem("Create&nbsp;InterModel&nbsp;Join","location='ConnectCategory.action'");
+  mm_menu_1203113257_0.addMenuItem("Create&nbsp;Service&nbsp;Group","location='ServiceGroup.action'");
+
   mm_menu_1203113257_0.addMenuSeparator();
   mm_menu_1203113257_0.addMenuItem("Attribute&nbsp;Ordering&nbsp;","location='CreateCategoryAttributeOrder.action'");
   mm_menu_1203113257_0.addMenuItem("Record&nbsp;Name&nbsp;Settings&nbsp;","location='RecordNameSettings.action'");

@@ -102,5 +102,12 @@
 	     	<result name="failure" >/jsp/default.jsp</result>
             <result name="success" >/jsp/default.jsp</result>
 	     </action>
+	     
+	     <action name="*ServiceGroup" method="{1}" class="edu.wustl.cab2b.admin.searchdata.action.ServiceGroupAction">
+            <result name="success" type="tiles">action.ChooseServiceGroup</result>
+            <result name="define" type="tiles">action.DefineServiceGroup</result>
+            <result name="save" type="tiles">action.SaveServiceGroup</result>
+	     </action>
+	     
     </package>
 </struts>

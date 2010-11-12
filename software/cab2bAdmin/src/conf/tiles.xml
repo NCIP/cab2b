@@ -101,4 +101,20 @@
 		<put-attribute name="body" value="/jsp/searchData/ServiceInstanceErrorPage.jsp" />
 	</definition>
 
+	<!--  ServiceGroup definitions -->
+	<definition name="action.ChooseServiceGroup" template="/jsp/Layout.jsp">
+		<put-attribute name="header" value="/jsp/SearchDataHeader.jsp" />
+		<put-attribute name="body" value="/jsp/searchData/ChooseServiceGroup.jsp" />
+	</definition>
+	
+	<definition name="action.DefineServiceGroup" template="/jsp/Layout.jsp">
+		<put-attribute name="header" value="/jsp/SearchDataHeader.jsp" />
+		<put-attribute name="body" value="/jsp/searchData/DefineServiceGroup.jsp" />
+	</definition>
+	
+	<definition name="action.SaveServiceGroup" template="/jsp/Layout.jsp">
+		<put-attribute name="header" value="/jsp/SearchDataHeader.jsp" />
+		<put-attribute name="body" value="/jsp/searchData/SaveServiceGroup.jsp" />
+	</definition>
+	
 </tiles-definitions>

@@ -17,6 +17,13 @@
 			<element column="OUTPUT_CLASS_URL" type="string" not-null="false" unique="false" />
 		</list>
 
+		<set name="serviceGroups" inverse="true" table="CAB2B_SERVICE_GROUP" cascade="all-delete-orphan">
+			<key>
+				<column name="QUERY_IDENTIFIER" not-null="true" />
+			</key>
+			<one-to-many class="edu.wustl.cab2b.common.queryengine.ServiceGroup" />
+		</set>
+      
 		<property name="entityId" type="long" update="true" insert="true" column="ENTITY_ID" length="30" not-null="true" />
 
 		<joined-subclass name="edu.wustl.cab2b.common.queryengine.CompoundQueryImpl" table="CAB2B_COMPOUND_QUERY"

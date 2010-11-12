@@ -380,3 +380,34 @@ opacity: 0.8;
 }
 /* End Popup css */
 
+.normalTable th {
+	color: black;
+	text-align: left;
+}
+
+.normalTable td {
+	color: black;
+}
+
+.instanceTable {
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+.instanceTable th {
+	border: 1px solid black;
+	padding: 5px;
+}
+.instanceTable td {
+	border: 1px solid black;
+	padding: 5px;
+}
+
+.noBorder {
+	border: 0;
+}
+.noBorder th {
+	border: 0;
+}
+.noBorder td {
+	border: 0;
+}
