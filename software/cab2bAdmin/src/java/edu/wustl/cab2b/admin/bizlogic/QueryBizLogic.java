@@ -10,9 +10,9 @@ import edu.wustl.cab2b.server.queryengine.QueryOperations;
 
 public class QueryBizLogic {
 
-	public Collection<ICab2bQuery> findAllQueries() {
+	public Collection<ICab2bQuery> findMultiModelQueries() {
 		 QueryOperations queryOperations = new QueryOperations();
-		 List<ICab2bQuery> queries = queryOperations.getAllQueries();
+		 List<ICab2bQuery> queries = queryOperations.getAllMultiModelQueries();
 		 return queries;
 	}
 	

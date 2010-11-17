@@ -396,10 +396,12 @@ opacity: 0.8;
 .instanceTable th {
 	border: 1px solid black;
 	padding: 5px;
+	font-size: 12px;
 }
 .instanceTable td {
 	border: 1px solid black;
 	padding: 5px;
+	font-size: 12px;
 }
 
 .noBorder {

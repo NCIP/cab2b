@@ -37,7 +37,7 @@ public class ServiceGroupAction extends BaseAction {
 	public String execute() {
 		QueryBizLogic queryLogic = new QueryBizLogic();
 		UserInterface user = (User) getSession().get(USER_OBJECT);
-		Collection<ICab2bQuery> allQueries = queryLogic.findAllQueries();
+		Collection<ICab2bQuery> allQueries = queryLogic.findMultiModelQueries();
 		this.allQueries = allQueries;
 		return SUCCESS;
 	}

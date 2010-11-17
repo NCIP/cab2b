@@ -7,8 +7,10 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.globus.gsi.GlobusCredential;
 import org.hibernate.HibernateException;
@@ -38,6 +40,8 @@ import edu.wustl.common.hibernate.HibernateDatabaseOperations;
 import edu.wustl.common.hibernate.HibernateUtil;
 import edu.wustl.common.querysuite.bizlogic.QueryBizLogic;
 import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
+import edu.wustl.common.querysuite.queryobject.IQueryEntity;
+import edu.wustl.common.querysuite.queryobject.impl.QueryEntity;
 import edu.wustl.common.querysuite.utils.ConstraintsObjectBuilder;
 import edu.wustl.common.util.dbManager.DBUtil;
 
@@ -113,6 +117,33 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
             throw new RuntimeException("Error occured while executing the HQL:" + e.getMessage(), e);
         }
         return queries;
+    }
+    
+    /**
+     * This method returns all queries that touch multiple object models.
+     *
+     * @param userName creator/owner of the queries
+     * @return
+     */
+    public List<ICab2bQuery> getAllMultiModelQueries() {
+        List<ICab2bQuery> allQueries = this.getAllQueries();
+        postProcessMMCQueries(allQueries);
+        filterSystemGeneratedSubQueries(allQueries);
+        List<ICab2bQuery> regularQueries = new ArrayList<ICab2bQuery>();
+        for(ICab2bQuery query : allQueries) {
+        	if(query.getType().equals(QueryType.ANDed.toString()) 
+        			&& query.getConstraints().getQueryEntities() != null 
+        			&& query.getConstraints().getQueryEntities().size() > 1) {
+        		Set<String> models = new HashSet<String>();
+        		for(IQueryEntity entity : query.getConstraints().getQueryEntities()) {
+        			models.add(((QueryEntity)entity).getEntityInterface().getEntityGroupCollection().iterator().next().getName());
+        		}
+        		if(models.size() > 1) {
+        			regularQueries.add(query);
+        		}
+        	}
+        }
+        return regularQueries;
     }
 
     /**
