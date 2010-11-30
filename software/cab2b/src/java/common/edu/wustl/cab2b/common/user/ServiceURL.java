@@ -3,6 +3,10 @@ package edu.wustl.cab2b.common.user;
 import java.io.Serializable;
 
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.common.util.logger.Log4jLogger;
+
+import org.apache.log4j.Logger;
+
 
 /**
  * @author Hrishikesh Rajpathak
@@ -13,6 +17,9 @@ import edu.wustl.cab2b.common.util.Utility;
 
 public class ServiceURL implements ServiceURLInterface, Serializable {
     private static final long serialVersionUID = 1L;
+    
+	private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ServiceURL.class);
+
 
     /** Unique Identifier for URLs  */
     private Long urlId;

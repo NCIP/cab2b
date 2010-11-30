@@ -1,12 +1,17 @@
 package edu.wustl.cab2b.server.queryengine.resulttransformers;
 
+import java.util.List;
+import java.util.Map;
+
 import org.globus.gsi.GlobusCredential;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
+import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
+import gov.nih.nci.cagrid.cqlresultset.CQLQueryResults;
 import gov.nih.nci.cagrid.dcql.DCQLQuery;
 
 /**
@@ -44,4 +49,14 @@ public interface IQueryResultTransformer<R extends IRecord, C extends ICategoria
      * @return the results.
      */
     IQueryResult<C> getCategoryResults(DCQLQuery query, CategorialClass categorialClass, GlobusCredential cred);
+
+	IQueryResult<? extends IRecord> getResultsNoUpdate(DCQLQuery dcqlQuery,
+			EntityInterface outputEntity, GlobusCredential gc);
+
+	public void setStatus(IQueryResult<? extends IRecord> result);
+
+	IQueryResult<? extends IRecord> mergeResults(
+			List<IQueryResult<? extends IRecord>> results,
+			EntityInterface outputEntity);
+
 }

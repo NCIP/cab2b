@@ -37,4 +37,5 @@ public interface IQueryResult<R extends IRecord> extends IBaseQueryObject {
     Collection<FQPUrlStatus> getFQPUrlStatus();
 
     void setFQPUrlStatus(Collection<FQPUrlStatus> fqpQueryUrlStatus);
+
 }

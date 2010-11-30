@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
@@ -19,6 +20,7 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
 import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
+import edu.wustl.cab2b.server.serviceurl.ServiceMetadataProcessor;
 import edu.wustl.cab2b.server.util.UtilityOperations;
 
 /**
@@ -27,6 +29,8 @@ import edu.wustl.cab2b.server.util.UtilityOperations;
  *
  */
 public class CaB2BQueryExecutionHandler extends QueryExecutionHandler<ICab2bQuery> {
+
+	private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(CaB2BQueryExecutionHandler.class);
 
     /**
      * @param query
@@ -75,7 +79,6 @@ public class CaB2BQueryExecutionHandler extends QueryExecutionHandler<ICab2bQuer
 
     public void initializeQueryStatus() {
         String conditions = UtilityOperations.getStringRepresentationofConstraints(query.getConstraints());
-
         Set<URLStatus> queryURLStatusSet = new HashSet<URLStatus>();
         Set<QueryStatus> childrenQueryStatus = new HashSet<QueryStatus>(1);
         for (QueryExecutor queryExecutor : queryExecutorsList) {

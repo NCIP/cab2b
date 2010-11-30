@@ -7,12 +7,21 @@ import java.util.Map;
 
 import edu.common.dynamicextensions.util.DynamicExtensionsUtility;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.ServiceGroup;
+import edu.wustl.cab2b.common.queryengine.ServiceGroupItem;
 import edu.wustl.cab2b.common.queryengine.result.FQPUrlStatus;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
+import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.DcqlConstraint;
+import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.GroupConstraint;
 import edu.wustl.common.querysuite.metadata.category.Category;
+import gov.nih.nci.cagrid.dcql.ForeignAssociation;
+import gov.nih.nci.cagrid.dcql.Group;
+import gov.nih.nci.cagrid.dcql.Object;
+import org.apache.log4j.Logger;
+
 
 /**
  * @author gaurav_mehta
@@ -35,7 +44,21 @@ public class QueryExecutorHelper {
         }
         return singleUrlQueries;
     }
+    
 
+    public static List<ICab2bQuery> splitQueryPerGroup(ICab2bQuery query) {        
+    	Collection<ServiceGroup> sGroups = query.getServiceGroups();    	
+        List<ICab2bQuery> singleUrlQueries = new ArrayList<ICab2bQuery>(sGroups.size());    
+        
+		for(int x=0; x< sGroups.size(); x++){
+            ICab2bQuery singleUrlQuery = (ICab2bQuery) DynamicExtensionsUtility.cloneObject(query); 
+            singleUrlQueries.add(singleUrlQuery);
+        
+		}
+		return singleUrlQueries;
+        
+    }
+   			   
     /**
      * @param categoryResults
      * @return

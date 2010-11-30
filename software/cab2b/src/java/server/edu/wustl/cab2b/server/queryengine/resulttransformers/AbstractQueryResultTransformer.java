@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,6 +34,7 @@ import gov.nih.nci.cagrid.dcqlresult.DCQLQueryResultsCollection;
 import gov.nih.nci.cagrid.dcqlresult.DCQLResult;
 import gov.nih.nci.cagrid.fqp.processor.FederatedQueryEngine;
 import gov.nih.nci.cagrid.fqp.processor.exceptions.FederatedQueryProcessingException;
+
 
 /**
  * Skeletal implementation of a query result transformer. Concrete
@@ -116,6 +118,54 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
         }
         return result;
     }
+    
+    public IQueryResult<R> getResultsNoUpdate(DCQLQuery query, EntityInterface targetEntity, GlobusCredential cred) {
+        IQueryResult<R> result = null;
+        try {
+            log(query);
+            Map<String, CQLQueryResults> queryResults = executeDcql(query, cred);
+            int numRecs = 0;
+            result = createResult(targetEntity);
+            for (Map.Entry<String, CQLQueryResults> entry : queryResults.entrySet()) {
+                String url = entry.getKey();
+                CQLQueryResults cqlQueryResult = entry.getValue();
+                List<R> recs = createRecords(url, cqlQueryResult, targetEntity);
+                result.addRecords(url, recs);
+                numRecs += recs.size();
+            }
+            
+            postProcessResult(query);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(Utility.getStackTrace(e), ErrorCodeConstants.QM_0004);
+        }
+        return result;
+    }
+    
+ 
+    public IQueryResult<R> mergeResults(List<IQueryResult<? extends IRecord>> results, EntityInterface targetEntity){
+    	IQueryResult<R> result = createResult(targetEntity); 
+    	
+		String url=null;
+		
+		for(IQueryResult<? extends IRecord> result1 :  results){
+			for (Entry<String, ?> entry : result1.getRecords().entrySet()) {
+				url = entry.getKey();   		
+				List<R> recs1 = (List<R>) entry.getValue();
+				result.addRecords(url, recs1);
+			}
+		}
+		
+    	return  result;
+    }
+
+    
+    public void setStatus(IQueryResult<? extends IRecord> result){
+    	if(result == null ) logger.error("result is null");
+        result.setFQPUrlStatus(urlVsStatus.values());
+    }
+    
 
     /**
      * 
@@ -247,7 +297,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      * @return the query result object.
      * @see QueryResultFactory#createResult()
      */
-    protected IQueryResult<R> createResult(EntityInterface outputEntity) {
+    public IQueryResult<R> createResult(EntityInterface outputEntity) {
         return QueryResultFactory.createResult(outputEntity);
     }
 

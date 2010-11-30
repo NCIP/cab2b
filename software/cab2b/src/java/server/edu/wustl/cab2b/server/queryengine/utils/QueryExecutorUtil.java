@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.server.queryengine.utils;
 
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.globus.gsi.GlobusCredential;
 
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
@@ -17,17 +19,22 @@ import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.CompoundQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
+import edu.wustl.cab2b.common.queryengine.ServiceGroup;
+import edu.wustl.cab2b.common.queryengine.ServiceGroupItem;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.Constants;
 import edu.wustl.cab2b.server.cache.EntityCache;
+import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.GroupConstraint;
 import edu.wustl.cab2b.server.user.UserOperations;
 import edu.wustl.cab2b.server.util.UtilityOperations;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IRule;
+import gov.nih.nci.cagrid.dcql.ForeignAssociation;
+import gov.nih.nci.cagrid.dcql.Group;
 
 /**
  * @author Deepak
@@ -47,6 +54,9 @@ public class QueryExecutorUtil {
      * @param maxLimit
      * @return
      */
+	
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(QueryExecutorUtil.class);
+
     public static boolean isURLFeasibleForConversion(List<ICategorialClassRecord> recordList, int maxLimit) {
         if (recordList != null) {
             if (recordList.size() > maxLimit) //if no of Root records only exceed the limit, return false 
@@ -177,6 +187,9 @@ public class QueryExecutorUtil {
                                                                                 String[] modelGroupNames) {
         Map<EntityGroupInterface, List<String>> entityGroupVsSelectedUrls =
                 new HashMap<EntityGroupInterface, List<String>>();
+        
+    	logger.info("JJJ ************getUserConfiguredUrls*:");
+
 
         if (modelGroupNames != null && modelGroupNames.length != 0) {
             Collection<ServiceURLInterface> userConfiguredUrls = user.getServiceURLCollection();
@@ -185,12 +198,15 @@ public class QueryExecutorUtil {
                 if (!user.isAdmin()) {
                     entityGroupVsSelectedUrls =
                             getUserConfiguredUrls(new UserOperations().getAdmin(), modelGroupNames);
+                	logger.info("JJJ ************admin*:");
+
                 } else {
                     throw new RuntimeException(Constants.SERVICE_INSTANCES_NOT_CONFIGURED);
                 }
             } else {
                 for (ServiceURLInterface serviceUrl : userConfiguredUrls) {
                     String entityGroupName = serviceUrl.getEntityGroupName();
+                	logger.info("JJJ ************userConfiguredUrls entityGroupName*:"+entityGroupName);
 
                     EntityGroupInterface entityGroup =
                             EntityCache.getInstance().getEntityGroupByName(entityGroupName);
@@ -202,6 +218,7 @@ public class QueryExecutorUtil {
                     urls.add(serviceUrl.getUrlLocation());
                 }
             }
+
         }
         return entityGroupVsSelectedUrls;
     }
@@ -217,6 +234,7 @@ public class QueryExecutorUtil {
                                      String[] modelGroupNames) throws RuntimeException {
         Iterator<ICab2bQuery> subQueriesIterator = query.getSubQueries().iterator();
         while (subQueriesIterator.hasNext()) {
+
             ICab2bQuery subQuery = subQueriesIterator.next();
             if (subQuery instanceof CompoundQuery) {
                 setOutputURLs((CompoundQuery) subQuery, proxy, user, modelGroupNames);
@@ -255,15 +273,32 @@ public class QueryExecutorUtil {
      */
     public static void setOutputURLs(ICab2bQuery query, GlobusCredential proxy, UserInterface user,
                                      String[] modelGroupNames) throws RuntimeException {
+
         Map<EntityGroupInterface, List<String>> entityGroupURLsMap = getUserConfiguredUrls(user, modelGroupNames);
 
         query.setOutputUrls(null);
         Collection<EntityGroupInterface> queryEntityGroups = getEntityGroups(query);
+        
+		List<String> newurls = new ArrayList<String>(1);      
+
         for (EntityGroupInterface queryEntityGroup : queryEntityGroups) {
             List<String> urls = entityGroupURLsMap.get(queryEntityGroup);
-            if (urls != null && !urls.isEmpty()) {
+            int sgc=0;
+            if(query.getServiceGroups().size() >0){
+            	for(ServiceGroup group : query.getServiceGroups()){
+            		for(ServiceGroupItem item : group.getItems()){
+            			if(item.getTargetObject().toString().equals(query.getOutputEntity().getName())){
+            				newurls.add(item.getServiceUrl().getUrlLocation());
+            			}
+            		}
+            	}
+            	query.setOutputUrls(newurls);
+
+            } else
+            if (urls != null && !urls.isEmpty()) {            	
                 query.setOutputUrls(urls);
-            }
+            }           
+            	
         }
     }
 

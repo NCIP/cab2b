@@ -790,7 +790,7 @@ public class Utility {
      * @param serviceUrlMetadata
      * @return short hosting institution name
      */
-    public static String getHostingInstitutionName(ServiceURLInterface serviceUrlMetadata) {
+    public static String getHostingInstitutionName(ServiceURLInterface serviceUrlMetadata) {  	
         String hostingCenter = serviceUrlMetadata.getHostingCenterShortName();
         //If short name is null
         if (hostingCenter == null || hostingCenter.isEmpty()) {
@@ -801,6 +801,7 @@ public class Utility {
                 hostingCenter = serviceUrlMetadata.getUrlLocation();
             } 
         }
+
         return hostingCenter;
     }
 

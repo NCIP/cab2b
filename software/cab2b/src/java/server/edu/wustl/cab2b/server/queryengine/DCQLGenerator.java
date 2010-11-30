@@ -4,12 +4,17 @@
 package edu.wustl.cab2b.server.queryengine;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.domain.DCQL;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.ServiceGroup;
+import edu.wustl.cab2b.common.queryengine.ServiceGroupItem;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.queryengine.querybuilders.CategoryPreprocessor;
 import edu.wustl.cab2b.server.queryengine.querybuilders.CategoryPreprocessorResult;
@@ -20,7 +25,16 @@ import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.DcqlCon
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.ForeignAssociationConstraint;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.GroupConstraint;
 import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.LocalAssociationConstraint;
+import edu.wustl.common.querysuite.queryobject.ICondition;
+import edu.wustl.common.querysuite.queryobject.IConstraints;
+import edu.wustl.common.querysuite.queryobject.IOutputAttribute;
+import edu.wustl.common.querysuite.queryobject.IParameter;
+import edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery;
+import gov.nih.nci.cagrid.cqlquery.Attribute;
+import gov.nih.nci.cagrid.dcql.Association;
 import gov.nih.nci.cagrid.dcql.DCQLQuery;
+import gov.nih.nci.cagrid.dcql.ForeignAssociation;
+import gov.nih.nci.cagrid.dcql.Group;
 import gov.nih.nci.cagrid.dcql.Object;
 import gov.nih.nci.cagrid.fqp.common.SerializationUtils;
 
@@ -100,11 +114,13 @@ public class DCQLGenerator {
         if (outputUrls.length == 0) {
             outputUrls = query.getOutputUrls().toArray(new String[0]);
         }
+        
         dcqlQuery.setTargetServiceURL(outputUrls);
-
+    	        
         assignDcqlConstraintToTarget(targetObject, constraint);
         return dcqlQuery;
     }
+    
 
     private static void assignDcqlConstraintToTarget(Object targetObject, DcqlConstraint constraint) {
         if (constraint == null) {
@@ -114,21 +130,26 @@ public class DCQLGenerator {
             case Attribute:
                 AttributeConstraint attributeConstraint = (AttributeConstraint) constraint;
                 targetObject.setAttribute(attributeConstraint.getAttribute());
+                logger.info("JJJ Attribute");
                 break;
 
             case LocalAssociation:
                 LocalAssociationConstraint localAssociationConstraint = (LocalAssociationConstraint) constraint;
                 targetObject.setAssociation(localAssociationConstraint.getLocalAssociation());
+                logger.info("JJJ LocalAssociation");
                 break;
 
             case ForeignAssociation:
                 ForeignAssociationConstraint foreignAssociationConstraint = (ForeignAssociationConstraint) constraint;
+            	logger.info("JJJ ForeignAssciation.tURL:"+foreignAssociationConstraint.getForeignAssociation().getTargetServiceURL());
                 targetObject.setForeignAssociation(foreignAssociationConstraint.getForeignAssociation());
                 break;
 
             case Group:
                 GroupConstraint groupConstraint = (GroupConstraint) constraint;
                 targetObject.setGroup(groupConstraint.getGroup());
+            	logger.info("JJJ GroupConstraint.tURL:"+groupConstraint.getGroup());
+
         }
     }
 }

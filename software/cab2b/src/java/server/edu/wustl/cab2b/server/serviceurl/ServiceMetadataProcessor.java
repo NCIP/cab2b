@@ -3,6 +3,8 @@
  */
 package edu.wustl.cab2b.server.serviceurl;
 
+import org.apache.log4j.Logger;
+
 import edu.wustl.cab2b.common.user.ServiceURL;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import gov.nih.nci.cagrid.metadata.ServiceMetadata;
@@ -19,6 +21,8 @@ import gov.nih.nci.cagrid.metadata.service.ServicePointOfContactCollection;
  *
  */
 public class ServiceMetadataProcessor {
+	private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ServiceMetadataProcessor.class);
+
 
     private final boolean adminDefined = false;
 

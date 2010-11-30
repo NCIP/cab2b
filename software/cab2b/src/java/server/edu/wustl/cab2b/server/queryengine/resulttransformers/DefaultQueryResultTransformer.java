@@ -5,10 +5,12 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.xerces.parsers.DOMParser;
+import org.globus.gsi.GlobusCredential;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -17,7 +19,9 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
+import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
+import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
@@ -83,7 +87,7 @@ final class DefaultQueryResultTransformer extends AbstractQueryResultTransformer
         return res;
     }
 
-    private IRecord createRecord(Set<AttributeInterface> attributes, RecordId id) {
+    public IRecord createRecord(Set<AttributeInterface> attributes, RecordId id) {
         return QueryResultFactory.createRecord(attributes, id);
     }
 
@@ -114,4 +118,6 @@ final class DefaultQueryResultTransformer extends AbstractQueryResultTransformer
 
         return QueryResultFactory.createCategorialClassRecord(categorialClass, categoryAttributes, id);
     }
+
+
 }

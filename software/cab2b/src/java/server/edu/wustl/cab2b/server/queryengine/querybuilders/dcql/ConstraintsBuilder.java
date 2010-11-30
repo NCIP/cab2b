@@ -101,6 +101,8 @@ public class ConstraintsBuilder {
      * @param categoryPreprocessorResult
      */
     public ConstraintsBuilder(ICab2bQuery query, CategoryPreprocessorResult categoryPreprocessorResult) {
+        logger.info("JJJ ConstraintsBuilder");
+
         setQuery(query);
         setCategoryPreprocessorResult(categoryPreprocessorResult);
         setResult(new ConstraintsBuilderResult());
@@ -300,7 +302,10 @@ public class ConstraintsBuilder {
         if (association instanceof IIntraModelAssociation) {
             dcqlConstraint = createLocalAssociation((IIntraModelAssociation) association);
         } else if (association instanceof IInterModelAssociation) {
+        	logger.info("JJJ calling CREATEASSOCIATIONFOREIGN"+association.toString());
+
             dcqlConstraint = createForeignAssociation((IInterModelAssociation) association);
+
         }
         return dcqlConstraint;
     }
@@ -325,6 +330,7 @@ public class ConstraintsBuilder {
         ForeignAssociation association = new ForeignAssociation();
         JoinCondition joinCondition = new JoinCondition();
         joinCondition.setPredicate(ForeignPredicate.EQUAL_TO);
+        logger.info("JJJ Set:"+interModelAssociation.getTargetEntity().getName()+"s URL to:"+rightServiceUrl);
         foreignObject.setName(interModelAssociation.getTargetEntity().getName());
         association.setTargetServiceURL(rightServiceUrl);
 
