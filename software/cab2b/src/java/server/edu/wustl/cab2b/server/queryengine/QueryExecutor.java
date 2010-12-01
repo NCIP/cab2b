@@ -1,15 +1,15 @@
 package edu.wustl.cab2b.server.queryengine;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
@@ -19,7 +19,6 @@ import org.globus.gsi.GlobusCredential;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
-import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ServiceGroup;
@@ -34,10 +33,7 @@ import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.ICategoryResult;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
-import edu.wustl.cab2b.common.queryengine.result.QueryResultFactory;
-import edu.wustl.cab2b.common.queryengine.result.Record;
 import edu.wustl.cab2b.common.queryengine.result.RecordId;
-import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.common.util.Cab2bServerProperty;
 import edu.wustl.cab2b.common.util.Constants;
@@ -57,10 +53,8 @@ import edu.wustl.cab2b.server.queryengine.querystatus.QueryURLStatusOperations;
 import edu.wustl.cab2b.server.queryengine.resulttransformers.IQueryResultTransformer;
 import edu.wustl.cab2b.server.queryengine.resulttransformers.QueryResultTransformerFactory;
 import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
-import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
 import edu.wustl.cab2b.server.user.UserOperations;
 import edu.wustl.cab2b.server.util.UtilityOperations;
-//import edu.wustl.cab2bwebapp.bizlogic.executequery.CsvWriter;
 import edu.wustl.common.querysuite.metadata.associations.IAssociation;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import edu.wustl.common.querysuite.metadata.category.Category;
@@ -68,17 +62,9 @@ import edu.wustl.common.querysuite.queryobject.DataType;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
-import gov.nih.nci.cagrid.cqlquery.Attribute;
-import gov.nih.nci.cagrid.cqlquery.Predicate;
-import gov.nih.nci.cagrid.cqlresultset.CQLQueryResults;
-//import gov.nih.nci.cagrid.dcql.*;
-
-//dcqlquery.*;
 import gov.nih.nci.cagrid.dcql.DCQLQuery;
 import gov.nih.nci.cagrid.dcql.ForeignAssociation;
-import gov.nih.nci.cagrid.dcql.ForeignPredicate;
 import gov.nih.nci.cagrid.dcql.Group;
-import gov.nih.nci.cagrid.dcql.JoinCondition;
 import gov.nih.nci.cagrid.dcql.Object;
 
 
@@ -216,7 +202,10 @@ public class QueryExecutor {
         		int sgc=0;       		
         		List<IQueryResult<? extends IRecord>> results = new ArrayList<IQueryResult<? extends IRecord>>(1);
 
+        		List<FutureTask<IQueryResult<? extends IRecord>>> futures = new ArrayList<FutureTask<IQueryResult<? extends IRecord>>>();
+        		
         		for(ServiceGroup group : sGroups){
+        			
         			logger.info("JJJ ***Service Group loop for : "+group.getName());
         			
                		GroupConstraint gr = (GroupConstraint) constraints[sgc];   		
@@ -246,15 +235,31 @@ public class QueryExecutor {
             		} //for GroupItem
 
 
-            		dcqlQueries[sgc] = DCQLGenerator.createDCQLQuery(queries.get(sgc), output, constraints[sgc]);            		
-            		results.add(transformer.getResultsNoUpdate(dcqlQueries[sgc], getOutputEntity(), gc));
+            		dcqlQueries[sgc] = DCQLGenerator.createDCQLQuery(queries.get(sgc), output, constraints[sgc]);
+            		FutureTask<IQueryResult<? extends IRecord>> executionTask = executeWithFuture(dcqlQueries[sgc]);
+            		futures.add(executionTask);
             		sgc++;
+            		
         		} // Groups
-        		       		        		
-        		result = transformer.mergeResults(results, getOutputEntity());
         		
-        		transformer.setStatus(result);	
-        		normalQueryFinished = true;     
+        		
+        		try {
+        			logger.info("WAITING FOR THREADS");
+        			executor.shutdown();
+					executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+					logger.info("COMPLETED ALL THREADS");
+					for(FutureTask<IQueryResult<? extends IRecord>> future : futures) {
+						results.add(future.get());
+						result = transformer.mergeResults(results, getOutputEntity());
+					}
+	        		transformer.setStatus(result);	
+	        		normalQueryFinished = true;     
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					e.printStackTrace();
+				}
+        		
         	} else {
         		hasQueryStarted = true;
         		String output = getOutputEntity().getName();
@@ -264,6 +269,18 @@ public class QueryExecutor {
         		normalQueryFinished = true;
         	}       	       	
         }
+	}
+	
+	private FutureTask<IQueryResult<? extends IRecord>> executeWithFuture(final DCQLQuery dcqlQuery) {
+		FutureTask<IQueryResult<? extends IRecord>> future = new FutureTask<IQueryResult<? extends IRecord>>(
+            	new Callable<IQueryResult<? extends IRecord>>() {
+                 	public IQueryResult<? extends IRecord> call() {
+                 			logger.info("ABOUT TO SUBMIT QUERY");
+                            return transformer.getResultsNoUpdate(dcqlQuery, getOutputEntity(), gc);
+                    }
+        });
+		executor.execute(future);
+		return future;
 	}
 
 
