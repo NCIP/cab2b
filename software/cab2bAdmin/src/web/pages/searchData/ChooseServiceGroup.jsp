@@ -73,7 +73,7 @@
 							</tr>							
 						<s:iterator value="allQueries"> 
 	                    	<tr>
-								<td style="border: 1px solid grey; bgcolor: #FFFFFF;"  colspan="2"><div style="color: black; font-size: 12;"><input type="radio" name="selectedQuery"  class="required" value="<s:property value='id'/>"  /> <s:property value="description"/></div></td>
+								<td style="border: 1px solid grey; bgcolor: #FFFFFF;"  colspan="2"><div style="color: black; font-size: 12;"><input type="radio" name="selectedQuery"  class="required" value="<s:property value='id'/>"  /> <s:property value="name"/></div></td>
 	                    	</tr>
 						</s:iterator> 
 	                </table>
