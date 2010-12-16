@@ -75,6 +75,17 @@
 						<DIV class="error hidden" id="error_password"><bean:message key="error.password.empty"/></DIV>
 						<DIV id="errors"><html:errors/></DIV>
 					</DIV>
+					<DIV>
+                                	<logic:present name="secondaryAuthName">
+						<SELECT name="auth">
+							<OPTION value="1"><bean:write name="authName"/></OPTION>
+							<OPTION value="2"><bean:write name="secondaryAuthName"/></OPTION>
+						</SELECT>
+       		                         </logic:present>
+               		                 <logic:notPresent name="secondaryAuthName">
+						<input type="hidden" name="auth" value="-1" />
+                       		         </logic:notPresent>
+					</DIV>
 				</DIV>
 			</html:form>
 		</DIV>

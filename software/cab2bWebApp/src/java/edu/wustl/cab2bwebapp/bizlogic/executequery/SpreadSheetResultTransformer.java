@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
@@ -22,6 +24,7 @@ import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.cab2b.server.queryengine.QueryExecutor;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
 import edu.wustl.common.querysuite.metadata.category.CategorialAttribute;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
@@ -34,6 +37,8 @@ import edu.wustl.common.querysuite.metadata.category.Category;
  *
  */
 public class SpreadSheetResultTransformer extends SpreadsheetTransformer {
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(QueryExecutor.class);
+
 
     private ICab2bQuery query;
 
@@ -119,6 +124,7 @@ public class SpreadSheetResultTransformer extends SpreadsheetTransformer {
                     }
                     recordList.add(recordMap);
                 }
+
                 writeToCSV.writeData(recordList, serviceUrlMetadata);
             }
         }

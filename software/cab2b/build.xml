@@ -200,7 +200,10 @@
 		<replace file="${conf.dir}/cagrid.properties" token="@sync.file@" value="${sync-description-file}" />
 		<replace file="${conf.dir}/cagrid.properties" token="@cds.url@" value="${cds-url}" />
 		<replace file="${conf.dir}/cagrid.properties" token="@idP.url@" value="${idP-url}" />
+		<replace file="${conf.dir}/cagrid.properties" token="@authentication.name@" value="${authentication-name}" />
 		<replace file="${conf.dir}/cagrid.properties" token="@authentication.url@" value="${authentication-url}" />
+		<replace file="${conf.dir}/cagrid.properties" token="@secondary.authentication.name@" value="${secondary-authentication-name}" />
+		<replace file="${conf.dir}/cagrid.properties" token="@secondary.authentication.url@" value="${secondary-authentication-url}" />
 		<replace file="${conf.dir}/cagrid.properties" token="@delegetee@" value="${delegetee-identifier}" />
 		<replace file="${conf.dir}/cagrid.properties" token="@grid.cert@" value="${grid-cert}" />
 		<replace file="${conf.dir}/cagrid.properties" token="@grid.key@" value="${grid-key}" />

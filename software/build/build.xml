@@ -335,7 +335,10 @@
 			<property name="sync-description-file" value="${sync-description-file}" />
 			<property name="cds-url" value="${cds-url}" />
 			<property name="idP-url" value="${idP-url}" />
+			<property name="authentication-name" value="${authentication-name}" />
 			<property name="authentication-url" value="${authentication-url}" />
+			<property name="secondary-authentication-name" value="${secondary-authentication-name}" />
+			<property name="secondary-authentication-url" value="${secondary-authentication-url}" />
 			<property name="delegetee-identifier" value="${delegetee-identifier}" />
 			<property name="grid-cert" value="${grid-cert}" />
 			<property name="grid-key" value="${grid-key}" />

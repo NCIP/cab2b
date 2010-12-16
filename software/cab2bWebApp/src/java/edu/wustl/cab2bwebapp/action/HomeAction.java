@@ -22,6 +22,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
+import edu.wustl.cab2b.common.authentication.util.CagridPropertyLoader;
 import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
 import edu.wustl.cab2b.common.user.UserInterface;
 import edu.wustl.cab2b.server.user.UserOperations;
@@ -54,6 +55,7 @@ public class HomeAction extends Action {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
+    	
         String actionForward = null;
         try {
             HttpSession session = request.getSession();
@@ -75,7 +77,7 @@ public class HomeAction extends Action {
             session.removeAttribute(Constants.UI_POPULATION_FINISHED);
             session.removeAttribute(Constants.KEYWORD);
             session.removeAttribute(Constants.SELECTED_QUERY_NAME);
-
+            
             //delete the file(exported by the user) from server , when user navigates to the home page
             String filePath = (String) session.getAttribute(Constants.EXPORTED_FILE_PATH);
             if (filePath != null && !filePath.equals("")) {

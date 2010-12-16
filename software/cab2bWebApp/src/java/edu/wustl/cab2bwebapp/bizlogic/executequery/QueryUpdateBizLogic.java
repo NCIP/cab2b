@@ -45,6 +45,7 @@ public class QueryUpdateBizLogic {
         if (queryInputString != null) {
             newConditions = createConditionsMap(queryInputString);
         }
+        
         for (IExpression expression : constraints) {
             int no_of_oprds = expression.numberOfOperands();
             IExpressionOperand operand;

@@ -44,8 +44,21 @@ public class CagridPropertyLoader {
      * @param idP
      * @return Dorian url for given idP
      */
+    
+    public static String getAuthenticationName() {
+        return properties.getProperty("authentication.name");
+    }
+    
     public static String getAuthenticationURL() {
         return properties.getProperty("authentication.url");
+    }
+    
+    public static String getSecondaryAuthenticationName() {
+        return properties.getProperty("secondary.authentication.name");
+    }
+    
+    public static String getSecondaryAuthenticationURL() {
+        return properties.getProperty("secondary.authentication.url");
     }
 
     /**

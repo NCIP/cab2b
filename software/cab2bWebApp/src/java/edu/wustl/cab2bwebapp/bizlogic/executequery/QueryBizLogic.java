@@ -196,6 +196,7 @@ public class QueryBizLogic {
                     Object value = record.get(a);
                     String title = edu.wustl.cab2b.common.util.Utility.getFormattedString(a.getName());
                     searchResultDVO.setTitle(title);
+
                     searchResultDVO.setValue(value == null ? null : value);
                     searchResultDVO.setMedia((!title.equals(Constants.POINT_OF_CONTACT)
                             && !title.equals(Constants.HOSTING_CANCER_RESEARCH_CENTER)

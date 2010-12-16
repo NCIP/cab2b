@@ -72,18 +72,58 @@ public class Authenticator {
      * @throws RemoteException
      */
     public GlobusCredential validateUser(final String password) {
-        logger.debug("Validating the user on grid...");
         GTSSynchronizer.generateGlobusCertificate();
 
         String authenticationURL = CagridPropertyLoader.getAuthenticationURL();
         Credential credential = createCredentials(userName, password);
         SAMLAssertion saml = autheticateUser(authenticationURL, credential);
-
         String dorianUrl = CagridPropertyLoader.getIdP_URL();
+
         return getGlobusCredentials(dorianUrl, saml);
     }
+    
+    /**
+     * Validates user on the basis of user name, password and the idP that it points to.
+     *
+     * @param password
+     * @throws RemoteException
+     */
+    public GlobusCredential validateUser(final String password, int auth) {
+        logger.debug("Validating the user on grid...");
+        String authenticationURL=null;
+        GTSSynchronizer.generateGlobusCertificate();
+        
+        if(auth== -1){
+        	return validateUser(password);
+        } else if(auth==1){
+        	 authenticationURL = CagridPropertyLoader.getAuthenticationURL();
+        } else if(auth==2){
+        	 authenticationURL = CagridPropertyLoader.getSecondaryAuthenticationURL();
+        } else {
+        	logger.error("invalid authenticationUrl selection");
+        }
+        Credential credential = createCredentials(userName, password);
+        logger.info("JJJ authenting from"+authenticationURL);
+        SAMLAssertion saml = autheticateUser(authenticationURL, credential);
+        String dorianUrl = CagridPropertyLoader.getIdP_URL();
 
+        return getGlobusCredentials(dorianUrl, saml);
+    }
+        
+
+
+    public void validateAndDelegate(final String password, int auth) {
+
+        GlobusCredential proxy = validateUser(password, auth);
+
+        DelegatedCredentialReference dcr = getDelegatedCredentialReference(proxy);
+        serializeDelegatedCredentialReference(dcr);
+
+        logger.debug("Credential delegated sucessfully");
+    }
+    
     public void validateAndDelegate(final String password) {
+
         GlobusCredential proxy = validateUser(password);
 
         DelegatedCredentialReference dcr = getDelegatedCredentialReference(proxy);
@@ -94,6 +134,7 @@ public class Authenticator {
 
     private SAMLAssertion autheticateUser(String authenticationUrl, Credential credential) {
         AuthenticationClient authenticationClient = null;
+
         try {
             logger.debug("Getting authentication client...");
             authenticationClient = new AuthenticationClient(authenticationUrl, credential);
@@ -109,7 +150,7 @@ public class Authenticator {
 
         SAMLAssertion saml = null;
         try {
-            logger.debug("Authenticating the user...");
+            logger.info("Authenticating the user...");
             saml = authenticationClient.authenticate();
         } catch (InvalidCredentialFault e) {
             logger.error(e.getMessage(), e);
@@ -296,6 +337,7 @@ public class Authenticator {
 
     private void serializeDelegatedCredentialReference(DelegatedCredentialReference dcr) {
         StringWriter stringWriter = new StringWriter();
+
         try {
             logger.debug("Serializing the delegated credential reference...");
             gov.nih.nci.cagrid.common.Utils.serializeObject(

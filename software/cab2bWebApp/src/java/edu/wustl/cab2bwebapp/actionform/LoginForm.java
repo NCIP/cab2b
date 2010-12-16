@@ -18,6 +18,9 @@ public class LoginForm extends ActionForm {
     private String userName;
 
     private String password;
+    
+    private int auth;
+
 
     /**
      * This method returns the userName.
@@ -49,5 +52,13 @@ public class LoginForm extends ActionForm {
      */    
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public int getAuth(){
+    	return auth;
+    }
+    
+    public void setAuth(int auth){
+    	this.auth= auth;
     }
 }

@@ -21,6 +21,7 @@ import org.globus.gsi.GlobusCredential;
 
 import edu.wustl.cab2b.common.authentication.Authenticator;
 import edu.wustl.cab2b.common.authentication.exception.AuthenticationException;
+import edu.wustl.cab2b.common.authentication.util.CagridPropertyLoader;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
@@ -74,10 +75,24 @@ public class LoginAction extends Action {
             session.removeAttribute(Constants.UI_POPULATION_FINISHED);
             session.removeAttribute(Constants.KEYWORD);
             session.removeAttribute(Constants.SELECTED_QUERY_NAME);
+            
+        	String authName = CagridPropertyLoader.getAuthenticationName();
+        	String secondaryAuthName = CagridPropertyLoader.getSecondaryAuthenticationName();            
+
+    		
+        	if((secondaryAuthName != null)  && (!secondaryAuthName.contains("$")) && (secondaryAuthName.trim().length() >0)){        	
+        		session.setAttribute("authName", authName);
+        		session.setAttribute("secondaryAuthName", secondaryAuthName);
+        	} else {
+        		logger.info("JJJ no secondary authName"+authName+":"+secondaryAuthName);
+        	}        	       	
                         
             LoginForm loginForm = (LoginForm) form;
             String userName = loginForm.getUserName();
             String password = loginForm.getPassword();
+            
+            int auth = loginForm.getAuth();
+
 
             if (userName == null || userName.isEmpty() || password == null || password.isEmpty()) {
                 return mapping.findForward(Constants.FORWARD_LOGIN);
@@ -88,7 +103,7 @@ public class LoginAction extends Action {
                 UserOperations userOperations = new UserOperations();
                 GlobusCredential globusCredential = null;
                 try {
-                    globusCredential = new Authenticator(userName).validateUser(password);
+                		globusCredential = new Authenticator(userName).validateUser(password, auth);
                 } catch (AuthenticationException e) {
                     logger.error(e.getMessage());
                     ActionErrors errors = new ActionErrors();
@@ -109,6 +124,7 @@ public class LoginAction extends Action {
                 session.setAttribute(Constants.GLOBUS_CREDENTIAL, globusCredential);
                 session.setAttribute(Constants.USER, user);
                 session.setAttribute(Constants.USER_NAME, userName);
+
             }
             if (!user.getUserName().equals(Constants.ANONYMOUS)) {
                 int inProgressQueryCount = 0;

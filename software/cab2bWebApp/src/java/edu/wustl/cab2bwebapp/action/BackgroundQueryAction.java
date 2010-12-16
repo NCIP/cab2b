@@ -41,6 +41,7 @@ public class BackgroundQueryAction extends Action {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
+
         try {
             QueryBizLogic executeQueryBizLogic =
                     (QueryBizLogic) request.getSession().getAttribute(Constants.QUERY_BIZ_LOGIC_OBJECT);

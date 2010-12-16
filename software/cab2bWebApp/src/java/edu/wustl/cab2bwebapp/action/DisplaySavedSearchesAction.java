@@ -18,6 +18,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
+import edu.wustl.cab2b.common.authentication.util.CagridPropertyLoader;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2bwebapp.bizlogic.ModelGroupBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
@@ -64,6 +65,7 @@ public class DisplaySavedSearchesAction extends Action {
                     modelGroupDVOList.get(i).setSelected(false);
                 }
             }
+            	
             request.getSession().setAttribute(Constants.MODEL_GROUP_DVO_LIST, modelGroupDVOList);
             if (!modelGroupName.equals("")) {
                 Collection<EntityGroupInterface> entityGroups =
