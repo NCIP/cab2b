@@ -210,7 +210,7 @@
       <priority value="INFO"/>
    </category>
    <category name="org.hibernate">
-      <priority value="INFO"/>
+      <priority value="OFF"/>
    </category>
    <category name="COM.claymoresystems.ptls.SSLDebug">
       <priority value="OFF"/>

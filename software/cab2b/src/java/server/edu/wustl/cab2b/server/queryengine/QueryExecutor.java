@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -190,13 +191,24 @@ public class QueryExecutor {
                 String output = getOutputEntity().getName();
                 List<ICab2bQuery> queries = QueryExecutorHelper.splitQueryPerGroup(query); 
                 DcqlConstraint constraints[] = new DcqlConstraint[queries.size()];
+                
+                
+
+                for (int i = 0; i < queries.size(); i++) {
+            		ConstraintsBuilder cb = new ConstraintsBuilder(queries.get(i), categoryPreprocessorResult);
+            		ConstraintsBuilderResult cbr = cb.buildConstraints();
+
+                	
+                    ICab2bQuery queryWithSingleUrl = queries.get(i);       
+                    constraints[i] = cbr.getDcqlConstraintForClass(getOutputEntity());
+                }
+                
+                
+                
                 DCQLQuery[] dcqlQueries = new DCQLQuery[queries.size()];           
                 hasQueryStarted = true;
                 
-                for (int i = 0; i < queries.size(); i++) {
-                    ICab2bQuery queryWithSingleUrl = queries.get(i);       
-                    constraints[i] = constraintsBuilderResult.getDcqlConstraintForClass(getOutputEntity());
-                }
+
                 
         		Collection<ServiceGroup> sGroups = query.getServiceGroups();    	
         		int sgc=0;       		
@@ -250,10 +262,14 @@ public class QueryExecutor {
 					logger.info("COMPLETED ALL THREADS");
 					for(FutureTask<IQueryResult<? extends IRecord>> future : futures) {
 						results.add(future.get());
+		        		transformer.mergeStatus(qStatus, results);
 						result = transformer.mergeResults(results, getOutputEntity());
 					}
-	        		transformer.setStatus(result);	
 	        		normalQueryFinished = true;     
+
+	        		qStatus.setStatus(AbstractStatus.Complete);
+
+	        		
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				} catch (ExecutionException e) {
@@ -277,6 +293,7 @@ public class QueryExecutor {
                  	public IQueryResult<? extends IRecord> call() {
                  			logger.info("ABOUT TO SUBMIT QUERY");
                             return transformer.getResultsNoUpdate(dcqlQuery, getOutputEntity(), gc);
+
                     }
         });
 		executor.execute(future);
@@ -300,6 +317,7 @@ public class QueryExecutor {
 		ForeignAssociation fofa = fo.getForeignAssociation();
 		if(fofa != null){
 			fas.add(fofa);
+			
 			fas.addAll(getForeignAssociations(fofa));
 		}
 
@@ -313,6 +331,7 @@ public class QueryExecutor {
 		for(int y=0;y<g.length;y++){
 
 			ForeignAssociation[] faa = g[y].getForeignAssociation();
+			
 
 			for(int x=0;x<faa.length;x++){
 				fas.add(faa[x]);
@@ -358,6 +377,7 @@ public class QueryExecutor {
 			qStatus.setUser(user);
 			QueryURLStatusOperations qso = new QueryURLStatusOperations();
 			qso.insertQueryStatus(qStatus);
+
 		}
 	}
 

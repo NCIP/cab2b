@@ -51,7 +51,7 @@
 					</DIV>
 				</DIV>
 				<DIV id="loginpanelbody">
-					<DIV class="label">
+<!--					<DIV class="label">
 						<bean:message key="label.username"/>
 					</DIV>
 					<DIV style="width:60%;float:right">
@@ -63,20 +63,13 @@
 					</DIV>
 					<DIV style="width:60%;float:right">
 						<INPUT type="password" class="textbox" name="password" autocomplete="off"/>
-					</DIV>
-					<BR style="line-height: 2em"/>
-					<DIV style="text-align:center">
-						<INPUT type="submit" value="<bean:message key="button.login"/>" class="button">
-						<SPAN style="margin:0.5em"></SPAN>
-						<INPUT type="button" value="<bean:message key="button.reset"/>" class="button" onclick="userName.value='';password.value='';userName.focus()">
-					</DIV>
-					<DIV id="notificationpanel">												
-						<DIV class="error hidden" id="error_userName"><bean:message key="error.username.empty"/></DIV>
-						<DIV class="error hidden" id="error_password"><bean:message key="error.password.empty"/></DIV>
-						<DIV id="errors"><html:errors/></DIV>
-					</DIV>
-					<DIV>
-                                	<logic:present name="secondaryAuthName">
+					</DIV>-->
+ <table>
+                    <thead>
+                    <tr><td>&nbsp;</td><td>&nbsp;</td></tr></thead>
+                    <tbody>
+                    <tr><td style="padding-right:5px; text-align:right">Username:</td><td><input name="userName" type="text" autocomplete="off" value="" size="29"/></td></tr><tr><td style="padding-right:5px; text-align:right;">Password:</td><td><input id="password" name="password" type="password" value="" autocomplete="off" size="29"/></td></tr><tr><td style="padding-right:5px; text-align:right;"> 
+					<logic:present name="secondaryAuthName">Identity Provider:</td><td>
 						<SELECT name="auth">
 							<OPTION value="1"><bean:write name="authName"/></OPTION>
 							<OPTION value="2"><bean:write name="secondaryAuthName"/></OPTION>
@@ -85,6 +78,21 @@
                		                 <logic:notPresent name="secondaryAuthName">
 						<input type="hidden" name="auth" value="-1" />
                        		         </logic:notPresent>
+                        </td></tr><tr><td></td><td style="padding-top:10px;">
+                            <span id="_cagriddirectauthn_WAR_cagridportlets_loginButtonContainer"></span>
+                        </td></tr></tbody>
+</table>
+					<DIV style="text-align:center">
+						<INPUT type="submit" value="<bean:message key="button.login"/>" class="button">
+						<SPAN style="margin:0.5em"></SPAN>
+						<INPUT type="button" value="<bean:message key="button.reset"/>" class="button" onclick="userName.value='';password.value='';userName.focus()">
+					</DIV>
+					<BR style="line-height: 2em"/>
+						<DIV class="error hidden" id="error_userName"><bean:message key="error.username.empty"/></DIV>
+						<DIV class="error hidden" id="error_password"><bean:message key="error.password.empty"/></DIV>
+						<DIV id="errors"><html:errors/></DIV>
+					</DIV>
+					<DIV>
 					</DIV>
 				</DIV>
 			</html:form>

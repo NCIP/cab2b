@@ -7,6 +7,7 @@ import org.globus.gsi.GlobusCredential;
 
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
@@ -58,5 +59,8 @@ public interface IQueryResultTransformer<R extends IRecord, C extends ICategoria
 	IQueryResult<? extends IRecord> mergeResults(
 			List<IQueryResult<? extends IRecord>> results,
 			EntityInterface outputEntity);
+
+	void mergeStatus(QueryStatus qStatus,
+			List<IQueryResult<? extends IRecord>> results);
 
 }

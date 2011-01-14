@@ -13,14 +13,18 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
 import edu.wustl.cab2b.common.queryengine.KeywordQuery;
 import edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
 import edu.wustl.cab2b.common.queryengine.querystatus.URLStatus;
+import edu.wustl.cab2b.common.queryengine.result.FQPUrlStatus;
 import edu.wustl.cab2b.common.user.ServiceURLInterface;
 import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
+import edu.wustl.cab2bwebapp.action.DisplayDashboardAction;
 
 /**
  * Class for DashBoardDVO related operations.
@@ -28,6 +32,10 @@ import edu.wustl.cab2b.server.serviceurl.ServiceURLOperations;
  *
  */
 public class DashBoardDvoUtility {
+	
+    private static final Logger logger =
+        edu.wustl.common.util.logger.Logger.getLogger(DashBoardDvoUtility.class);
+
 
     private DashBoardDvoUtility() {
 
@@ -41,7 +49,11 @@ public class DashBoardDvoUtility {
         int count = 0;
         if (queryStatusDVOSet != null) {
             for (QueryStatusDVO qStatusDVO : queryStatusDVOSet) {
+            	logger.info("JJJ in getQueryStatusDVOProc. STATUS:"+qStatusDVO);
+
                 if (qStatusDVO.getStatus().equals(AbstractStatus.Processing)) {
+                	logger.info("JJJ in getQueryStatusDVOProc. STATUS = PROCESSING");
+
                     count++;
                 }
             }
@@ -172,6 +184,7 @@ public class DashBoardDvoUtility {
         Iterator<URLStatus> itr = qs.getUrlStatus().iterator();
         while (itr.hasNext()) {
             URLStatus urlStatus = (URLStatus) itr.next();
+            logger.info("JJJ urlStatus:"+urlStatus.getStatus()+":"+urlStatus.getMessage()+urlStatus.getUrl());   				
             ServiceInstanceDVO sreviceInstance = new ServiceInstanceDVO();
             ServiceURLOperations serviceURLOpreration = new ServiceURLOperations();
             ServiceURLInterface serviceURL = serviceURLOpreration.getServiceURLbyURLLocation(urlStatus.getUrl());

@@ -91,20 +91,6 @@
 				</table>
 				<table width="100%" border="0" align="center" cellpadding="3"
 					cellspacing="3">
-                                <tr>
-                                                <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td>
-                                                <td class="font_blk_b"><A href="../" CLASS="set3">Web Client</a></td>
-                                </tr>
-                                <tr>
-                                                <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td>
-                                                <td class="font_blk_b"><A href="../webpage/jnlp/cab2b_client_webstart.jnlp" CLASS="set3">Launch Client App</a></td>
-                                </tr>
-                                <tr>
-                                                <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td>
-                                                <td class="font_blk_b"><A href="../admin" CLASS="set3">Admin</a></td>
-                                </tr>
-
-
 					<tr>
 						<td width="15" align="right" valign="middle"><img
 							src="images/arrow.gif" width="12" height="11"></td>
@@ -113,19 +99,21 @@
 					<tr>
 						<td align="right" valign="middle"><img src="images/arrow.gif"
 							width="12" height="11"></td>
-						<td class="font_blk_b"><a href="http://ncicb.nci.nih.gov/" target="_blank" CLASS="set3">NCICB Home </a></td>
-					</tr>
-					<tr>
-						<td width="15" align="right" valign="middle"><img
-							src="images/arrow.gif" width="12" height="11"></td>
-						<td class="font_blk_b"><a
-							href="http://cagrid.org/display/cagridhome/Home" target="_blank" CLASS="set3">caGrid Wiki </a></td>
-					</tr>
-					<tr>
-						<td align="right" valign="middle"><img src="images/arrow.gif"
-							width="12" height="11"></td>
 						<td class="font_blk_b"><A href="../webpage" target="_blank" CLASS="set3">caB2B Webpage </a></td>
 					</tr>
+                                <tr>
+                                                <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td>
+                                                <td class="font_blk_b"><A href="../" CLASS="set3">caB2B Web Client</a></td>
+                                </tr>
+                                <tr>
+                                                <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td>
+                                                <td class="font_blk_b"><A href="../webpage/jnlp/cab2b_client_webstart.jnlp" CLASS="set3">caB2B Client App</a></td>
+                                </tr>
+                                <tr>
+                                                <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td>
+                                                <td class="font_blk_b"><A href="../admin" CLASS="set3">caB2B Admin</a></td>
+                                </tr>
+
 
 				</table>
 				</td>

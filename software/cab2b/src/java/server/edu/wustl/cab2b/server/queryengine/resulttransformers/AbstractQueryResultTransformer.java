@@ -19,6 +19,8 @@ import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.querystatus.AbstractStatus;
+import edu.wustl.cab2b.common.queryengine.querystatus.QueryStatus;
+import edu.wustl.cab2b.common.queryengine.querystatus.URLStatus;
 import edu.wustl.cab2b.common.queryengine.result.FQPUrlStatus;
 import edu.wustl.cab2b.common.queryengine.result.ICategorialClassRecord;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
@@ -153,16 +155,55 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
 			for (Entry<String, ?> entry : result1.getRecords().entrySet()) {
 				url = entry.getKey();   		
 				List<R> recs1 = (List<R>) entry.getValue();
+				logger.info("JJJ recs in mergeResults:"+recs1.size());
 				result.addRecords(url, recs1);
 			}
 		}
 		
+
     	return  result;
     }
+    
+	public void mergeStatus(QueryStatus qStatus,
+			List<IQueryResult<? extends IRecord>> results) {
+		
+		String url=null;
+		int resultCount=0;
+		
+		for(IQueryResult<? extends IRecord> result1 :  results){
+						
+            result1.setFQPUrlStatus(urlVsStatus.values());
+
+			
+			for (Entry<String, ?> entry : result1.getRecords().entrySet()) {
+				url = entry.getKey();   		
+				List<R> recs1 = (List<R>) entry.getValue();
+				
+        		for(URLStatus s: qStatus.getUrlStatus()){
+        			if(s.getUrl().equals(url)){
+        			
+        				logger.info("JJJ EQUAL currentstatus:"+s.getStatus());
+        				s.setResultCount(recs1.size());   
+        				resultCount += recs1.size();
+        			} else {
+        				logger.info("JJJ NOTEQUAL:"+s.getUrl()+":"+url);
+
+        			}
+        			s.setStatus(AbstractStatus.Complete);
+        		}
+
+				logger.info("JJJ merge status size:"+recs1.size());
+				qStatus.setResultCount(resultCount);
+			}
+		}
+
+		
+	}
+
 
     
     public void setStatus(IQueryResult<? extends IRecord> result){
-    	if(result == null ) logger.error("result is null");
+    	if(result == null ) logger.error("JJJ result is null");
         result.setFQPUrlStatus(urlVsStatus.values());
     }
     

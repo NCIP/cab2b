@@ -49,26 +49,38 @@ public class DisplayDashboardAction extends Action {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
+    	logger.info("JJJ in dashboard execute");
         try {
             Set<QueryStatus> queryStatusSet = new HashSet<QueryStatus>();
             Set<QueryStatusDVO> queryStatusDVOSet = null;
             UserInterface user = (UserInterface) request.getSession().getAttribute(Constants.USER);
+        	logger.info("JJJ in dashboard execute user="+user.getUserName());
+
 
             if (request.getHeader(Constants.AJAX_CALL) == null) {
+            	logger.info("JJJ in dashboard AJAX CALL NULL="+user.getUserName());
+
                 //First call take value from database.
                 queryStatusDVOSet = new HashSet<QueryStatusDVO>();
                 QueryURLStatusOperations opr = new QueryURLStatusOperations();
                 Collection<QueryStatus> queryStatusFromDB = opr.getAllQueryStatusByUser(user);
+            	logger.info("JJJ in dashboard queryStatusFromDB:"+queryStatusFromDB);
+
                 if (queryStatusFromDB != null) {
                     queryStatusSet.addAll(queryStatusFromDB);
                 }
             } else {
+            	logger.info("JJJ in dashboard AJAX NOT NULL="+Constants.AJAX_CALL);
+
                 queryStatusDVOSet =
                         (Set<QueryStatusDVO>) request.getSession().getAttribute(Constants.QUERY_STATUS_DVO_SET);
             }
             //This is to ensure that we are showing query status that was added into Memory after our first DB call.
             Set<QueryStatus> queryStatusFromMemory =
                     UserBackgroundQueries.getInstance().getBackgroundQueriesForUser(user);
+            
+        	logger.info("JJJ in dashboard # backgroundqueries="+queryStatusFromMemory.size());
+
 
             //As a property of JAVA set interface if you want to update the object 
             //we have to first remove the object from set and add again with its modified value.
@@ -83,6 +95,8 @@ public class DisplayDashboardAction extends Action {
             request.getSession().setAttribute("completedQueryCount", completedQueryCount);
             request.getSession().setAttribute("inProgressQueryCount", inProgressQueryCount);
             request.getSession().setAttribute(Constants.QUERY_STATUS_DVO_SET, queryStatusDVOSet);
+        	logger.info("JJJ DONE dashboard execute");
+
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             ActionErrors errors = new ActionErrors();

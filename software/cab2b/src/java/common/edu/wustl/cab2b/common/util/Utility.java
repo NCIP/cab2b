@@ -790,7 +790,13 @@ public class Utility {
      * @param serviceUrlMetadata
      * @return short hosting institution name
      */
-    public static String getHostingInstitutionName(ServiceURLInterface serviceUrlMetadata) {  	
+    public static String getHostingInstitutionName(ServiceURLInterface serviceUrlMetadata) {  
+    	if(serviceUrlMetadata==null ) {
+    		logger.info("JJJ serviceURL NULL!");
+    		return "errorNOSUCHNAME";
+    	}
+		logger.info("JJJ serviceURL not null");
+
         String hostingCenter = serviceUrlMetadata.getHostingCenterShortName();
         //If short name is null
         if (hostingCenter == null || hostingCenter.isEmpty()) {

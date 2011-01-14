@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
+
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.util.DynamicExtensionsUtility;
 import edu.wustl.cab2b.common.exception.RuntimeException;
@@ -17,6 +19,7 @@ import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.server.queryengine.QueryOperations;
 import edu.wustl.cab2b.server.queryengine.utils.QueryExecutorUtil;
 import edu.wustl.cab2b.server.util.ServerProperties;
+import edu.wustl.cab2bwebapp.action.DisplaySavedSearchesAction;
 
 /**
  * This class fetches the saved searches.
@@ -26,6 +29,10 @@ import edu.wustl.cab2b.server.util.ServerProperties;
  * @author pallavi_mistry
  */
 public class SavedQueryBizLogic {
+	
+    private static final Logger logger =
+        edu.wustl.common.util.logger.Logger.getLogger(SavedQueryBizLogic.class);
+
 
     /** All keyword search queries:  map of modelgroupName and corresponding keyword query id */
     private Map<String, Long> modelVsKeywordQueryId = new HashMap<String, Long>();
@@ -133,19 +140,23 @@ public class SavedQueryBizLogic {
         for (ICab2bQuery query : getRegularQueries()) {
             Collection<EntityGroupInterface> queryEntityGroups = QueryExecutorUtil.getEntityGroups(query);
             if (entityGroups.containsAll(queryEntityGroups)) {
-                regularQueriesFor.add(query);
+        		if(query.getServiceGroups().size() == 0){
+            		regularQueriesFor.add(query);
+        		}
             } else {
                 if (query instanceof MultiModelCategoryQuery)//&& entityGroups.retainAll(queryEntityGroups)){
                 {
+
                     for (EntityGroupInterface entityGroupInterface : entityGroups) {
                         for (EntityGroupInterface queryEntityGroupInterface : queryEntityGroups) {
+
                             if (entityGroupInterface.equals(queryEntityGroupInterface)) {
-                                regularQueriesFor.add(query);
-                                break;
+                            		regularQueriesFor.add(query);
+                            		break;
                             }
                         }
                     }
-                }
+                } 
             }
         }
         return regularQueriesFor;
