@@ -79,10 +79,11 @@
 								src="images/spacer.gif" width="1" height="1"></td>
 						</tr>
 	                    <tr>
+	                    	<s:if test="%{query.serviceGroups.empty}">
 							<table class="instanceTable normalTable">
 								<tr>
 									<th>
-										Service Group Name
+										Service Group Name 
 									</th>
 									<th colspan="2">
 										<span style="float: left; padding-top: 4px;">Service Instances</span><span style="float: right"><input type="button" class="addRow" value="Add Service Group"/></span>
@@ -113,6 +114,45 @@
 										</td>
 								</tr>	
 							</table>
+							</s:if>
+							<s:else>
+							<table class="instanceTable normalTable">
+								<tr>
+									<th>
+										Service Group Name
+									</th>
+									<th colspan="2">
+										<span style="float: left; padding-top: 4px;">Service Instances</span><span style="float: right"><input type="button" class="addRow" value="Add Service Group"/></span>
+									</th>
+								</tr>
+								<s:iterator value="query.serviceGroups">
+								<tr>
+										<td>
+											<s:textfield name="groupNames"  theme="simple" cssClass="required" value="%{name}"/><br/>
+											<div class="error" style="color: red; display: none;">Please enter a name</div> 
+											
+										</td>
+										<td>
+											<table class="noBorder">
+											<s:iterator  value="items">
+												<tr>
+													<td>
+														<s:property value="targetObject" />
+													</td>
+													<td>
+														<s:select name="selectedUrls['%{targetObject}']" list="serviceUrls[targetObject]" listKey="urlId" listValue="hostingCenter" theme="simple" value="serviceUrl.urlId" />
+													</td>
+												</tr>
+											</s:iterator>
+											</table>
+										</td>
+										<td>
+											<input type="button" class="delRow" value="Delete Row"/>
+										</td>
+								</tr>
+								</s:iterator>	
+							</table>							
+							</s:else>
 	                    </tr>
 
 	                </table></td>

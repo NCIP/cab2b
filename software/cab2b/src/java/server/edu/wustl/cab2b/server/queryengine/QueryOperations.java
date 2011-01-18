@@ -12,8 +12,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.globus.gsi.GlobusCredential;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
@@ -31,6 +33,7 @@ import edu.wustl.cab2b.common.queryengine.KeywordQueryImpl;
 import edu.wustl.cab2b.common.queryengine.MultiModelCategoryQuery;
 import edu.wustl.cab2b.common.queryengine.QueryType;
 import edu.wustl.cab2b.common.queryengine.ServiceGroup;
+import edu.wustl.cab2b.common.queryengine.ServiceGroupItem;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
@@ -192,7 +195,8 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
      * @see edu.wustl.common.querysuite.bizlogic.QueryBizLogic#getQueryById(java.lang.Long)
      */
     public ICab2bQuery getQueryById(Long queryId) {
-        ICab2bQuery query = super.getQueryById(queryId);
+    	Session session = HibernateUtil.newSession();
+        ICab2bQuery query = (ICab2bQuery) session.load(Cab2bQuery.class, queryId);
         if (query != null && query instanceof MultiModelCategoryQuery) {
             postProcessMMCQuery((MultiModelCategoryQuery) query);
         }
@@ -280,15 +284,40 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
     }
 
     public Cab2bQuery addServiceGroupsToQuery(Long queryId, Collection<ServiceGroup> groups) {
-    	Session session = HibernateUtil.currentSession();
+    	Session session = HibernateUtil.newSession();
     	HibernateDatabaseOperations<ServiceGroup> dbopr =
-            new HibernateDatabaseOperations<ServiceGroup>(DBUtil.currentSession());
+            new HibernateDatabaseOperations<ServiceGroup>(session);
     	Cab2bQuery query = (Cab2bQuery)session.get(Cab2bQuery.class, queryId);
     	for(ServiceGroup group : groups) {
     		group.setQuery(query);
-    		dbopr.insert(group);
+    		session.persist(group);
     	}
+    	query = (Cab2bQuery)session.get(Cab2bQuery.class, queryId);
+    	query.getServiceGroups();
     	return query;
+    }
+    
+    public void deleteAllServiceGroups(Long id) {
+    	Session session = HibernateUtil.newSession();
+    	Cab2bQuery query = (Cab2bQuery)session.get(Cab2bQuery.class, id);
+    	if(query.getServiceGroups() != null && !query.getServiceGroups().isEmpty()) {
+	    	List<Long> ids = new ArrayList<Long>();
+			List<Long> itemIds = new ArrayList<Long>();
+			for(ServiceGroup group : query.getServiceGroups()) {
+	    		ids.add(group.getId());
+	    		for(ServiceGroupItem item : group.getItems()) {
+	    			itemIds.add(item.getId());
+	    		}
+	    	}
+			if(itemIds.size() > 0) {
+		    	Query deleteGroups = session.createQuery("delete ServiceGroupItem where id in ("  + StringUtils.join(itemIds.iterator(), ", ") + ")");
+		    	deleteGroups.executeUpdate();
+			}
+			if(ids.size() > 0) {
+		    	Query deleteQuery = session.createQuery("delete ServiceGroup where id in ("  + StringUtils.join(ids.iterator(), ", ") + ")");
+		    	deleteQuery.executeUpdate();
+			}
+    	}
     }
     /**
      * This method saves the given query as a subquery of the appropriate keyword query present in the system.

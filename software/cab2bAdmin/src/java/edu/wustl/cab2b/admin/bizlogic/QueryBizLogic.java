@@ -18,11 +18,14 @@ public class QueryBizLogic {
 	
 	public ICab2bQuery loadQuery(Long id) {
 		 QueryOperations queryOperations = new QueryOperations();
-		 return queryOperations.getQueryById(id);
+		 ICab2bQuery query = queryOperations.getQueryById(id);
+		 query.getServiceGroups();
+		 return query;
 	}
 	
 	public Cab2bQuery addServiceGroups(Long id, Collection<ServiceGroup> groups) {
 		QueryOperations queryOperations = new QueryOperations();
+		queryOperations.deleteAllServiceGroups(id);
 		return queryOperations.addServiceGroupsToQuery(id, groups);
 	}
 }
