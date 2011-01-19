@@ -2,6 +2,9 @@ package edu.wustl.cab2b.common.queryengine;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class ServiceGroup implements Serializable {
 
@@ -24,7 +27,8 @@ public class ServiceGroup implements Serializable {
 		this.name = name;
 	}
 	public Collection<ServiceGroupItem> getItems() {
-		return items;
+		SortedSet<ServiceGroupItem> sortedItems = new TreeSet<ServiceGroupItem>(items);
+		return sortedItems;
 	}
 	public void setItems(Collection<ServiceGroupItem> items) {
 		this.items = items;

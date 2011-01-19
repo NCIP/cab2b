@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import edu.wustl.cab2b.common.user.ServiceURL;
 
-public class ServiceGroupItem implements Serializable {
+public class ServiceGroupItem implements Serializable, Comparable {
 
 	private static final long serialVersionUID = 9084583500302186326L;
 	private Long id;
@@ -35,6 +35,11 @@ public class ServiceGroupItem implements Serializable {
 	}
 	public void setServiceGroup(ServiceGroup serviceGroup) {
 		this.serviceGroup = serviceGroup;
+	}
+	@Override
+	public int compareTo(Object o) {
+		
+		return this.targetObject.compareTo(((ServiceGroupItem)o).targetObject);
 	}
 	
 	
