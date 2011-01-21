@@ -1234,6 +1234,26 @@
 			<arg value="${pairs.out.file}" />
 		</java>
 	</target>
+    <target name="convert.model" depends="" description="Converts XMI to DomainModel xml file">
+                <input message="Please full path to the XMI file you wish to convert: " addproperty="convert.xmi.file"/>
+                <available file="${convert.xmi.file}" property="isFileAvail" />
+                <fail unless="isFileAvail" message="File doesn't exist!" />
+                <input message="Please enter Model Short Name: " addproperty="cmodel.name"/>
+                <input message="Please enter Model Version: " addproperty="cmodel.version"/>
+                <input message="Please enter XMI File Type Version [SDK_32_EA, SDK_40_EA, or SDK_40_ARGO]: " addproperty="xmi.version"/>
+                <input message="Please enter output file path: " addproperty="out.xml.file" />
+                <delete file="${out.xml.file}" failonerror="no" />
+
+    	<java failonerror="true" classname="edu.wustl.cab2b.server.path.ConvertModelUtil" classpathref="mmcloader.classpath" fork="yes">
+    		<jvmarg value="-Xmx1024m"/>
+			<arg value="${convert.xmi.file}" />
+			<arg value="${cmodel.name}" />
+			<arg value="${cmodel.version}" />
+			<arg value="${xmi.version}" />
+			<arg value="${out.xml.file}" />
+    	</java>
+    	<echo>Model Converted Successfully !!!</echo>
+    </target>
 </project>
 
 <!-- ==================================================================================

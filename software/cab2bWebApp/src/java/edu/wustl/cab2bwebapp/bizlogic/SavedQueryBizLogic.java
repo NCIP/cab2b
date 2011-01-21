@@ -140,9 +140,7 @@ public class SavedQueryBizLogic {
         for (ICab2bQuery query : getRegularQueries()) {
             Collection<EntityGroupInterface> queryEntityGroups = QueryExecutorUtil.getEntityGroups(query);
             if (entityGroups.containsAll(queryEntityGroups)) {
-        		if(query.getServiceGroups().size() == 0){
             		regularQueriesFor.add(query);
-        		}
             } else {
                 if (query instanceof MultiModelCategoryQuery)//&& entityGroups.retainAll(queryEntityGroups)){
                 {
