@@ -103,7 +103,7 @@
 														<s:property value="entityInterface.name" />
 													</td>
 													<td>
-														<s:select name="selectedUrls['%{entityInterface.name}']" list="serviceUrls[entityInterface.name]" listKey="urlId" listValue="hostingCenter" theme="simple" />
+														<s:select name="selectedUrls['%{entityInterface.name}']" list="serviceUrls[entityInterface.name]" listKey="urlId" listValue="%{hostingCenter + ' (' + urlLocation + ')'}" theme="simple" />
 													</td>
 												</tr>
 											</s:iterator>
@@ -140,7 +140,7 @@
 														<s:property value="targetObject" />
 													</td>
 													<td>
-														<s:select name="selectedUrls['%{targetObject}']" list="serviceUrls[targetObject]" listKey="urlId" listValue="hostingCenter" theme="simple" value="serviceUrl.urlId" />
+														<s:select name="selectedUrls['%{targetObject}']" list="serviceUrls[targetObject]" listKey="urlId" listValue="%{hostingCenter + ' (' + urlLocation + ')'}" theme="simple" value="serviceUrl.urlId" />
 													</td>
 												</tr>
 											</s:iterator>

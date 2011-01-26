@@ -109,5 +109,10 @@
             <result name="save" type="tiles">action.SaveServiceGroup</result>
 	     </action>
 	     
+	     <action name="*ServiceURL" method="{1}" class="edu.wustl.cab2b.admin.searchdata.action.ServiceURLAction">
+            <result name="success" type="tiles">action.DefineServiceURL</result>
+            <result name="save" type="tiles">action.SaveServiceURL</result>
+	     </action>
+	     
     </package>
 </struts>

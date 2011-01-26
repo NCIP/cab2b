@@ -60,6 +60,10 @@ public class ServiceInstanceBizLogic {
                                                                       currentUser);
         return saveUser(currentUser);
     }
+    
+    public void saveNewServiceInstance(ServiceURLInterface serviceURL) {
+    	new ServiceURLOperations().saveServiceURL(serviceURL);
+    }
 
     private UserInterface saveUser(UserInterface user) throws RemoteException {
         if (user.getUserId() != null) {

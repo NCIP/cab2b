@@ -117,4 +117,15 @@
 		<put-attribute name="body" value="/jsp/searchData/SaveServiceGroup.jsp" />
 	</definition>
 	
+	<!--  ServiceURL definitions -->
+	<definition name="action.DefineServiceURL" template="/jsp/Layout.jsp">
+		<put-attribute name="header" value="/jsp/SearchDataHeader.jsp" />
+		<put-attribute name="body" value="/jsp/searchData/DefineServiceURL.jsp" />
+	</definition>
+	
+	<definition name="action.SaveServiceURL" template="/jsp/Layout.jsp">
+		<put-attribute name="header" value="/jsp/SearchDataHeader.jsp" />
+		<put-attribute name="body" value="/jsp/searchData/SaveServiceURL.jsp" />
+	</definition>
+	
 </tiles-definitions>

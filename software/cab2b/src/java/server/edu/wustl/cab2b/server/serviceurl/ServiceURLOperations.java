@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 
 import edu.wustl.cab2b.common.user.ServiceURL;
@@ -141,10 +142,13 @@ public class ServiceURLOperations {
      */
     public List<ServiceURLInterface> getAllURLsForEntityGroup(String entityGroupName) {
         List<ServiceURLInterface> serviceURLs = new ArrayList<ServiceURLInterface>();
+        Session session = HibernateUtil.newSession();
         try {
-            Collection<ServiceURLInterface> serviceURLList =
-                    HibernateUtility.executeHQL("getServiceURLsByDomainModelnVersion", Arrays
-                        .asList((Object[]) entityGroupName.split("_v")));
+        	Query namedQuery = session.getNamedQuery("getServiceURLsByDomainModelnVersion");
+        	String[] model = entityGroupName.split("_v");
+        	namedQuery.setString(0, model[0]);
+        	namedQuery.setString(1, model[1]);
+            Collection<ServiceURLInterface> serviceURLList = namedQuery.list();
             serviceURLs.addAll(serviceURLList);
         } catch (HibernateException e) {
             logger.info(e.getMessage(), e);
