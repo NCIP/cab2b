@@ -1,0 +1,415 @@
+.font_wh_b {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 0.75em;
+	color: #FFFFFF;
+	font-weight: bold;
+}
+
+
+
+.font_wh_s {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 0.7em;
+	color: #FFFFFF;
+	font-weight: normal;
+}
+.font_bl1_b {
+
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 0.75em;
+	color: #2d8ac6;
+	font-weight: bold;
+}
+
+.error_font_b {
+
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 0.7em;
+	color: #FF0000;
+	font-weight: bold;
+}
+
+.font_bl2_b {
+
+
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 0.85em;
+	color: #145575;
+	font-weight: bold;
+}
+.td_lblue {
+	background-color: #bce3f6;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+	color: #000000;
+}
+
+.font_blk_s {
+
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 0.73em;
+	color: #000000;
+	font-weight: normal;
+}
+A.set1:link {color: #FFFFFF; Text-Decoration: underline}
+A.set1:active {color: #FFFFFF; text-decoration: underline}
+A.set1:visited {color: #FFFFFF; Text-Decoration: underline}
+A.set1:hover {color: #ffc83c; Text-Decoration: none}
+
+A.set2:link {color: #FFFFFF; text-decoration: none}
+A.set2:active {color: #FFFFFF; text-decoration: none}
+A.set2:visited {color: #FFFFFF; Text-Decoration: none}
+A.set2:hover {color: #ffc83c; Text-Decoration: none}
+
+A.set3:link {color: #000000; text-decoration: underline}
+A.set3:active {color: #000000; text-decoration: underline}
+A.set3:visited {color: #000000; Text-Decoration: underline}
+A.set3:hover {color: #145575; Text-Decoration: none}
+
+A.set4:link {color: #2d8ac6; text-decoration: underline}
+A.set4:active {color: #2d8ac6; text-decoration: underline}
+A.set4:visited {color: #2d8ac6; Text-Decoration: underline}
+A.set4:hover {color: #145575; Text-Decoration: none}
+
+.font_bl3_b {
+
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 0.75em;
+	color: #145575;
+	font-weight: bold;
+}
+.font_blk_b {
+
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 0.7em;
+	color: #000000;
+	font-weight: bold;
+}
+.td_orange {
+	background-color: #ffc83c;
+}
+.td_grey {
+	background-color: #f7f7f7;
+}
+.td_dgrey {
+
+	background-color: #E5E5E5;
+}
+.td_lbluebr {
+
+	background-color: #bce3f6;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+	border: 2px solid #ffc83c;
+}
+body,td,th {
+	color: #FFFFFF;
+	font-family: Arial, Helvetica, sans-serif;
+}
+.red {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 0.75em;
+	font-weight: normal;
+	color: #FF0000;
+}
+.input_tbox {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 0.75em;
+}
+
+
+#PageContent {
+overflow: auto;
+width: auto;
+height: 100%;
+background-color: #ffffff;
+display: block;
+margin: 0 10px 0 10px;
+}
+.td_blue {
+
+	background-color: #d0e1ee;
+}
+body {
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+.articlehead{
+padding-left:10px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #000000;
+	font-weight: bold;
+}
+
+.articleheading{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 18px;
+	color: #FFFFFF;
+}
+
+
+.bodytext{
+
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #000000;
+}
+
+
+.MenuHeaderText {
+	font-family: Arial,Verdana, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-decoration:none;
+	color:#003066;
+	text-align:center;
+	vertical-align: middle;
+}
+.MenubgcolorHeaderWhite {
+	background-color: #FFFFFF;
+
+}
+
+.WhiteBorderRight {
+	border-right-width: 0px;
+	border-right-style: solid;
+	border-right-color: #FFFFFF;
+}
+
+.MenubgcolorHeader {
+	background-color: #5F7A00;
+	background:url(../images/bg1.gif) repeat-x;
+}
+.MenubgcolorHeader2 {
+	background-color: #5F7A00;
+	background:url(..images/bg2.gif) repeat-x;
+
+}
+}
+.SubMenubg {
+	font-family: arial,verdana,helvetica;
+	font-size: 12px;
+	font-weight: normal;
+	color: #000000;
+	text-decoration: none;
+
+
+
+
+}
+SubMenubgTr {
+	background-color: #c3ddf5;
+
+}body {
+	margin: 0px;
+	padding: 0px;
+}
+.MenuHeaderText {	font-family: Arial, Verdana,Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-decoration:none;
+	color:#003066;
+	text-align:center;
+	vertical-align: middle;
+}
+.MenubgcolorHeader {	background-color: #5F7A00;
+	background:url(../images/bg1.gif) repeat-x;
+}
+.MenubgcolorHeaderWhite {	background-color: #FFFFFF;
+}
+.SubMenubg {	font-family: arial,verdana,helvetica;
+	font-size: 12px;
+	font-weight: normal;
+	color: #000000;
+	text-decoration: none;
+}
+.WhiteBorderRight {	border-right-width: 0px;
+	border-right-style: solid;
+	border-right-color: #FFFFFF;
+}
+.MenuHeaderText1 {	font-family: Arial,Verdana, Helvetica, sans-serif;
+	font-size:12px;
+	font-weight:bold;
+	text-decoration:none;
+	color:#003066;
+	text-align:center;
+	vertical-align: middle;
+
+}
+.MenuHeaderText1 {font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:11px;
+	font-weight:bold;
+	text-decoration:none;
+	color:#003066;
+	text-align:center;
+	vertical-align: middle;
+}
+.SubMenubg1 {	font-family: verdana,arial,helvetica;
+	font-size: 10px;
+	font-weight: normal;
+	color: #000000;
+	text-decoration: none;
+}
+.SubMenubg1 {font-family: verdana,arial,helvetica;
+	font-size: 10px;
+	font-weight: normal;
+	color: #000000;
+	text-decoration: none;
+}
+.SubMenubgTr2 {
+	background-color: #c3ddf5;
+	background:url(../images/bg1.gif) repeat-x;
+	
+	}
+	
+.button_bl{
+	background-color: #d3edff;
+	border: 1px solid #2d8ac6;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #000000;
+	text-align: center;
+	vertical-align: middle;
+padding-left:3px;
+padding-right:3px;
+padding-top:2px;
+padding-bottom:2px;
+}
+.button_gr{
+	background-color: #e7e7e7;
+	border: 1px solid #a8a8a8;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #000000;
+	text-align: center;
+	vertical-align: middle;
+padding-left:3px;
+padding-right:3px;
+padding-top:2px;
+padding-bottom:2px;
+}.small_txt {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: .7em;
+	color: #666666;
+}
+
+/* Start Popup css */
+.dhtmlwindow{
+position: absolute;
+border: 1px solid #05509b;
+visibility: hidden;
+background-color: white;
+}
+
+.drag-handle{ /*CSS for Drag Handle*/
+padding: 1px;
+text-indent: 3px;
+font: bold 12px verdana;
+background-color: #CA0000;
+color: white;
+cursor: move;
+overflow: hidden;
+width: auto;
+filter:progid:DXImageTransform.Microsoft.alpha(opacity=100);
+-moz-opacity: 1;
+opacity: 1;
+}
+
+.drag-handle .drag-controls{ /*CSS for controls (min, close etc) within Drag Handle*/
+position: absolute;
+right: 1px;
+top: 0px;
+cursor: hand;
+cursor: pointer;
+vertical-align:top;
+}
+
+* html .drag-handle{ /*IE6 and below CSS hack. Width must be set to 100% in order for opaque title bar to render*/
+width: 100%;
+}
+
+
+.drag-contentarea{ /*CSS for Content Display Area div*/
+/*border-top: 1px solid brown;*/
+background-color: white;
+color: black;
+height: 150px;
+padding: 0px;
+overflow: auto;
+}
+
+.drag-statusarea{ /*CSS for Status Bar div (includes resizearea)*/
+/*border-top: 1px solid gray;*/
+background-color: #F8F8F8;
+height: 13px; /*height of resize image*/
+}
+
+
+.drag-resizearea{ /*CSS for Resize Area itself*/
+float: right;
+width: 13px; /*width of resize image*/
+height: 13px; /*height of resize image*/
+cursor: nw-resize;
+font-size: 0;
+}
+
+.drag-handle{ /*Overwrite default drag handle bar background color with below*/
+/*background-color: #990000;*/
+background-image: url(../../../caTissue_suite_new/HTML/images/uIEnhancementImages/top_bg.jpg);
+vertical-align:top;
+
+}
+
+#interVeil{ /*CSS for veil that covers entire page while modal window is visible*/
+position: absolute;
+background: url(../images/uIEnhancementImages/blackdot.gif);
+width: 10px;
+left: 0;
+top: 0;
+z-index: 5;
+visibility: hidden;
+filter:progid:DXImageTransform.Microsoft.alpha(opacity=75);
+opacity: 0.8;
+}
+/* End Popup css */
+
+.normalTable th {
+	color: black;
+	text-align: left;
+}
+
+.normalTable td {
+	color: black;
+}
+
+.instanceTable {
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+.instanceTable th {
+	border: 1px solid black;
+	padding: 5px;
+	font-size: 12px;
+}
+.instanceTable td {
+	border: 1px solid black;
+	padding: 5px;
+	font-size: 12px;
+}
+
+.noBorder {
+	border: 0;
+}
+.noBorder th {
+	border: 0;
+}
+.noBorder td {
+	border: 0;
+}
