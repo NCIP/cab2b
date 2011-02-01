@@ -41,6 +41,7 @@ import edu.wustl.cab2b.client.ui.util.ClientPropertyLoader;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.CustomSwingWorker;
 import edu.wustl.cab2b.common.authentication.Authenticator;
+import edu.wustl.cab2b.common.authentication.util.CagridPropertyLoader;
 import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
@@ -215,7 +216,7 @@ public class LoginFrame extends JXFrame {
     private JPanel getRightPanel() {
         Cab2bLabel userNameLabel = getLabel("User Name :");
         Cab2bLabel passWordLabel = getLabel("Password :");
-        Cab2bLabel gridTypeLabel = getLabel("Grid :");
+        Cab2bLabel gridTypeLabel = getLabel("Authentication :");
 
         usrNameText = getTextField("");
         usrNameText.setPreferredSize(new Dimension(160, 20));
@@ -228,7 +229,13 @@ public class LoginFrame extends JXFrame {
         gridType.setFont(idProviderFont);
         gridType.setOpaque(false);
         gridType.setBorder(border);
-        gridType.addItem("Production");
+        //gridType.addItem("Production");
+        //gridType.addItem("Other");
+        
+        gridType.addItem(CagridPropertyLoader.getAuthenticationName());
+
+        gridType.addItem(CagridPropertyLoader.getSecondaryAuthenticationName());
+        
         /*String[] gridTypes = ClientPropertyLoader.getGridTypes();
         int len = gridTypes.length;
         for (int i = 0; i < len; i++) {
@@ -361,8 +368,10 @@ public class LoginFrame extends JXFrame {
         }
         String password = new String(passwordArray);
         //final String selectedIdentityProvider = gridType.getSelectedItem().toString();
+	
        try {
-            new Authenticator(userName).validateAndDelegate(password);
+           //new Authenticator(userName).validateAndDelegate(password);
+           new Authenticator(userName).validateAndDelegate(password,gridType.getSelectedIndex()+1);
             Thread mainThread = new Thread() {
                 public void run() {
                     launchMainFrame();
