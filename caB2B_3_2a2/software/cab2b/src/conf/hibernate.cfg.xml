@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+	<session-factory>
+	   	<property name="show_sql">true</property>
+		
+	<!-- use data source -->	
+	
+	<!-- use Local Database 	-->
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+       	<property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">root</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/cab2b</property>
+	
+		
+    	<property name="hibernate.transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</property>
+	 	<property name="dialect">org.hibernate.dialect.MySQLDialect</property>	
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+       	<property name="hibernate.jdbc.batch_size">0</property>
+       	<property name="hibernate.cache.use_second_level_cache">false</property>
+       	<property name="hibernate.cache.provider_class">none</property>
+       	
+       	<mapping resource="edu/wustl/cab2b/server/hbm/AbstractDomainObject.hbm.xml"/>
+		<mapping resource="edu/wustl/cab2b/server/hbm/CaB2BHQL.hbm.xml"/>
+		<mapping resource="edu/wustl/cab2b/server/hbm/Cab2bQuery.hbm.xml"/>
+		<mapping resource="edu/wustl/cab2b/server/hbm/DataCategorialAttribute.hbm.xml"/>
+		<mapping resource="edu/wustl/cab2b/server/hbm/DataCategorialClass.hbm.xml"/>
+		<mapping resource="edu/wustl/cab2b/server/hbm/DataCategory.hbm.xml"/>
+		
+		<mapping resource="edu/wustl/cab2b/server/hbm/ServiceURL.hbm.xml"/>
+		<mapping resource="edu/wustl/cab2b/server/hbm/User.hbm.xml"/>
+		<mapping resource="edu/wustl/cab2b/server/hbm/CategoryPopularity.hbm.xml"/>
+		<mapping resource="edu/wustl/cab2b/server/hbm/ModelGroup.hbm.xml"/>
+ 		<mapping resource="edu/wustl/cab2b/server/hbm/AbstractStatus.hbm.xml"/>
+		<mapping resource="edu/wustl/cab2b/server/hbm/MultiModelAttributeImpl.hbm.xml"/>
+		<mapping resource="edu/wustl/cab2b/server/hbm/MultiModelCategoryImpl.hbm.xml"/>
+		<mapping resource="edu/wustl/cab2b/server/hbm/ServiceGroup.hbm.xml"/>
+		<mapping resource="edu/wustl/cab2b/server/hbm/ServiceGroupItem.hbm.xml"/>
+	</session-factory>
+</hibernate-configuration>

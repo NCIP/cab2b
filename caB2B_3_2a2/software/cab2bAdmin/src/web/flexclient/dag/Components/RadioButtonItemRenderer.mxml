@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+	<mx:Script>
+		<![CDATA[
+		
+		
+
+			public static var isRadioButtonSelected:Boolean = false;
+			public static var radioButton:RadioButton = new RadioButton();
+			
+		
+			private function onClick(e:MouseEvent):void
+			{
+				
+				if(isRadioButtonSelected){
+					radioButton.selected=false;
+					isRadioButtonSelected=false;
+					radioButton = e.target as RadioButton;	
+		   		}
+				else{
+					radioButton.selected=false;
+					radioButton = e.target as RadioButton;
+					isRadioButtonSelected=true;
+				
+				}
+				
+			}
+		]]>
+	</mx:Script>
+
+	<mx:RadioButton  id="cb" click="onClick(event)" width="15"/>
+</mx:HBox>
