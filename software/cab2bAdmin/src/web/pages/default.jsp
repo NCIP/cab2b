@@ -107,7 +107,7 @@
                                 </tr>
                                 <tr>
                                                 <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td>
-                                                <td class="font_blk_b"><A href="../webpage/jnlp/cab2b_client_webstart.jnlp" CLASS="set3">caB2B Client App</a></td>
+                                                <td class="font_blk_b"><A href="../webpage/jnlp/cab2b_client_webstart.jnlp" CLASS="set3">caB2B Client Application</a></td>
                                 </tr>
                                 <tr>
                                                 <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td>
