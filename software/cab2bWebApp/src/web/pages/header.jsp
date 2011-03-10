@@ -13,7 +13,8 @@
 				<logic:notPresent name="userName">
 					<A href="Login.do" class="link"><bean:message key="link.signin"/></A> 
 					<SPAN class="title"><bean:message key="title.or"/></SPAN> 
-					<A href="http://cagrid-portal.nci.nih.gov/web/guest/register" class="link" target="_blank"><bean:message key="link.register"/></A>					
+					<!--<A href="http://cagrid-portal.nci.nih.gov/web/guest/register" class="link" target="_blank"><bean:message key="link.register"/></A>					-->
+					<A href="Register.do" class="link" target="_blank"><bean:message key="link.register"/></A>					
 					<logic:notEqual name="home" value="home">
 						<SPAN class="title">|</SPAN>
 						<A href="Home.do" class="link">Home</A>

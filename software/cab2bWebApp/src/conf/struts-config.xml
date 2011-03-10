@@ -10,6 +10,8 @@
 			type="edu.wustl.cab2bwebapp.actionform.KeywordSearchForm" />
 		<form-bean name="loginForm"
 			type="edu.wustl.cab2bwebapp.actionform.LoginForm" />
+		<form-bean name="registerForm"
+			type="edu.wustl.cab2bwebapp.actionform.RegisterForm" />
 	</form-beans>
 
 	<!-- ========================== Global Forwards ========================== -->
@@ -17,6 +19,7 @@
 		<forward name="failure" path="/pages/failure.jsp" />
 		<forward name="home" path="/pages/home.jsp" />
 		<forward name="login" path="/pages/login.jsp" />
+		<forward name="register" path="/pages/register.jsp" />
 		<forward name="searchresults" path="/pages/searchresults.jsp" />
 		<forward name="searchresultspanel"
 			path="/pages/searchresultspanel.jsp" />
@@ -68,6 +71,11 @@
 		<action path="/KeywordSearch"
 			type="edu.wustl.cab2bwebapp.action.KeywordSearchAction"
 			name="keywordSearchForm" scope="request" validate="false">
+		</action>
+
+		<action path="/Register"
+			type="edu.wustl.cab2bwebapp.action.RegisterAction" name="registerForm"
+			scope="request" validate="false">
 		</action>
 
 		<action path="/Login"

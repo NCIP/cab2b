@@ -112,6 +112,8 @@ public interface Constants {
     /** Constant for fatal login failure */
     public static final String FATAL_LOGIN_FAILURE = "fatalLoginFailure";
 
+    public static final String FORWARD_REGISTER = "register";
+
     /** Constant for forward to login page */
     public static final String FORWARD_LOGIN = "login";
 
