@@ -10,19 +10,29 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.globus.gsi.GlobusCredential;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cache.EhCache;
+
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.common.dynamicextensions.domaininterface.TaggedValueInterface;
+import edu.common.dynamicextensions.entitymanager.EntityManager;
+import edu.wustl.cab2b.client.cache.ClientSideCache;
+import edu.wustl.cab2b.client.ui.parameterizedQuery.ParameterizedQueryShowResultPanel;
 import edu.wustl.cab2b.common.authentication.util.AuthenticationUtility;
+import edu.wustl.cab2b.common.cache.AbstractEntityCache;
 import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.modelgroup.ModelGroupInterface;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
@@ -37,6 +47,9 @@ import edu.wustl.cab2b.common.queryengine.ServiceGroupItem;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.common.util.Utility;
+import edu.wustl.cab2b.server.cache.DatalistCache;
+import edu.wustl.cab2b.server.cache.EntityCache;
+import edu.wustl.cab2b.server.category.CategoryCache;
 import edu.wustl.cab2b.server.category.PopularCategoryOperations;
 import edu.wustl.cab2b.server.util.UtilityOperations;
 import edu.wustl.common.hibernate.HibernateDatabaseOperations;
@@ -53,6 +66,9 @@ import edu.wustl.common.util.dbManager.DBUtil;
  *
  */
 public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
+	
+    private static final Logger logger = Logger.getLogger(QueryOperations.class);
+
 
     /**
      * This method checks whether the given query name has already been used by the given user or not.
@@ -319,6 +335,36 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
 			}
     	}
     }
+    
+    
+
+
+public void deleteQuery(Long id) {
+	
+	logger.info("id to delete:"+id);
+   	
+    Session session = HibernateUtil.getSessionFactory().openSession();
+	Transaction tx = session.beginTransaction();
+	
+	try{
+	 session.connection().createStatement().execute("update query_abstract_query set created_by=-1 where identifier="+id); 
+		
+	} catch(Exception e) {	
+		logger.error(e);
+
+	}
+	
+   		tx.commit();
+   		session.clear();
+   		session.close();
+   		
+   		EntityCache.getCache().refreshCache();
+   		
+   		CategoryCache.getInstance().refreshCategoryCache();   	   		
+        UtilityOperations.refreshCache();
+   		
+}
+    
     /**
      * This method saves the given query as a subquery of the appropriate keyword query present in the system.
      * @param query

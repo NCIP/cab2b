@@ -11,6 +11,11 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
+import org.apache.log4j.Logger;
+
+import edu.wustl.cab2b.client.cache.ClientSideCache;
+import edu.wustl.cab2b.client.cache.PopularCategoryCache;
+import edu.wustl.cab2b.client.cache.UserCache;
 import edu.wustl.cab2b.client.ui.controls.Cab2bButton;
 import edu.wustl.cab2b.client.ui.controls.Cab2bLabel;
 import edu.wustl.cab2b.client.ui.controls.Cab2bPanel;
@@ -26,11 +31,22 @@ import edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface;
 import edu.wustl.cab2b.client.ui.searchDataWizard.MainSearchPanel;
 import edu.wustl.cab2b.client.ui.searchDataWizard.SearchNavigationPanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
+import edu.wustl.cab2b.common.authentication.Authenticator;
+import edu.wustl.cab2b.common.cache.AbstractEntityCache;
+import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
+import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
+import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
+import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.CheckedException;
+import edu.wustl.cab2b.common.exception.RuntimeException;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.common.beans.SessionDataBean;
+import edu.wustl.common.dao.DAOFactory;
+import edu.wustl.common.dao.JDBCDAO;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IParameter;
 import edu.wustl.common.querysuite.utils.QueryUtility;
+import edu.wustl.common.util.global.Constants;
 
 /**
  * Panel generated for showing parameterized/non-paramerterized conditions when
@@ -50,6 +66,8 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
      */
     private ParameterizedQueryDataModel queryDataModel;
 
+    private Cab2bButton deleteQueryButton;
+
     /**
      * Show result button
      */
@@ -59,6 +77,9 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
      * Cancel button
      */
     private Cab2bButton cancelButton;
+    
+    private static final Logger logger = Logger.getLogger(ParameterizedQueryShowResultPanel.class);
+
 
     /**
      * Constructor
@@ -95,6 +116,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
         navigationPanel.setBackground(new Color(240, 240, 240));
         navigationPanel.add("right ", showResultButton);
         navigationPanel.add("right ", cancelButton);
+        navigationPanel.add("right ", deleteQueryButton);
         navigationPanel.add("br ", new Cab2bLabel());
         return navigationPanel;
     }
@@ -108,6 +130,10 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
         this.setLayout(new BorderLayout());
         bottomConditionPanel = new Cab2bPanel();
         topConditionPanel = new Cab2bPanel();
+
+        deleteQueryButton = new Cab2bButton("Disable");
+        deleteQueryButton.setPreferredSize(new Dimension(125, 22));
+        deleteQueryButton.addActionListener(new DeleteQueryActionListener());
 
         showResultButton = new Cab2bButton("Show Results");
         showResultButton.setPreferredSize(new Dimension(125, 22));
@@ -224,6 +250,54 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
             }
         }
         return expressionId;
+    }
+
+    private class DeleteQueryActionListener implements ActionListener {
+        public void actionPerformed(ActionEvent arg0) {
+
+        	
+            int reply = JOptionPane.showConfirmDialog(null, 
+            		"Are you sure you want to disable the query:"+
+                	getQueryDataModel().getQuery().getName()+
+                	"Owned by userid=:"+
+                	getQueryDataModel().getQuery().getCreatedBy()+"?", 
+                	"Delete Query?", JOptionPane.YES_NO_OPTION);
+
+        	
+                  
+			if (reply == JOptionPane.YES_OPTION) {
+
+				try {
+		        	ICab2bQuery q = getQueryDataModel().getQuery();
+
+					QueryEngineBusinessInterface biz = (QueryEngineBusinessInterface) CommonUtils
+							.getBusinessInterface(
+									EjbNamesConstants.QUERY_ENGINE_BEAN,
+									QueryEngineHome.class);
+
+					logger.info("updating query id=" + q.getId());
+
+					biz.deleteQuery(q.getId());
+										
+					// This refresh doesn't appear to always work.
+					ClientSideCache.getInstance().refreshCache();
+					
+					logger.info("done refresh:");
+
+					updateUI();
+					JOptionPane.showMessageDialog(null, "Successful.  Query may not disappear immediately.  If necessary ask your administer to restart the caB2B server.");
+							
+					logger.info("done refresh:");
+
+					dialog.dispose();
+
+				} catch (Exception e) {
+
+					logger.error("exception" + e);
+				}
+			}
+
+        }
     }
 
     /**

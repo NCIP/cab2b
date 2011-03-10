@@ -93,6 +93,11 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
     public void updateQuery(ICab2bQuery query) throws RemoteException {
         new QueryOperations().updateQuery(query);
     }
+    
+    public void deleteQuery(long id) throws RemoteException {
+        new QueryOperations().deleteQuery(id);
+    }
+
 
     /**
      * This method retrieves the query which has the given identifier.

@@ -93,4 +93,6 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
      * @return TreeNode<DCQL>
      */
     DCQL getDCQL(ICab2bQuery query) throws RemoteException;
+
+	void deleteQuery(long id) throws RemoteException;
 }
