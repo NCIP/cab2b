@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<jnlp spec="1.0+"
+	codebase="@server-address@/" 
+	href="">
+ 
+	<information>
+		<title>Extension JNLP for a JAR required by caB2B Client </title>
+		<vendor>WashU-Persistent</vendor>
+		<offline-allowed />
+	</information>
+
+	<!-- Get total access to client system -->
+	<security>
+		<all-permissions/>
+	</security>
+
+	<resources>
+		<jar href=""/>
+	</resources>
+ 
+	<component-desc/>
+</jnlp> 
