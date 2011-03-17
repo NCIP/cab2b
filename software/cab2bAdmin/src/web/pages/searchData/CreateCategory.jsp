@@ -3,8 +3,58 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>caBench-To-Bedside</title>
+<%!
+
+public String filterSpecialChars(String value) {
+	if (value == null) { return "";
+	} 
+
+	StringBuffer result = new StringBuffer(value.length()); 
+        for (int i=0; i<value.length(); ++i) {
+	  switch (value.charAt(i)) { 
+
+		case '<':
+			result.append("&lt;");
+			break; 
+		case '>':
+			result.append("&gt;");
+			break; 	
+		case '"':
+		//	result.append("&quot;");
+			break; 	
+		case '\'':
+		//	result.append("&#39;");
+			break; 	
+		case '%':
+			result.append("&#37;");
+			break; 
+		case ';':
+			result.append("&#59;"); 
+			break; 
+		case '(':
+			//result.append("&#40;");
+			break; 
+		case ')':
+			//result.append("&#41;");
+			break; 
+		case '&':
+			result.append("&amp;");
+			break; 
+		case '+':
+			result.append("&#43;");
+			break; 
+		default:
+			result.append(value.charAt(i)); break;
+	  } 
+	}
+	return result.toString();
+}
+%>
 <%
+
 String isBack= (String)request.getParameter("isBack");
+String titleparam= filterSpecialChars((String)request.getParameter("title"));
+String descriptionparam= filterSpecialChars((String)request.getParameter("description"));
 session.removeAttribute(AdminConstants.PAGE_IDENTIFIER);
 %>
 
@@ -16,6 +66,24 @@ session.removeAttribute(AdminConstants.PAGE_IDENTIFIER);
 <script type="text/JavaScript" src="javascript/menu_create.js">
 </script>
 <script>
+
+function removeSpecialCharacter(text){
+        var iChars = "!@#$%^&*+=-[]\\';,/{}|\":<>?";
+	scs = false;
+
+        for (var i = 0; i < text.length; i++) {
+	        if (iChars.indexOf(text.charAt(i)) != -1) {
+                	scs = true;
+       		 }
+
+        }
+
+	if(scs == true) return "";
+
+        return text;
+}
+
+
 
 function AddToSelected()
 {
@@ -69,7 +137,7 @@ function Previous()
 
 </head>
 <body>
-<!--Begin content area -->
+<!--Begin content area HERE -->
       <table width="100%" border="0" cellpadding="0" cellspacing="0">
 
         <tr>
@@ -225,8 +293,8 @@ function Previous()
               <tr>
                   <td height="35" align="right" class="td_grey"><input name="Submit22" type="submit" class="font_bl1_b" onClick="Previous();" value="Previous" />
                    <input type="hidden" name="attributelist" id="attributelist"  value="abc"/> 
-		           <input type="hidden" name="title" value="${param.title}"/>
-				   <input type="hidden" name="description" value="${param.description}"/>	
+		           <input type="hidden" name="title" value="<%= titleparam %>"/>
+				   <input type="hidden" name="description" value="<%= descriptionparam %>"/>	
                   
                 
                    <input name="Submit2" type="button" class="font_bl1_b" onClick="validateDAG();" value="Next &gt;&gt;" />  

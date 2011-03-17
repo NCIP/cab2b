@@ -89,11 +89,58 @@ function goToPage(pageUrl)
 
 
 
+<%!
+public String filterSpecialChars(String value) {
+        if (value == null) { return "";
+        }
+
+        StringBuffer result = new StringBuffer(value.length());
+        for (int i=0; i<value.length(); ++i) {
+          switch (value.charAt(i)) {
+
+                case '<':
+                        result.append("&lt;");
+                        break;
+                case '>':
+                        result.append("&gt;");
+                        break;
+                case '"':
+                        result.append("&quot;");
+                        break;
+                case '\'':
+                        result.append("&#39;");
+                        break;
+                case '%':
+                        result.append("&#37;");
+                        break;
+                case ';':
+                        result.append("&#59;");
+                        break;
+                case '(':
+                        //result.append("&#40;");
+                        break;
+                case ')':
+                        //result.append("&#41;");
+                        break;
+                case '&':
+                        result.append("&amp;");
+                        break;
+                case '+':
+                        result.append("&#43;");
+                        break;
+                default:
+                        result.append(value.charAt(i)); break;
+          }
+        }
+        return result.toString();
+}
+%>
+
 <%
     List<CaDSRModelDetailsBean> loadModel = (List) session.getAttribute(AdminConstants.FILTERED_AVAILABLE_MODELS_TO_LOAD);
     CaDSRModelDetailsBean modelBean;
     Integer pageNum = new Integer(0);
-    String searchString = request.getParameter("textbox");
+    String searchString = filterSpecialChars((String)request.getParameter("textbox"));
     String pageTitle =  searchString==null||searchString.length()==0? "Available Models" : "Search for " + searchString;
     searchString = searchString == null ? "" : searchString;
     String isDisabled = "";
@@ -109,7 +156,7 @@ function goToPage(pageUrl)
 %>
 
 
-<!--Begin content area -->
+<!--Begin content -->
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td height="35" colspan="4" align="left" valign="top" background="\\">
@@ -151,9 +198,9 @@ function goToPage(pageUrl)
 								<td align="left"><span class="font_blk_s"> Search
 								For </span></td>
 								<td align="left">&nbsp;<input id="searchText" type="text"
-									class="input_tbox" name="textbox" 
+									class="input_tbox" name="<%=searchString%>" 
 									onKeyDown="setFocusOnSearchButton(event)"
-									value="${param.textbox}" size="30" /></td>
+									value="<%=searchString%>" size="30" /></td>
 								<td align="left"><input type="checkbox"
 									id="includeDescription" name="includeDescription" value="checked" ${param.includeDescription} />
 								<span class="font_blk_s"> Include Description </span></td>

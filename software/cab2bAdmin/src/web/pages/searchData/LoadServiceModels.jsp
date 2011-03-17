@@ -36,14 +36,60 @@
 
 </head>
 
+<%!
+public String filterSpecialChars(String value) {
+        if (value == null) { return "";
+        }
+
+        StringBuffer result = new StringBuffer(value.length());
+        for (int i=0; i<value.length(); ++i) {
+          switch (value.charAt(i)) {
+
+                case '<':
+                        result.append("&lt;");
+                        break;
+                case '>':
+                        result.append("&gt;");
+                        break;
+                case '"':
+                        result.append("&quot;");
+                        break;
+                case '\'':
+                        result.append("&#39;");
+                        break;
+                case '%':
+                        result.append("&#37;");
+                        break;
+                case ';':
+                        result.append("&#59;");
+                        break;
+                case '(':
+                        //result.append("&#40;");
+                        break;
+                case ')':
+                        //result.append("&#41;");
+                        break;
+                case '&':
+                        result.append("&amp;");
+                        break;
+                case '+':
+                        result.append("&#43;");
+                        break;
+                default:
+                        result.append(value.charAt(i)); break;
+          }
+        }
+        return result.toString();
+}
+%>
 <%
  List<EntityGroupInterface> loadEntity = (List) session.getAttribute(AdminConstants.FILTERED_LOADED_MODELS); 
   Integer pageNum = new Integer(0); 
-  String searchString = request.getParameter("textbox");
+  String searchString = filterSpecialChars((String)request.getParameter("textbox"));
   String pageTitle = searchString==null||searchString.length()==0?"Available Models":"Search for "+searchString;
   searchString = searchString==null?"":searchString;
 %>
-<!--Begin content area -->
+<!--Begin content Area -->
       <table width="100%" border="0" cellpadding="0" cellspacing="0">
 
 		 <tr>
@@ -79,7 +125,7 @@
                         <tr>
                           <td rowspan="2" align="left" width="15">&nbsp;</td>
                           <td align="left"> <span class="font_blk_s"> Search For </span></td>
-                          <td align="left">&nbsp;<input id="searchText"  type="text" class="input_tbox" name="textbox" value="${param.textbox}" onKeyDown="setFocusOnSearchButton(event)" size="30" /></td>
+                          <td align="left">&nbsp;<input id="searchText"  type="text" class="input_tbox" name="<%=searchString%>" value="<%=searchString%>" onKeyDown="setFocusOnSearchButton(event)" size="30" /></td>
                           <td align="left"><input  type="checkbox" id ="includeDescription" name="includeDescription" value="checked" ${param.includeDescription}/>
                               <span class="font_blk_s"> Include Description </span></td>
                           <td align="left">
@@ -155,7 +201,7 @@
 		
 		  <pg:item >                      
                       <tr>
-                        <td align="left" colspan="2"><span class="font_bl1_b" onmouseover="Tip('<%=descriptionWithoutComma%>',400,200)"><a href="SearchServiceInstances.action?serviceName=<%=loadEntity.get(i).getLongName()%>&version=<%=loadEntity.get(i).getVersion()%>&fromPage=<%=pagNumber%>&searchString=${param.textbox}" class="set4"><%=loadEntity.get(i).getLongName()%>  V<%=loadEntity.get(i).getVersion()%> </a></span><br />
+                        <td align="left" colspan="2"><span class="font_bl1_b" onmouseover="Tip('<%=descriptionWithoutComma%>',400,200)"><a href="SearchServiceInstances.action?serviceName=<%=loadEntity.get(i).getLongName()%>&version=<%=loadEntity.get(i).getVersion()%>&fromPage=<%=pagNumber%>&searchString=<%=searchString%>" class="set4"><%=loadEntity.get(i).getLongName()%>  V<%=loadEntity.get(i).getVersion()%> </a></span><br />
                             <span class="font_blk_s"><%=description %>&hellip;</span></td>
                       </tr>
                       <tr align="center">
