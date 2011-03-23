@@ -187,6 +187,8 @@ public class QueryExecutor {
         	// if output is a class, then just set the target as the class name,
         	// and appropriate constraints.
 
+			if(query.getServiceGroups() == null) logger.error("JJJ NO SERVICE GROUPS!");
+			
         	if(query.getServiceGroups().size() >0){      	// if ServiceGroups exist	        		
                 String output = getOutputEntity().getName();
                 List<ICab2bQuery> queries = QueryExecutorHelper.splitQueryPerGroup(query); 

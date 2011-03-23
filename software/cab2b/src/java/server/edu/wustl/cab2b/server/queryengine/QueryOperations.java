@@ -229,7 +229,7 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         if (hasAnySecureService) {
             globusCredential = AuthenticationUtility.getGlobusCredential(serializedDCR);
         }
-
+        
         //TODO may need to comment popularity for the time being
         //This is causing connection issues in case of Apply Datalist where client calls EJB in multiple threads
         //For each thread a new session is created due to ThreadLocal way of getting Session

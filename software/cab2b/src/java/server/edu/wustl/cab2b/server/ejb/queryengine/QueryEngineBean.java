@@ -5,10 +5,13 @@ import java.rmi.RemoteException;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
 
+import org.apache.log4j.Logger;
+
 import edu.wustl.cab2b.common.authentication.util.AuthenticationUtility;
 import edu.wustl.cab2b.common.domain.DCQL;
 import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2b.common.queryengine.ServiceGroup;
 import edu.wustl.cab2b.common.queryengine.result.IQueryResult;
 import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
@@ -22,6 +25,9 @@ import edu.wustl.cab2b.server.queryengine.QueryOperations;
 public class QueryEngineBean extends AbstractStatelessSessionBean implements QueryEngineBusinessInterface {
 
     private static final long serialVersionUID = 8416841912609836063L;
+    
+    private static final Logger logger = Logger.getLogger(QueryEngineBean.class);
+
 
     /**
      * This method executes the given query if the given credential is authentic.
