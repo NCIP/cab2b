@@ -37,7 +37,8 @@ public class PopularCategoryOperations {
      * @return list of all the objects of CategoryPopularity class present in database
      */
     public Collection<CategoryPopularity> getPopularityForAllCategories() {
-        Session session = HibernateUtil.currentSession();
+        //Session session = HibernateUtil.currentSession();
+        Session session = HibernateUtil.newSession();
         Collection<CategoryPopularity> list = new HibernateDatabaseOperations<CategoryPopularity>(session).retrieve(CategoryPopularity.class.getName());
         return list;
     }
@@ -51,7 +52,8 @@ public class PopularCategoryOperations {
      * @throws SQLException 
      */
     private void persistPopularity(Collection<EntityInterface> entities) throws SQLException {
-        Session session = HibernateUtil.currentSession();
+        //Session session = HibernateUtil.currentSession();
+        Session session = HibernateUtil.newSession();
         HibernateDatabaseOperations<CategoryPopularity> hiberOp = new HibernateDatabaseOperations<CategoryPopularity>(
                 session);
 

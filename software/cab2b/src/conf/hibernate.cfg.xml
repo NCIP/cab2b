@@ -9,6 +9,13 @@
 		
 	<!-- use data source -->	
         <property name="connection.datasource">java:/DS-NAME</property>
+
+<!--
+-->
+	<property name="hibernate.c3p0.timeout">5000</property>
+	<property name="c3p0.timeout">5000</property>
+	<property name="c3p0.idleConnectionTestPeriod">500</property>
+	<property name="hibernate.c3p0.idleConnectionTestPeriod">500</property>
 	
 	<!-- use Local Database
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>

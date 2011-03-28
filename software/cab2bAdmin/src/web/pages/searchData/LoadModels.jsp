@@ -88,7 +88,6 @@ function goToPage(pageUrl)
 </head>
 
 
-
 <%!
 public String filterSpecialChars(String value) {
         if (value == null) { return "";
@@ -136,11 +135,13 @@ public String filterSpecialChars(String value) {
 }
 %>
 
+
 <%
     List<CaDSRModelDetailsBean> loadModel = (List) session.getAttribute(AdminConstants.FILTERED_AVAILABLE_MODELS_TO_LOAD);
     CaDSRModelDetailsBean modelBean;
     Integer pageNum = new Integer(0);
-    String searchString = filterSpecialChars((String)request.getParameter("textbox"));
+    String searchString = filterSpecialChars(request.getParameter("textbox"));
+    String descriptionString = filterSpecialChars(request.getParameter("includeDescription"));
     String pageTitle =  searchString==null||searchString.length()==0? "Available Models" : "Search for " + searchString;
     searchString = searchString == null ? "" : searchString;
     String isDisabled = "";
@@ -156,7 +157,7 @@ public String filterSpecialChars(String value) {
 %>
 
 
-<!--Begin content -->
+<!--Begin CONTENT area -->
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td height="35" colspan="4" align="left" valign="top" background="\\">
@@ -198,11 +199,11 @@ public String filterSpecialChars(String value) {
 								<td align="left"><span class="font_blk_s"> Search
 								For </span></td>
 								<td align="left">&nbsp;<input id="searchText" type="text"
-									class="input_tbox" name="<%=searchString%>" 
+									class="input_tbox" name="textbox" 
 									onKeyDown="setFocusOnSearchButton(event)"
 									value="<%=searchString%>" size="30" /></td>
 								<td align="left"><input type="checkbox"
-									id="includeDescription" name="includeDescription" value="checked" ${param.includeDescription} />
+									id="includeDescription" name="includeDescription" value="checked" <%=descriptionString%> />
 								<span class="font_blk_s"> Include Description </span></td>
 								<td align="left"><input type="button" name="Search2"
 									id="searchButton" onClick="checkTextBox()" value="Search" /></td>

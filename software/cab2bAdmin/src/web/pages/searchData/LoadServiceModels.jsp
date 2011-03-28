@@ -35,7 +35,6 @@
 
 
 </head>
-
 <%!
 public String filterSpecialChars(String value) {
         if (value == null) { return "";
@@ -82,14 +81,17 @@ public String filterSpecialChars(String value) {
         return result.toString();
 }
 %>
+
+
 <%
  List<EntityGroupInterface> loadEntity = (List) session.getAttribute(AdminConstants.FILTERED_LOADED_MODELS); 
   Integer pageNum = new Integer(0); 
-  String searchString = filterSpecialChars((String)request.getParameter("textbox"));
+  //String searchString = request.getParameter("textbox");
+  String searchString = filterSpecialChars(request.getParameter("textbox"));
   String pageTitle = searchString==null||searchString.length()==0?"Available Models":"Search for "+searchString;
   searchString = searchString==null?"":searchString;
 %>
-<!--Begin content Area -->
+<!--Begin Content area -->
       <table width="100%" border="0" cellpadding="0" cellspacing="0">
 
 		 <tr>
@@ -125,7 +127,8 @@ public String filterSpecialChars(String value) {
                         <tr>
                           <td rowspan="2" align="left" width="15">&nbsp;</td>
                           <td align="left"> <span class="font_blk_s"> Search For </span></td>
-                          <td align="left">&nbsp;<input id="searchText"  type="text" class="input_tbox" name="<%=searchString%>" value="<%=searchString%>" onKeyDown="setFocusOnSearchButton(event)" size="30" /></td>
+                          <!--<td align="left">&nbsp;<input id="searchText"  type="text" class="input_tbox" name="textbox" value="${param.textbox}" onKeyDown="setFocusOnSearchButton(event)" size="30" /></td>-->
+                          <td align="left">&nbsp;<input id="searchText"  type="text" class="input_tbox" name="textbox" value="<%=searchString%>" onKeyDown="setFocusOnSearchButton(event)" size="30" /></td>
                           <td align="left"><input  type="checkbox" id ="includeDescription" name="includeDescription" value="checked" ${param.includeDescription}/>
                               <span class="font_blk_s"> Include Description </span></td>
                           <td align="left">
