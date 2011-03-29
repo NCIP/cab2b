@@ -1,9 +1,11 @@
 package edu.wustl.cab2b.common.queryengine;
 
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 
 import edu.wustl.common.querysuite.factory.QueryObjectFactory;
 
@@ -23,7 +25,7 @@ public class Cab2bQueryObjectFactory extends QueryObjectFactory {
     public static ICab2bQuery createCab2bQuery() {
         ICab2bQuery query = new Cab2bQuery();
         query.setCreatedDate(new Date());              
-        query.setServiceGroups(new ArrayList<ServiceGroup>());
+        query.setServiceGroups(new HashSet<ServiceGroup>());
         
         return query;
     }
