@@ -3,6 +3,8 @@ package edu.wustl.cab2bwebapp.filters;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.servlet.Filter;
@@ -13,7 +15,11 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
+import edu.wustl.cab2b.server.category.PopularCategoryOperations;
 import edu.wustl.cab2b.server.util.XSSVulnerableDetector;
 import edu.wustl.cab2bwebapp.constants.Constants;
 
@@ -23,6 +29,8 @@ import edu.wustl.cab2bwebapp.constants.Constants;
  */
 
 public class ApplicationFilter implements Filter {
+
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ApplicationFilter.class);
 
     FilterConfig fc = null;
 
@@ -54,11 +62,20 @@ public class ApplicationFilter implements Filter {
 
         if (!(request.getMethod().trim().equalsIgnoreCase("GET") || request.getMethod().trim()
             .equalsIgnoreCase("POST"))) {
-            //Disable all HTTP methods except GET and POST.           
+            //Disable all HTTP methods except GET and POST.      
+        	logger.info("JJJ forbidden");
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
         } else {
             //To make check on cross site scripting (XSS).
             boolean isXssVulnerable = false;
+            
+            if(request.isRequestedSessionIdFromURL()){
+            	logger.info("JJJ forbidden:  SessionIDFromURL!");
+                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                return;
+            }
+
+        	logger.info("JJJ NOT forbidden");
 
             //There should not be any parameter appended in the URL (for Non AJAX GET requests).
             //If some parameters are appended in the URL and the call is not AJAX based, then redirect to home page.
@@ -104,18 +121,39 @@ public class ApplicationFilter implements Filter {
                     request.setAttribute(Constants.ERROR_SESSION_TIMEOUT, Constants.ERROR_SESSION_TIMEOUT);
                     request.getRequestDispatcher("/pages/home.jsp").forward(req, res);
                 } else {
+            		generateNewSession((HttpServletRequest) request);
                     filterChain.doFilter(request, response);
                 }
             } else {
+        		generateNewSession((HttpServletRequest) request);
                 filterChain.doFilter(request, response);
             }
         } else if (request.getSession().getAttribute(Constants.USER_NAME) != null
                 && request.getRequestURL().indexOf("Login.do") != -1) {
             request.getRequestDispatcher("/pages/home.jsp").forward(req, res);
         } else {
+    		//generateNewSession((HttpServletRequest) request);
             filterChain.doFilter(request, response);
         }
     }
+    
+    private void generateNewSession(HttpServletRequest httpRequest){
+   	 HttpSession session = httpRequest.getSession();
+        HashMap<String, Object> old = new HashMap<String, Object>();
+        Enumeration<String> keys = (Enumeration<String>) session.getAttributeNames();
+        while (keys.hasMoreElements()) {
+          String key = keys.nextElement();
+          old.put(key, session.getAttribute(key));
+        }
+        //session invalidated 
+        session.invalidate();
+        session = null;
+        session = httpRequest.getSession(true);
+        for (Map.Entry<String, Object> entry : old.entrySet()) {
+          session.setAttribute(entry.getKey(), entry.getValue());
+        }
+
+   }
 
     /**
      * This method is called only once when the filter class is unloaded.

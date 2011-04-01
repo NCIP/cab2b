@@ -3,6 +3,14 @@ package edu.wustl.cab2b.admin.preactionlogic;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.log4j.Logger;
+import javax.servlet.http.HttpSession;
+
+
+
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -26,6 +34,8 @@ import edu.wustl.cab2b.server.util.XSSVulnerableDetector;
  */
 public class AuthenticationProcessor implements Filter {
     private static final long serialVersionUID = -5992264946335132057L;
+    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(AuthenticationProcessor.class);
+
 
     FilterConfig fc = null;
 
@@ -53,6 +63,7 @@ public class AuthenticationProcessor implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
         response.addHeader("Cache-Control", fc.getInitParameter("Cache-Control"));
 
+	logger.info("JJJ Admin doFilter");
         if (!(request.getMethod().trim().equalsIgnoreCase("GET") || request.getMethod().trim()
             .equalsIgnoreCase("POST"))) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
@@ -111,6 +122,7 @@ public class AuthenticationProcessor implements Filter {
                     user = new UserOperations().getUserByName(userName);
                     if (user != null && ((User) user).getPassword().compareTo(password) == 0) {
                         request.getSession().setAttribute(AdminConstants.USER_OBJECT, user);
+            		generateNewSession((HttpServletRequest) request);
                         filterChain.doFilter(request, response);
                         return;
                     }
@@ -135,9 +147,29 @@ public class AuthenticationProcessor implements Filter {
             }
 
         } else {
+	    generateNewSession((HttpServletRequest) request);
             filterChain.doFilter(request, response);
         }
     }
+
+    private void generateNewSession(HttpServletRequest httpRequest){
+	logger.info("JJJ Admin generateNewSession");
+   	 HttpSession session = httpRequest.getSession();
+        HashMap<String, Object> old = new HashMap<String, Object>();
+        Enumeration<String> keys = (Enumeration<String>) session.getAttributeNames();
+        while (keys.hasMoreElements()) {
+          String key = keys.nextElement();
+          old.put(key, session.getAttribute(key));
+        }
+        //session invalidated 
+        session.invalidate();
+        session = null;
+        session = httpRequest.getSession(true);
+        for (Map.Entry<String, Object> entry : old.entrySet()) {
+          session.setAttribute(entry.getKey(), entry.getValue());
+        }
+
+   }
 
     /**
      * This method is called only once when the filter class is unloaded.
