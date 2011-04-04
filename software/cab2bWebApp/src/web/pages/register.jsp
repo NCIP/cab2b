@@ -175,9 +175,15 @@
 			</DIV>
 						<BR/>
 						<A HREF="http://cagrid-portal.nci.nih.gov/web/guest/register">caGrid Portal</A>
+<BR/>
+<DIV>
+						<A HREF="http://cagrid-portal.nci.nih.gov/web/guest/register">
+						<IMG src="images/portalreg.jpg" alt="Portal Registration" WIDTH="658" HEIGHT="204"/>
+</A>
+		<jsp:include page="footer.jsp"/>
+</DIV>
 		</DIV>
 </DIV>
-		<jsp:include page="footer.jsp"/>
 	</FORM>
 </BODY>
 </HTML>
