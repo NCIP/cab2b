@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 2.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-lazy="false">
+	<class name="edu.wustl.cab2b.common.queryengine.ServiceGroupItem"
+		table="CAB2B_SERVICE_GROUP_ITEM" >
+
+		<id name="id" column="ID" type="long" length="30"
+			unsaved-value="null">
+			<generator class="native">
+			</generator>
+		</id>
+
+		<property name="targetObject" type="string" update="true"
+			insert="true" column="TARGET_OBJECT" length="1024" not-null="true" />
+
+		<many-to-one name="serviceUrl" class="edu.wustl.cab2b.common.user.ServiceURL">
+			<column name="SERVICE_URL_ID" not-null="true" />
+		</many-to-one>
+		
+		<many-to-one name="serviceGroup" column="SERVICE_GROUP_ID" />
+		
+	</class>
+
+</hibernate-mapping>
