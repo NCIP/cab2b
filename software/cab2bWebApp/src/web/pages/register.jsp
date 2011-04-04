@@ -140,7 +140,7 @@
 </SCRIPT>
 <!--<BODY onLoad="setPage()">-->
 <BODY> 
-	<FORM name="form" method="post" action="mailto:ncicb@pop.nci.nih.gov?SUBJECT=caB2Bregistration" onSubmit="return validate()" enctype="text/plain">
+	<FORM name="form" method="post" action="mailto:ncicb@pop.nci.nih.gov?SUBJECT=caB2B Registration" onSubmit="return validate()" enctype="text/plain">
 
 		<jsp:include page="header.jsp">
 			<jsp:param name="home" value="home"/>

@@ -122,6 +122,7 @@ public class AuthenticationProcessor implements Filter {
                     user = new UserOperations().getUserByName(userName);
                     if (user != null && ((User) user).getPassword().compareTo(password) == 0) {
                         request.getSession().setAttribute(AdminConstants.USER_OBJECT, user);
+			logger.info("JJJ Admin 1");
             		generateNewSession((HttpServletRequest) request);
                         filterChain.doFilter(request, response);
                         return;
@@ -147,7 +148,8 @@ public class AuthenticationProcessor implements Filter {
             }
 
         } else {
-	    generateNewSession((HttpServletRequest) request);
+	    logger.info("JJJ Admin 2");
+//	    generateNewSession((HttpServletRequest) request);
             filterChain.doFilter(request, response);
         }
     }

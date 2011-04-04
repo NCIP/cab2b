@@ -17,6 +17,8 @@ public class ConvertModelUtil {
        // TODO Auto-generated method stub
        String xmiFileName =null;
        String projectShortName =null;
+       String projectLongName =null;
+       String projectDescription =null;
        String projectVersion =null;
        String xmiFileType =null; 
        String xmlFileName =null;
@@ -27,14 +29,15 @@ public class ConvertModelUtil {
        }
 
        xmiFileName=args[0];
-       projectShortName = args[1];
-       projectVersion = args[2];
-       xmiFileType = args[3];
-       //xmlFileName = args[4];
+       projectLongName = args[1];
+       projectShortName = args[2];
+       projectDescription = args[3];
+       projectVersion = args[4];
+       xmiFileType = args[5];
        
        Properties p = Utility.getPropertiesFromFile("server.properties");
        int maxPathlength = Integer.parseInt(p.getProperty("max.path.length"));
-       xmlFileName = p.getProperty("model.dir")+File.separator+projectShortName+projectVersion;
+       xmlFileName = p.getProperty("model.dir")+File.separator+projectShortName+projectVersion+".xml";
 
        
 
@@ -42,7 +45,9 @@ public class ConvertModelUtil {
        try{
            File xmiFile = new File(xmiFileName);
            // convert the model
-           XMIParser parser = new XMIParser(projectShortName, projectVersion);
+           XMIParser parser = new XMIParser(projectShortName, projectVersion);             
+	   parser.setProjectLongName(projectLongName);
+	   parser.setProjectDescription(projectDescription);
            
            if(xmiFileType.compareToIgnoreCase("SDK_32_EA") == 0){
                model = parser.parse(xmiFile,XmiFileType.SDK_32_EA);
