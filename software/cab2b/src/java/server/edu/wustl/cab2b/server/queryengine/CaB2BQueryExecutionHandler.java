@@ -44,6 +44,8 @@ public class CaB2BQueryExecutionHandler extends QueryExecutionHandler<ICab2bQuer
             UserInterface user,
             String[] modelGroupNames) {
         super(query, proxy, user, modelGroupNames);
+        logger.info("JJJ CaB2BQEH");
+
         preProcessQuery();
         //Initilizing executor list.
         QueryExecutor queryExecutor = new QueryExecutor(query, proxy);

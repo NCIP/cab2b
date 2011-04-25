@@ -98,6 +98,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      */
     public IQueryResult<R> getResults(DCQLQuery query, EntityInterface targetEntity, GlobusCredential cred) {
         IQueryResult<R> result = null;
+        if(cred == null) logger.info("JJJ cred==null in getResults");
         try {
             log(query);
             Map<String, CQLQueryResults> queryResults = executeDcql(query, cred);

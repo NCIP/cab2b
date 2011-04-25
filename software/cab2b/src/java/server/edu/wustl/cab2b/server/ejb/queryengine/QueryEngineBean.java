@@ -3,6 +3,7 @@ package edu.wustl.cab2b.server.ejb.queryengine;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
@@ -17,6 +18,14 @@ import edu.wustl.cab2b.common.queryengine.result.IRecord;
 import edu.wustl.cab2b.server.ejb.AbstractStatelessSessionBean;
 import edu.wustl.cab2b.server.queryengine.DCQLGenerator;
 import edu.wustl.cab2b.server.queryengine.QueryOperations;
+import edu.wustl.cab2b.server.queryengine.querybuilders.CategoryPreprocessor;
+import edu.wustl.cab2b.server.queryengine.querybuilders.CategoryPreprocessorResult;
+import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.ConstraintsBuilder;
+import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.ConstraintsBuilderResult;
+import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.DcqlConstraint;
+import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.GroupConstraint;
+import gov.nih.nci.cagrid.dcql.ForeignAssociation;
+import gov.nih.nci.cagrid.dcql.Group;
 
 /**
  * Class for handling query related operations
@@ -45,6 +54,7 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      */
     public IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String serializedDCR)
             throws RemoteException {
+    	logger.info("JJJ queryEngineBean.executeQuery. serializedDCR="+serializedDCR);
         return new QueryOperations().executeQuery(query, serializedDCR);
     }
     
@@ -103,6 +113,11 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
     public void deleteQuery(long id) throws RemoteException {
         new QueryOperations().deleteQuery(id);
     }
+    
+	public boolean anySecureServices(ICab2bQuery query) throws RemoteException {
+        return new QueryOperations().anySecureServices(query);
+	}
+
 
 
     /**

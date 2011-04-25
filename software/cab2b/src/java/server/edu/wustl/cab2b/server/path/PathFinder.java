@@ -217,45 +217,58 @@ public class PathFinder {
             List<PathRecord> pathRecords = getPathRecords(srcEntityId, desEntityId);
             List<IPath> pathList = new ArrayList<IPath>(getPathList(pathRecords));
             return pathList;
-        } else {
-            // they are from different models
-            logger.info("Finding intermodel paths between : " + srcName + " and " + desName);
-            for (InterModelConnection interModelConnection : interModelConnections) {
+		} else {
+			// they are from different models
+			logger.info("Finding intermodel paths between : " + srcName
+					+ " and " + desName);
 
-                Long leftEntityId = interModelConnection.getLeftEntityId();
-                EntityGroupInterface leftEntityGroup = Utility.getEntityGroup(getCache().getEntityById(leftEntityId));
-                if (srcEntityGroup.equals(leftEntityGroup)) {
+			List<IPath> pathList = new ArrayList<IPath>(0);
+			for (InterModelConnection interModelConnection : interModelConnections) {
 
-                    Long rightEntityId = interModelConnection.getRightEntityId();
-                    EntityGroupInterface rightEntityGroup = Utility.getEntityGroup(getCache().getEntityById(
-                            rightEntityId));
+				Long leftEntityId = interModelConnection.getLeftEntityId();
+				EntityGroupInterface leftEntityGroup = Utility
+						.getEntityGroup(getCache().getEntityById(leftEntityId));
+				if (srcEntityGroup.equals(leftEntityGroup)) {
 
-                    if (rightEntityGroup.equals(desEntityGroup)) {
-                        List<Path> pathsSrcToLeftEntity = new ArrayList<Path>();
-                        if (!srcEntityId.equals(leftEntityId)) {
-                            List<PathRecord> pathRecordsSrcToLeftEntity = getPathRecords(srcEntityId, leftEntityId);
-                            if (pathRecordsSrcToLeftEntity.size() == 0) {
-                                continue;
-                            }
-                            pathsSrcToLeftEntity = getPathList(pathRecordsSrcToLeftEntity);
-                        }
-                        List<Path> pathsRightEntityToDes = new ArrayList<Path>();
-                        if (!rightEntityId.equals(desEntityId)) {
-                            List<PathRecord> pathRecordsRightEntityToDes = getPathRecords(rightEntityId, desEntityId);
-                            if (pathRecordsRightEntityToDes.size() == 0) {
-                                continue;
-                            }
-                            pathsRightEntityToDes = getPathList(pathRecordsRightEntityToDes);
-                        }
-                        InterModelAssociation association = getInterModelAssociation(interModelConnection);
-                        List<IPath> pathList = connectPaths(pathsSrcToLeftEntity, association, pathsRightEntityToDes);
-                        return pathList;
-                    }
-                }
-            }
-        }
-        return new ArrayList<IPath>(0);
-    }
+					Long rightEntityId = interModelConnection
+							.getRightEntityId();
+					EntityGroupInterface rightEntityGroup = Utility
+							.getEntityGroup(getCache().getEntityById(
+									rightEntityId));
+
+					if (rightEntityGroup.equals(desEntityGroup)) {
+						List<Path> pathsSrcToLeftEntity = new ArrayList<Path>();
+						if (!srcEntityId.equals(leftEntityId)) {
+							List<PathRecord> pathRecordsSrcToLeftEntity = getPathRecords(
+									srcEntityId, leftEntityId);
+							if (pathRecordsSrcToLeftEntity.size() == 0) {
+								continue;
+							}
+							pathsSrcToLeftEntity = getPathList(pathRecordsSrcToLeftEntity);
+						}
+						List<Path> pathsRightEntityToDes = new ArrayList<Path>();
+						if (!rightEntityId.equals(desEntityId)) {
+							List<PathRecord> pathRecordsRightEntityToDes = getPathRecords(
+									rightEntityId, desEntityId);
+							if (pathRecordsRightEntityToDes.size() == 0) {
+								continue;
+							}
+							pathsRightEntityToDes = getPathList(pathRecordsRightEntityToDes);
+						}
+						InterModelAssociation association = getInterModelAssociation(interModelConnection);
+						// List<IPath>
+						logger.info("JJJ Found path to Add");
+						pathList.addAll( connectPaths(pathsSrcToLeftEntity,
+								association, pathsRightEntityToDes));
+						// return pathList;
+					}
+				}
+			}
+			return pathList;
+
+		}
+		// return new ArrayList<IPath>(0);
+	}
 
     /**
      * Connect each path of passes "prePaths" to each path of passed "postPaths" by association. If "prePaths" is

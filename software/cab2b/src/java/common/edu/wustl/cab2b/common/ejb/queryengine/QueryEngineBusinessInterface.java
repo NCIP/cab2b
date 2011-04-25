@@ -95,4 +95,6 @@ public interface QueryEngineBusinessInterface extends BusinessInterface {
     DCQL getDCQL(ICab2bQuery query) throws RemoteException;
 
 	void deleteQuery(long id) throws RemoteException;
+
+	boolean anySecureServices(ICab2bQuery query) throws RemoteException;
 }

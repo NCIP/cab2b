@@ -51,6 +51,8 @@ public class KeywordQueryExecutionHandler extends QueryExecutionHandler<KeywordQ
             String keyword) {
         super(query, proxy, user, modelGroupNames);
         this.keyword = keyword;
+        logger.info("JJJ KQQEH");
+
         preProcessQuery();
 
         // Initilizing executor list.

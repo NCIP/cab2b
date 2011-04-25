@@ -39,6 +39,7 @@ public class MMCQueryExecutionHandler extends QueryExecutionHandler<MultiModelCa
             UserInterface user,
             String[] modelGroupNames) {
         super(query, proxy, user, modelGroupNames);
+        logger.info("JJJ MMCQEH");
         resultConflator = new MMCQueryResultConflator(query);
         preProcessQuery();
 

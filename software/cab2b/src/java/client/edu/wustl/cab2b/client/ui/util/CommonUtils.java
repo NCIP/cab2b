@@ -81,6 +81,8 @@ import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.category.Category;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.util.global.ApplicationProperties;
+import gov.nih.nci.cagrid.dcql.ForeignAssociation;
+import gov.nih.nci.cagrid.dcql.Group;
 
 /**
  * Utility for UI side classes
@@ -214,15 +216,24 @@ public class CommonUtils {
      */
     public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, boolean isApplyDatalist)
             throws Exception {
-        boolean anySecureSevice = Utility.hasAnySecureService(query);
+	logger.info("JJJ IN COMMON UTILS method");
+        boolean anySecureService = Utility.hasAnySecureService(query);
+        
+
+		
 
         QueryEngineBusinessInterface queryEngineBus =
                 (QueryEngineBusinessInterface) CommonUtils
                     .getBusinessInterface(EjbNamesConstants.QUERY_ENGINE_BEAN, QueryEngineHome.class);
+        
+		if (!anySecureService) {
+			anySecureService = queryEngineBus.anySecureServices(query);
+		}
+
         IQueryResult<? extends IRecord> results = null;
         try {
 
-            if (anySecureSevice) {
+            if (anySecureService) {
                 if (isApplyDatalist) {
                     results = queryEngineBus.executeQueryForApplyDatalist(query, Authenticator.getSerializedDCR());
                 } else {
@@ -251,8 +262,11 @@ public class CommonUtils {
      * @throws RemoteException
      */
     public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query) throws Exception {
+    	logger.info("JJJ IN COMMON UTILS method");
+
         return executeQuery(query, false);
     }
+    
 
     /**
      * Method to get count of bit 1 set in given BitSet

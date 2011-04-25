@@ -49,6 +49,12 @@ import edu.wustl.cab2b.server.cache.DatalistCache;
 import edu.wustl.cab2b.server.cache.EntityCache;
 import edu.wustl.cab2b.server.category.CategoryCache;
 import edu.wustl.cab2b.server.category.PopularCategoryOperations;
+import edu.wustl.cab2b.server.queryengine.querybuilders.CategoryPreprocessor;
+import edu.wustl.cab2b.server.queryengine.querybuilders.CategoryPreprocessorResult;
+import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.ConstraintsBuilder;
+import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.ConstraintsBuilderResult;
+import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.DcqlConstraint;
+import edu.wustl.cab2b.server.queryengine.querybuilders.dcql.constraints.GroupConstraint;
 import edu.wustl.cab2b.server.util.UtilityOperations;
 import edu.wustl.common.hibernate.HibernateDatabaseOperations;
 import edu.wustl.common.hibernate.HibernateUtil;
@@ -58,6 +64,9 @@ import edu.wustl.common.querysuite.queryobject.IQueryEntity;
 import edu.wustl.common.querysuite.queryobject.impl.QueryEntity;
 import edu.wustl.common.querysuite.utils.ConstraintsObjectBuilder;
 import edu.wustl.common.util.dbManager.DBUtil;
+import gov.nih.nci.cagrid.dcql.ForeignAssociation;
+import gov.nih.nci.cagrid.dcql.Group;
+//import gov.nih.nci.cagrid.dcql.Object;
 
 /**
  * @author chetan_patil
@@ -225,9 +234,16 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
      */
     public IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String serializedDCR) {
         GlobusCredential globusCredential = null;
-        boolean hasAnySecureService = Utility.hasAnySecureService(query);
+        boolean hasAnySecureService  = Utility.hasAnySecureService(query); 
+        
+        // also test ForeignAssocs for secure services   
+		if (!hasAnySecureService) {
+			hasAnySecureService = anySecureServices(query);
+		}
+		
         if (hasAnySecureService) {
             globusCredential = AuthenticationUtility.getGlobusCredential(serializedDCR);
+			logger.info("JJJ Since foreign secure service.  cred="+globusCredential+"sDCR="+serializedDCR);
         }
         
         //TODO may need to comment popularity for the time being
@@ -247,9 +263,23 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
      */
     public IQueryResult<? extends IRecord> executeQueryForApplyDatalist(ICab2bQuery query, String serializedDCR) {
         GlobusCredential globusCredential = null;
+        logger.info("JJJ executeQueryForApplyDatalist");
+        
         boolean hasAnySecureService = Utility.hasAnySecureService(query);
+        
+        // also test ForeignAssocs for secure services   
+		if (!hasAnySecureService) {
+			hasAnySecureService = anySecureServices(query);
+		}
+        
+        
         if (hasAnySecureService) {
+			logger.info("JJJ Authenticating because hasAnySecureService=true");
+
             globusCredential = AuthenticationUtility.getGlobusCredential(serializedDCR);
+			if(globusCredential==null){logger.info("JJJ credential is null!!!!!!!!!");}
+			else {logger.info("JJJ credential NOT null");}
+
         }
         QueryExecutor queryExecutor = new QueryExecutor(query, globusCredential);
         queryExecutor.executeQuery();
@@ -335,6 +365,36 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
     }
     
     
+	public boolean anySecureServices(ICab2bQuery query) {
+
+		boolean hasAnySecureService = false;
+		CategoryPreprocessorResult categoryPreprocessorResult = new CategoryPreprocessor()
+				.processCategories(query);
+		ConstraintsBuilder cb = new ConstraintsBuilder(query,
+				categoryPreprocessorResult);
+		ConstraintsBuilderResult cbr = cb.buildConstraints();
+		DcqlConstraint constraint = cbr.getDcqlConstraintForClass(query
+				.getOutputEntity());
+		GroupConstraint gr = (GroupConstraint) constraint;
+		Group[] gr1 = new Group[1];
+		gr1[0] = gr.getGroup();
+
+		Collection<ForeignAssociation> fc = getForeignAssociations(gr1);
+
+		for (ForeignAssociation forAss : fc) {
+			String furl = forAss.getTargetServiceURL();
+			if (furl != null)
+				if (furl.trim().toLowerCase().startsWith("https://")) {
+					logger.info("JJJ foreign secure service");
+					hasAnySecureService = true;
+					break;
+
+				}
+		}
+
+		return hasAnySecureService;
+
+	}
 
 
 public void deleteQuery(Long id) {
@@ -401,6 +461,53 @@ public void deleteQuery(Long id) {
             DBUtil.closeSession();
         }
     }
+    
+	private static Collection<ForeignAssociation> getForeignAssociations(ForeignAssociation faa){	
+		ArrayList<ForeignAssociation> fas=  new ArrayList<ForeignAssociation>();    	
+
+		gov.nih.nci.cagrid.dcql.Object fo = faa.getForeignObject();
+		Group fog = fo.getGroup();
+
+		if(fog != null){
+			Group[] gr1 = new Group[1];         
+			gr1[0]=fog;
+			fas.addAll(getForeignAssociations(gr1));
+		}
+
+
+		ForeignAssociation fofa = fo.getForeignAssociation();
+		if(fofa != null){
+			fas.add(fofa);
+			
+			fas.addAll(getForeignAssociations(fofa));
+		}
+
+		return fas;
+	}
+
+
+
+	private static Collection<ForeignAssociation> getForeignAssociations(Group[] g){
+		ArrayList<ForeignAssociation> fas=  new ArrayList<ForeignAssociation>();    	
+		for(int y=0;y<g.length;y++){
+
+			ForeignAssociation[] faa = g[y].getForeignAssociation();
+			
+
+			for(int x=0;x<faa.length;x++){
+				fas.add(faa[x]);
+				fas.addAll(getForeignAssociations(faa[x]));
+			}
+
+			Group[] g2= g[y].getGroup();      
+
+			if(g2.length>0){
+				fas.addAll(getForeignAssociations(g2));
+			}
+		}
+		return fas;
+
+	}
 
     /**
      * This method create and save the keyword query
@@ -505,5 +612,7 @@ public void deleteQuery(Long id) {
                 }
             }
         }
+        
+        
     }
 }
