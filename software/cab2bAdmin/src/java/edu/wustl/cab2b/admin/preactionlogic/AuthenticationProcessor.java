@@ -148,7 +148,7 @@ public class AuthenticationProcessor implements Filter {
             }
 
         } else {
-	    logger.info("JJJ Admin 2");
+	    logger.info("JJJ Admin 2, no new session");
 //	    generateNewSession((HttpServletRequest) request);
             filterChain.doFilter(request, response);
         }
