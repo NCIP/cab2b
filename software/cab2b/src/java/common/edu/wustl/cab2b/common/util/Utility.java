@@ -833,13 +833,17 @@ public class Utility {
      * @return TRUE : if given query is being fired on at-least one service containing https
      */
     public static boolean hasAnySecureService(ICab2bQuery query) {
+    	   	
         boolean anySecureSevice = false;
+        logger.info("JJJ called OLD hasAnySecureService");
         for (String url : query.getOutputUrls()) {
             if (url.trim().toLowerCase().startsWith("https://")) {
                 anySecureSevice = true;
                 break;
             }
         }
+        logger.info("JJJ OLD hasAnySecureService RETURNING"+anySecureSevice);
+
         return anySecureSevice;
     }
 

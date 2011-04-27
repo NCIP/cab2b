@@ -227,6 +227,7 @@ public class CommonUtils {
                     .getBusinessInterface(EjbNamesConstants.QUERY_ENGINE_BEAN, QueryEngineHome.class);
         
 		if (!anySecureService) {
+			logger.info("JJJ calling jims anySecureServices");
 			anySecureService = queryEngineBus.anySecureServices(query);
 		}
 

@@ -98,7 +98,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
      */
     public IQueryResult<R> getResults(DCQLQuery query, EntityInterface targetEntity, GlobusCredential cred) {
         IQueryResult<R> result = null;
-        if(cred == null) logger.info("JJJ cred==null in getResults");
+        logger.info("JJJ cred=="+cred+" in getResults");
         try {
             log(query);
             Map<String, CQLQueryResults> queryResults = executeDcql(query, cred);
@@ -107,6 +107,10 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             for (Map.Entry<String, CQLQueryResults> entry : queryResults.entrySet()) {
                 String url = entry.getKey();
                 CQLQueryResults cqlQueryResult = entry.getValue();
+                if(cqlQueryResult == null) logger.info("JJJ AQR: url NULL!!");
+                if(cqlQueryResult == null) logger.info("JJJ AQR: cqlQueryResults NULL!!");
+                if(targetEntity == null) logger.info("JJJ AQR: targetENtity NULL!!");
+
                 List<R> recs = createRecords(url, cqlQueryResult, targetEntity);
                 result.addRecords(url, recs);
                 numRecs += recs.size();
@@ -234,17 +238,25 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
         DCQLQueryResultsCollection queryResults = null;
         try {
             QueryExecutionParameters queryParameter = new QueryExecutionParameters();
+            
+            logger.info("JJJ SETTING TO ALWAYS AUTHENTICATE TRUE !!");
+            queryParameter.setAlwaysAuthenticate(true);
+            
             TargetDataServiceQueryBehavior targetBehaviour = new TargetDataServiceQueryBehavior();
             targetBehaviour.setFailOnFirstError(false);
             queryParameter.setTargetDataServiceQueryBehavior(targetBehaviour);
             String queryName = query.getTargetObject().getName();
             String className = queryName.substring(queryName.lastIndexOf('.') + 1, queryName.length());
             logger.debug("Executing DQCL to get " + className);
+            logger.info("JJJ Executing DQCL to get " + className + "with cred="+cred);
+
             FederatedQueryEngine federatedQueryEngine = new FederatedQueryEngine(cred, queryParameter, executor);
             FQPQueryListener listener = new FQPQueryListener(this);
             federatedQueryEngine.addStatusListener(listener);
             queryResults = federatedQueryEngine.execute(query);
             logger.debug("Query for " + className + " Completed");
+            logger.info("JJJ Query for " + className + " Completed");
+
         } catch (FederatedQueryProcessingException e) {
             e.printStackTrace();
             throw new RuntimeException(Utility.getStackTrace(e), ErrorCodeConstants.QM_0004);

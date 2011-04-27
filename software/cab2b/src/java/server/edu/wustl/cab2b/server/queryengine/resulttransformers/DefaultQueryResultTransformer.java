@@ -2,6 +2,7 @@ package edu.wustl.cab2b.server.queryengine.resulttransformers;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -14,6 +15,11 @@ import org.globus.gsi.GlobusCredential;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import javax.xml.namespace.QName;
+import gov.nih.nci.cagrid.common.Utils;
+import gov.nih.nci.cagrid.cqlquery.CQLQuery;
+import gov.nih.nci.cagrid.cqlresultset.CQLQueryResults;
+
 
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -29,6 +35,7 @@ import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
 import gov.nih.nci.cagrid.cqlresultset.CQLQueryResults;
 import gov.nih.nci.cagrid.data.utilities.CQLQueryResultsIterator;
+
 
 /**
  * The default query result transformer. It parses the
@@ -57,6 +64,27 @@ final class DefaultQueryResultTransformer extends AbstractQueryResultTransformer
         CQLQueryResultsIterator itr = new CQLQueryResultsIterator(cqlQueryResults, true);
         Set<AttributeInterface> attributes =
                 new HashSet<AttributeInterface>(targetEntity.getAttributeCollection());
+        if(cqlQueryResults == null) logger.info("JJJ cqlQueryResults NULL!!");
+        if(cqlQueryResults.getObjectResult() == null) logger.info("JJJ cqlQueryResults.getObjectResult NULL!!");
+
+        
+      //write the results
+        
+        StringWriter w = new StringWriter();
+		try {
+			Utils.serializeObject(cqlQueryResults, new QName(
+					"http://CQL.caBIG/1/gov.nih.nci.cagrid.CQLResultSet",
+					"CQLResultSet"), w);
+		} catch (java.lang.Exception e) {
+			System.err.println("ERROR"+e);
+		}
+		
+        System.out.println(w.getBuffer());
+        
+        if(cqlQueryResults == null || cqlQueryResults.getObjectResult() == null){
+        	return res;
+        }
+        
         Set<String> ids = new HashSet<String>(cqlQueryResults.getObjectResult().length);
         AttributeInterface idAttribute = Utility.getIdAttribute(targetEntity);
         while (itr.hasNext()) {

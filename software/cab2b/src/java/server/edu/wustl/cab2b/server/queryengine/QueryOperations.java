@@ -237,9 +237,9 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         boolean hasAnySecureService  = Utility.hasAnySecureService(query); 
         
         // also test ForeignAssocs for secure services   
-		if (!hasAnySecureService) {
-			hasAnySecureService = anySecureServices(query);
-		}
+	if (!hasAnySecureService) {
+		hasAnySecureService = anySecureServices(query);
+	}
 		
         if (hasAnySecureService) {
             globusCredential = AuthenticationUtility.getGlobusCredential(serializedDCR);
@@ -268,17 +268,17 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
         boolean hasAnySecureService = Utility.hasAnySecureService(query);
         
         // also test ForeignAssocs for secure services   
-		if (!hasAnySecureService) {
-			hasAnySecureService = anySecureServices(query);
-		}
+	if (!hasAnySecureService) {
+		hasAnySecureService = anySecureServices(query);
+	}
         
         
         if (hasAnySecureService) {
-			logger.info("JJJ Authenticating because hasAnySecureService=true");
+	    logger.info("JJJ Authenticating because hasAnySecureService=true");
 
             globusCredential = AuthenticationUtility.getGlobusCredential(serializedDCR);
-			if(globusCredential==null){logger.info("JJJ credential is null!!!!!!!!!");}
-			else {logger.info("JJJ credential NOT null");}
+  	    if(globusCredential==null){logger.info("JJJ credential is null!!!!!!!!!");}
+	    else {logger.info("JJJ credential NOT null");}
 
         }
         QueryExecutor queryExecutor = new QueryExecutor(query, globusCredential);
@@ -367,6 +367,8 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
     
 	public boolean anySecureServices(ICab2bQuery query) {
 
+		logger.info("JJJ jims anySecureServices");
+								
 		boolean hasAnySecureService = false;
 		CategoryPreprocessorResult categoryPreprocessorResult = new CategoryPreprocessor()
 				.processCategories(query);
@@ -375,22 +377,35 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
 		ConstraintsBuilderResult cbr = cb.buildConstraints();
 		DcqlConstraint constraint = cbr.getDcqlConstraintForClass(query
 				.getOutputEntity());
-		GroupConstraint gr = (GroupConstraint) constraint;
-		Group[] gr1 = new Group[1];
-		gr1[0] = gr.getGroup();
 
-		Collection<ForeignAssociation> fc = getForeignAssociations(gr1);
+		if (constraint.getConstraintType().equals(
+				DcqlConstraint.ConstraintType.Group)) {
+			logger.info("JJJ jims anySecureServices IS A GROUP:"
+					+ constraint.getConstraintType());
 
-		for (ForeignAssociation forAss : fc) {
-			String furl = forAss.getTargetServiceURL();
-			if (furl != null)
-				if (furl.trim().toLowerCase().startsWith("https://")) {
-					logger.info("JJJ foreign secure service");
-					hasAnySecureService = true;
-					break;
+			GroupConstraint gr = (GroupConstraint) constraint;
+			Group[] gr1 = new Group[1];
+			gr1[0] = gr.getGroup();
 
-				}
+			Collection<ForeignAssociation> fc = getForeignAssociations(gr1);
+
+			for (ForeignAssociation forAss : fc) {
+				String furl = forAss.getTargetServiceURL();
+				if (furl != null)
+					if (furl.trim().toLowerCase().startsWith("https://")) {
+						logger.info("JJJ foreign secure service");
+						hasAnySecureService = true;
+						break;
+
+					}
+			}
+		} else {
+			logger.info("JJJ WARNING: jims anySecureServices NOT GROUP BUT:"
+					+ constraint.getConstraintType());
+
 		}
+		
+		logger.info("JJJ jims anySecureServices RETURNING"+hasAnySecureService);
 
 		return hasAnySecureService;
 

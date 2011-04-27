@@ -115,7 +115,11 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
     }
     
 	public boolean anySecureServices(ICab2bQuery query) throws RemoteException {
-        return new QueryOperations().anySecureServices(query);
+
+        boolean result = new QueryOperations().anySecureServices(query);
+		logger.info("JJJ jims wrapper for anySecure returning"+result);
+        return  result;
+        
 	}
 
 
