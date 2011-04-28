@@ -144,11 +144,11 @@ function deselectSelectAll()
             List<ServiceURL> records = (List) session.getAttribute(AdminConstants.FILTERED_SERVICE_INSTANCES);
 			records = records==null? new ArrayList<ServiceURL>():records;
  			Integer pageNum = new Integer(0);
-            String searchString = filterSpecialChars(request.getParameter("textbox"));
+            String searchString = filterSpecialChars((String)request.getParameter("textbox"));
             String pageTitle = searchString==null?"Available Models":"Search for "+searchString;
 			searchString = searchString==null?"":searchString;
             String selection = "";
-             String serviceName = filterSpecialChars(request.getParameter("serviceName"));  
+             String serviceName = filterSpecialChars((String)request.getParameter("serviceName"));  
              String chkboxNames = "";
              String isDisable = records.size()==0?"disabled":"";
             
@@ -308,7 +308,7 @@ function deselectSelectAll()
 					%>   
  <tr>
                   <td align="center" valign="top"></td>
-                  <td ><span class="font_blk_b"><%=filterSpecialChars(request.getAttribute("serviceInstanceError"))%>.</span>
+                  <td ><span class="font_blk_b"><%= filterSpecialChars((String)request.getAttribute("serviceInstanceError")) %>.</span>
                       </td>
                 </tr>
 <%} else   
