@@ -243,7 +243,6 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
 		
         if (hasAnySecureService) {
             globusCredential = AuthenticationUtility.getGlobusCredential(serializedDCR);
-			logger.info("JJJ Since foreign secure service.  cred="+globusCredential+"sDCR="+serializedDCR);
         }
         
         //TODO may need to comment popularity for the time being
@@ -261,30 +260,25 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
      * @param serializedDCR
      * @return
      */
-    public IQueryResult<? extends IRecord> executeQueryForApplyDatalist(ICab2bQuery query, String serializedDCR) {
-        GlobusCredential globusCredential = null;
-        logger.info("JJJ executeQueryForApplyDatalist");
-        
-        boolean hasAnySecureService = Utility.hasAnySecureService(query);
-        
-        // also test ForeignAssocs for secure services   
-	if (!hasAnySecureService) {
-		hasAnySecureService = anySecureServices(query);
+	public IQueryResult<? extends IRecord> executeQueryForApplyDatalist(
+			ICab2bQuery query, String serializedDCR) {
+		GlobusCredential globusCredential = null;
+
+		boolean hasAnySecureService = Utility.hasAnySecureService(query);
+
+		// also test ForeignAssocs for secure services
+		if (!hasAnySecureService) {
+			hasAnySecureService = anySecureServices(query);
+		}
+
+		if (hasAnySecureService) {
+			globusCredential = AuthenticationUtility
+					.getGlobusCredential(serializedDCR);
+		}
+		QueryExecutor queryExecutor = new QueryExecutor(query, globusCredential);
+		queryExecutor.executeQuery();
+		return queryExecutor.getCompleteResults();
 	}
-        
-        
-        if (hasAnySecureService) {
-	    logger.info("JJJ Authenticating because hasAnySecureService=true");
-
-            globusCredential = AuthenticationUtility.getGlobusCredential(serializedDCR);
-  	    if(globusCredential==null){logger.info("JJJ credential is null!!!!!!!!!");}
-	    else {logger.info("JJJ credential NOT null");}
-
-        }
-        QueryExecutor queryExecutor = new QueryExecutor(query, globusCredential);
-        queryExecutor.executeQuery();
-        return queryExecutor.getCompleteResults();
-    }
 
     /**
      * This method saves the Cab2bQuery
@@ -365,10 +359,7 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
     }
     
     
-	public boolean anySecureServices(ICab2bQuery query) {
-
-		logger.info("JJJ jims anySecureServices");
-								
+	public boolean anySecureServices(ICab2bQuery query) {								
 		boolean hasAnySecureService = false;
 		CategoryPreprocessorResult categoryPreprocessorResult = new CategoryPreprocessor()
 				.processCategories(query);
@@ -380,8 +371,6 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
 
 		if (constraint.getConstraintType().equals(
 				DcqlConstraint.ConstraintType.Group)) {
-			logger.info("JJJ jims anySecureServices IS A GROUP:"
-					+ constraint.getConstraintType());
 
 			GroupConstraint gr = (GroupConstraint) constraint;
 			Group[] gr1 = new Group[1];
@@ -400,13 +389,11 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
 					}
 			}
 		} else {
-			logger.info("JJJ WARNING: jims anySecureServices NOT GROUP BUT:"
+			logger.info("JJJ anySecureServices NOT GROUP but:"
 					+ constraint.getConstraintType());
 
 		}
 		
-		logger.info("JJJ jims anySecureServices RETURNING"+hasAnySecureService);
-
 		return hasAnySecureService;
 
 	}

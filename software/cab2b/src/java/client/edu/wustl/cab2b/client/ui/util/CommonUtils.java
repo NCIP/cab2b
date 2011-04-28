@@ -216,7 +216,6 @@ public class CommonUtils {
      */
     public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, boolean isApplyDatalist)
             throws Exception {
-	logger.info("JJJ IN COMMON UTILS method");
         boolean anySecureService = Utility.hasAnySecureService(query);
         
 
@@ -227,7 +226,6 @@ public class CommonUtils {
                     .getBusinessInterface(EjbNamesConstants.QUERY_ENGINE_BEAN, QueryEngineHome.class);
         
 		if (!anySecureService) {
-			logger.info("JJJ calling jims anySecureServices");
 			anySecureService = queryEngineBus.anySecureServices(query);
 		}
 
@@ -263,8 +261,6 @@ public class CommonUtils {
      * @throws RemoteException
      */
     public static IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query) throws Exception {
-    	logger.info("JJJ IN COMMON UTILS method");
-
         return executeQuery(query, false);
     }
     

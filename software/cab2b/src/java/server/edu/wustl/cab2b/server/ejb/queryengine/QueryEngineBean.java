@@ -54,7 +54,6 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
      */
     public IQueryResult<? extends IRecord> executeQuery(ICab2bQuery query, String serializedDCR)
             throws RemoteException {
-    	logger.info("JJJ queryEngineBean.executeQuery. serializedDCR="+serializedDCR);
         return new QueryOperations().executeQuery(query, serializedDCR);
     }
     
@@ -117,7 +116,6 @@ public class QueryEngineBean extends AbstractStatelessSessionBean implements Que
 	public boolean anySecureServices(ICab2bQuery query) throws RemoteException {
 
         boolean result = new QueryOperations().anySecureServices(query);
-		logger.info("JJJ jims wrapper for anySecure returning"+result);
         return  result;
         
 	}

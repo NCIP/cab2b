@@ -64,8 +64,6 @@ final class DefaultQueryResultTransformer extends AbstractQueryResultTransformer
         CQLQueryResultsIterator itr = new CQLQueryResultsIterator(cqlQueryResults, true);
         Set<AttributeInterface> attributes =
                 new HashSet<AttributeInterface>(targetEntity.getAttributeCollection());
-        if(cqlQueryResults == null) logger.info("JJJ cqlQueryResults NULL!!");
-        if(cqlQueryResults.getObjectResult() == null) logger.info("JJJ cqlQueryResults.getObjectResult NULL!!");
 
         
       //write the results

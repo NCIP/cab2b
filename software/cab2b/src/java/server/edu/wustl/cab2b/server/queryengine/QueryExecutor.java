@@ -132,8 +132,6 @@ public class QueryExecutor {
 	public QueryExecutor(ICab2bQuery query, GlobusCredential credential) {
 		this.gc = credential;
 		this.query = query;
-
-		if(credential == null ) logger.info("JJJ NULL globus credential");
 		
 		recordStatus = query.getId() != null;
 		initializeQueryStatus(credential);

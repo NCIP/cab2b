@@ -107,9 +107,6 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             for (Map.Entry<String, CQLQueryResults> entry : queryResults.entrySet()) {
                 String url = entry.getKey();
                 CQLQueryResults cqlQueryResult = entry.getValue();
-                if(cqlQueryResult == null) logger.info("JJJ AQR: url NULL!!");
-                if(cqlQueryResult == null) logger.info("JJJ AQR: cqlQueryResults NULL!!");
-                if(targetEntity == null) logger.info("JJJ AQR: targetENtity NULL!!");
 
                 List<R> recs = createRecords(url, cqlQueryResult, targetEntity);
                 result.addRecords(url, recs);
@@ -160,7 +157,6 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
 			for (Entry<String, ?> entry : result1.getRecords().entrySet()) {
 				url = entry.getKey();   		
 				List<R> recs1 = (List<R>) entry.getValue();
-				logger.info("JJJ recs in mergeResults:"+recs1.size());
 				result.addRecords(url, recs1);
 			}
 		}
@@ -187,7 +183,6 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
         		for(URLStatus s: qStatus.getUrlStatus()){
         			if(s.getUrl().equals(url)){
         			
-        				logger.info("JJJ EQUAL currentstatus:"+s.getStatus());
         				s.setResultCount(recs1.size());   
         				resultCount += recs1.size();
         			} else {
@@ -197,7 +192,6 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
         			s.setStatus(AbstractStatus.Complete);
         		}
 
-				logger.info("JJJ merge status size:"+recs1.size());
 				qStatus.setResultCount(resultCount);
 			}
 		}
@@ -239,7 +233,7 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
         try {
             QueryExecutionParameters queryParameter = new QueryExecutionParameters();
             
-            logger.info("JJJ SETTING TO ALWAYS AUTHENTICATE TRUE !!");
+            logger.info("JJJ setting alwaysAuthenticate true");
             queryParameter.setAlwaysAuthenticate(true);
             
             TargetDataServiceQueryBehavior targetBehaviour = new TargetDataServiceQueryBehavior();
@@ -248,14 +242,12 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
             String queryName = query.getTargetObject().getName();
             String className = queryName.substring(queryName.lastIndexOf('.') + 1, queryName.length());
             logger.debug("Executing DQCL to get " + className);
-            logger.info("JJJ Executing DQCL to get " + className + "with cred="+cred);
 
             FederatedQueryEngine federatedQueryEngine = new FederatedQueryEngine(cred, queryParameter, executor);
             FQPQueryListener listener = new FQPQueryListener(this);
             federatedQueryEngine.addStatusListener(listener);
             queryResults = federatedQueryEngine.execute(query);
             logger.debug("Query for " + className + " Completed");
-            logger.info("JJJ Query for " + className + " Completed");
 
         } catch (FederatedQueryProcessingException e) {
             e.printStackTrace();

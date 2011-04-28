@@ -103,7 +103,6 @@ public class Authenticator {
         	logger.error("invalid authenticationUrl selection");
         }
         Credential credential = createCredentials(userName, password);
-        logger.info("JJJ authenting from"+authenticationURL);
         SAMLAssertion saml = autheticateUser(authenticationURL, credential);
         String dorianUrl = CagridPropertyLoader.getIdP_URL();
 

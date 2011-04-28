@@ -792,10 +792,8 @@ public class Utility {
      */
     public static String getHostingInstitutionName(ServiceURLInterface serviceUrlMetadata) {  
     	if(serviceUrlMetadata==null ) {
-    		logger.info("JJJ serviceURL NULL!");
     		return "errorNOSUCHNAME";
     	}
-		logger.info("JJJ serviceURL not null");
 
         String hostingCenter = serviceUrlMetadata.getHostingCenterShortName();
         //If short name is null
@@ -835,14 +833,12 @@ public class Utility {
     public static boolean hasAnySecureService(ICab2bQuery query) {
     	   	
         boolean anySecureSevice = false;
-        logger.info("JJJ called OLD hasAnySecureService");
         for (String url : query.getOutputUrls()) {
             if (url.trim().toLowerCase().startsWith("https://")) {
                 anySecureSevice = true;
                 break;
             }
         }
-        logger.info("JJJ OLD hasAnySecureService RETURNING"+anySecureSevice);
 
         return anySecureSevice;
     }

@@ -12,6 +12,53 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>caBench-To-Bedside</title>
+<%!
+public String filterSpecialChars(String value) {
+        if (value == null) { return "";
+        }
+
+        StringBuffer result = new StringBuffer(value.length());
+        for (int i=0; i<value.length(); ++i) {
+          switch (value.charAt(i)) {
+
+                case '<':
+                        result.append("&lt;");
+                        break;
+                case '>':
+                        result.append("&gt;");
+                        break;
+                case '"':
+                        result.append("&quot;");
+                        break;
+                case '\'':
+                        result.append("&#39;");
+                        break;
+                case '%':
+                        result.append("&#37;");
+                        break;
+                case ';':
+                        result.append("&#59;");
+                        break;
+                case '(':
+                        //result.append("&#40;");
+                        break;
+                case ')':
+                        //result.append("&#41;");
+                        break;
+                case '&':
+                        result.append("&amp;");
+                        break;
+                case '+':
+                        result.append("&#43;");
+                        break;
+                default:
+                        result.append(value.charAt(i)); break;
+          }
+        }
+        return result.toString();
+}
+%>
+
 
 <link href="css/cab2b.css" rel="stylesheet" type="text/css" />
 
@@ -97,11 +144,11 @@ function deselectSelectAll()
             List<ServiceURL> records = (List) session.getAttribute(AdminConstants.FILTERED_SERVICE_INSTANCES);
 			records = records==null? new ArrayList<ServiceURL>():records;
  			Integer pageNum = new Integer(0);
-            String searchString = request.getParameter("textbox");
+            String searchString = filterSpecialChars(request.getParameter("textbox"));
             String pageTitle = searchString==null?"Available Models":"Search for "+searchString;
 			searchString = searchString==null?"":searchString;
             String selection = "";
-             String serviceName = request.getParameter("serviceName");  
+             String serviceName = filterSpecialChars(request.getParameter("serviceName"));  
              String chkboxNames = "";
              String isDisable = records.size()==0?"disabled":"";
             
@@ -179,7 +226,7 @@ function deselectSelectAll()
                   <tr>
                     <td colspan="2"><table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
                         <tr>
-                          <td align="left" valign="middle" background="images/title_bg.gif" class="font_bl3_b" ><img src="images/c1.gif" width="12" height="24" align="absmiddle" />&nbsp;&nbsp;<%=request.getParameter("serviceName")%> (<%=records.size()%>)</td>
+                          <td align="left" valign="middle" background="images/title_bg.gif" class="font_bl3_b" ><img src="images/c1.gif" width="12" height="24" align="absmiddle" />&nbsp;&nbsp;<%=serviceName%> (<%=records.size()%>)</td>
                           <td align="right" valign="middle" background="images/title_bg.gif" >
                           <%                     if(records.size()>0)
                       {
@@ -261,14 +308,14 @@ function deselectSelectAll()
 					%>   
  <tr>
                   <td align="center" valign="top"></td>
-                  <td ><span class="font_blk_b"><%=request.getAttribute("serviceInstanceError")%>.</span>
+                  <td ><span class="font_blk_b"><%=filterSpecialChars(request.getAttribute("serviceInstanceError"))%>.</span>
                       </td>
                 </tr>
 <%} else   
     {%>
     	<tr>
                   <td align="center" valign="top"></td>
-                  <td ><span class="font_blk_b">No active service instances found for <%=request.getParameter("serviceName")%>.</span>
+                  <td ><span class="font_blk_b">No active service instances found for <%=serviceName%>.</span>
                       </td>
         </tr>
     
