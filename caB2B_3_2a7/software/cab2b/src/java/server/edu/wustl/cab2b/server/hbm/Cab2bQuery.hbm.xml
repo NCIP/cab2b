@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="false" default-lazy="false">
+	<joined-subclass name="edu.wustl.cab2b.common.queryengine.Cab2bQuery"
+		extends="edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery" table="CAB2B_QUERY" dynamic-update="false"
+		dynamic-insert="false">
+		<key column="IDENTIFIER" />
+
+		<list name="outputUrls" table="OUTPUT_CLASS_URLS" lazy="false" inverse="false" cascade="all-delete-orphan">
+			<cache usage="read-write" />
+			<key column="CAB2B_QUERY_ID" />
+			<index column="POSITION" type="int" />
+			<element column="OUTPUT_CLASS_URL" type="string" not-null="false" unique="false" />
+		</list>
+
+		<set name="serviceGroups" inverse="true" table="CAB2B_SERVICE_GROUP" cascade="all-delete-orphan">
+			<key>
+				<column name="QUERY_IDENTIFIER" not-null="true" />
+			</key>
+			<one-to-many class="edu.wustl.cab2b.common.queryengine.ServiceGroup" />
+		</set>
+      
+		<property name="entityId" type="long" update="true" insert="true" column="ENTITY_ID" length="30" not-null="true" />
+
+		<joined-subclass name="edu.wustl.cab2b.common.queryengine.CompoundQueryImpl" table="CAB2B_COMPOUND_QUERY"
+			dynamic-update="false" dynamic-insert="false">
+			<key column="IDENTIFIER" />
+
+			<set name="subQueries" table="CAB2B_QUERY" lazy="false" inverse="false" cascade="all-delete-orphan">
+				<key column="COMPOUND_QUERY_ID"/>
+				<one-to-many class="edu.wustl.cab2b.common.queryengine.Cab2bQuery"/>
+			</set>
+
+			<joined-subclass name="edu.wustl.cab2b.common.queryengine.MultiModelCategoryQueryImpl" table="CAB2B_MMC_QUERY"
+				dynamic-update="false" dynamic-insert="false">
+				<key column="IDENTIFIER" />
+			</joined-subclass>
+
+			<joined-subclass name="edu.wustl.cab2b.common.queryengine.KeywordQueryImpl" table="CAB2B_KEYWORD_QUERY"
+				dynamic-update="false" dynamic-insert="false">
+				<key column="IDENTIFIER" />
+
+				<many-to-one name="applicationGroup" class="edu.wustl.cab2b.common.modelgroup.ModelGroup"
+					column="APP_GROUP_ID" cascade="none" update="true" insert="true" not-null="false" />
+			</joined-subclass>
+		</joined-subclass>
+	</joined-subclass>
+</hibernate-mapping>
