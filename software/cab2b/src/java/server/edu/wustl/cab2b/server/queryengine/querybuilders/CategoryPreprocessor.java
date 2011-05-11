@@ -71,14 +71,20 @@ public class CategoryPreprocessor {
 
         for (IExpression expr : getConstraints()) {
             if (!Utility.isCategory(expr.getQueryEntity().getDynamicExtensionsEntity())) {
+            	logger.info("JJJ not a category"+expr.getId()+"queryentity="+expr.getQueryEntity().toString());
                 continue;
             }
+        	logger.info("JJJ *IS* a category id="+expr.getId());
+
             processCategoryExpression(expr);
             this.catExprs.add(expr);
         }
         removeCategoryExpressions();
         // check there is a single root.
         try {
+        	for(IExpression exp:getConstraints().getJoinGraph().getAllRoots()){
+        		logger.info("JJJ ROOT: id="+exp.getId()+"exp.id="+exp.getExpressionId()+"queryent="+exp.getQueryEntity());
+        	}
             getConstraints().getRootExpression();
         } catch (MultipleRootsException e) {
             throw new RuntimeException("Problem in code...", e);

@@ -22,6 +22,7 @@ import org.xml.sax.SAXException;
 
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.exception.CheckedException;
+import edu.wustl.common.util.logger.Logger;
 
 /**
  * This class is used for parsing the XML file and put the parsed elements to HashMaps 
@@ -47,6 +48,8 @@ public class ParseXMLFile {
     private Map<String, ArrayList<String>> enumDataTypeToConditionMap = new HashMap<String, ArrayList<String>>();
 
     private Map<String, String> enumDataTypeToComponentMap = new HashMap<String, String>();
+
+	private static final org.apache.log4j.Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ParseXMLFile.class);
 
     /**
      * Constructor for parsing the XML file. 
@@ -143,13 +146,17 @@ public class ParseXMLFile {
                             NodeList nodeConditions = node.getChildNodes();
                             for (int conditionCnt = 0; conditionCnt < nodeConditions.getLength(); conditionCnt++) {
                                 Node conditionNode = nodeConditions.item(conditionCnt);
+                                logger.info("JJJ NODEINFO for cc="+conditionCnt+" nodeName="+conditionNode.getNodeName()+" added"+getElementValue(conditionNode));
+
                                 if (conditionNode.getNodeType() == Node.ELEMENT_NODE) {
                                     NodeList displayNodes = conditionNode.getChildNodes();
                                     for (int j = 0; j < displayNodes.getLength(); j++) {
+                                        logger.info("JJJ CHILDREN for cc="+j+" nodeName="+displayNodes.item(j).getNodeName()+" added"+getElementValue(displayNodes.item(j)));
+
                                         if (displayNodes.item(j).getNodeType() == Node.ELEMENT_NODE) {
                                             conditionList.add(getElementValue(displayNodes.item(j)));
                                             break;
-                                        }
+                                        }                                  
                                     }
                                 }
                             }

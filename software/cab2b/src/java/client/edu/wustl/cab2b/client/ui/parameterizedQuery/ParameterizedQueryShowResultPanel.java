@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -192,6 +193,8 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
                                                                                                       maxLabelDimension);
                 componentPanel.createPanelWithOperator(condition);
                 componentPanel.setExpressionId(getExpressionIdForCondition(condition, conditionMap));
+                logger.info("JJJ anpc setting expressionID"+getExpressionIdForCondition(condition, conditionMap)+" for condition="+condition.getValue());
+
                 CommonUtils.disableAllComponent(componentPanel);
                 bottomConditionPanel.add("br ", componentPanel);
             }
@@ -224,6 +227,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
                 //Changes made by Deepak 
                 //For fixing bug 11056
                 componentPanel.setAttributeDisplayName(parameter.getName());
+                logger.info("JJJ apc setting expressionID"+getExpressionIdForCondition(condition, conditionMap)+" for condition="+condition.getValue());
                 componentPanel.setExpressionId(getExpressionIdForCondition(condition, conditionMap));
 
                 topConditionPanel.add("br ", componentPanel);
@@ -233,6 +237,14 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
         }
     }
 
+    
+    public static
+    <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
+      List<T> list = new ArrayList<T>(c);
+      java.util.Collections.sort(list);
+      return list;
+    }
+    
     /**
      * Method to experssion ID for conditions
      * 
@@ -241,10 +253,16 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
      * @return
      */
     private int getExpressionIdForCondition(ICondition condition, Map<Integer, Collection<ICondition>> conditionMap) {
-        int expressionId = 1;
-        for (Integer key : conditionMap.keySet()) {
+ 
+    	int expressionId = 1;
+        for (Integer key : asSortedList(conditionMap.keySet())) { //JJJ
+
             Collection<ICondition> conditions = conditionMap.get(key);
+        	logger.info("JJJ "+key+" getExpressIdForCondition condition"+condition.getValue());
+
             if (conditions.contains(condition)) {
+            	logger.info("JJJ "+key+" contains condition");
+
                 expressionId = key;
                 break;
             }

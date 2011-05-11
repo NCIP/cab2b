@@ -7,9 +7,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
+
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
+import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.IExpressionOperand;
@@ -24,6 +27,9 @@ import edu.wustl.common.util.ObjectCloner;
  *
  */
 public class ParameterizedQueryDataModel {
+
+    private static final Logger logger =
+    edu.wustl.common.util.logger.Logger.getLogger(ParameterizedQueryDataModel.class);
 
     /**
      * Cab2b Parameterized Query
@@ -218,10 +224,19 @@ public class ParameterizedQueryDataModel {
                 while (iterator.hasNext()) {
                     ICondition condition = iterator.next();
                     if (condition.getAttribute() == newCondition.getAttribute()) {
+                    	logger.info("JJJ adding condition="+newCondition.getAttribute()+ "and then breaking");
                         iterator.remove();
                         rule.addCondition(newCondition);
                         isConditionAdded = true;
                         break ALL;
+                    }
+                }
+                
+                Iterator<ICondition> iterator2 = rule.iterator();
+                while (iterator2.hasNext()) {
+                    ICondition condition = iterator2.next();
+                    if (condition.getAttribute() == newCondition.getAttribute()) {
+                    	logger.info("JJJ CHECKING without breaking condition="+newCondition.getAttribute());
                     }
                 }
                 if (!isConditionAdded) {

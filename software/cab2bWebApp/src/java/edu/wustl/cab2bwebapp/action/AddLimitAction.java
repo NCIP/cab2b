@@ -6,6 +6,7 @@ package edu.wustl.cab2bwebapp.action;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ import edu.wustl.cab2bwebapp.bizlogic.AddLimitHTMLGeneratorBizLogic;
 import edu.wustl.cab2bwebapp.bizlogic.SavedQueryBizLogic;
 import edu.wustl.cab2bwebapp.constants.Constants;
 import edu.wustl.common.querysuite.queryobject.ICondition;
+import edu.wustl.common.querysuite.queryobject.IParameter;
 import edu.wustl.common.querysuite.utils.QueryUtility;
 
 /**
@@ -51,6 +53,7 @@ public class AddLimitAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
         String actionForward = null;
+        logger.info("JJJ addlimitaction.java");
         HttpSession session = request.getSession();
 
         session.removeAttribute(Constants.SEARCH_RESULTS);
@@ -74,14 +77,30 @@ public class AddLimitAction extends Action {
             SavedQueryBizLogic savedQueryProvider =
                     (SavedQueryBizLogic) request.getSession().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
             if (request.getParameterValues(Constants.MODEL_GROUPS) != null) {
+
                 actionForward = Constants.FORWARD_ADD_LIMIT;
                 ActionForward forward = mapping.findForward(actionForward);
+                logger.info("JJJ addlimitaction.java FORWARD:"+forward.getName()+":"+forward.getPath());
+
                 return new ActionForward(forward.getName(), forward.getPath(), false);
             } else {
+
                 Long queryId = Long.parseLong(request.getParameter(Constants.QUERY_ID));
                 ICab2bQuery query = savedQueryProvider.getQueryById(queryId);
+                
+                List<IParameter<?>> parameters = query.getParameters();
+                for (IParameter<?> parameter : parameters) {
+                	logger.info("JJJ "+parameter.getName());
+                    if (parameter.getParameterizedObject() instanceof ICondition) {
+                    	logger.info("JJJ "+parameter.getName()+":"+((ICondition)parameter.getParameterizedObject()));
+                    }
+                }
+                
+                
                 Collection<ICondition> nonPara = QueryUtility.getAllNonParameteriedConditions(query);
                 Collection<ICondition> paraCond = QueryUtility.getAllParameterizedConditions(query);
+                logger.info("JJJ addlimitaction:"+nonPara+":parmConds:"+paraCond);
+
                 response.setContentType("text/html");
                 PrintWriter writer = response.getWriter();
                 String html =

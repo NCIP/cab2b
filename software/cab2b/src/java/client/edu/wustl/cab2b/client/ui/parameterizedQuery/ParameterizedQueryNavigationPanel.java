@@ -144,12 +144,21 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                     int conditionStatus = panel.isConditionValidBeforeSaving(parameterizedQueryMainPanel);
                     if (conditionStatus == 0) {
                         validCondition = true;
-                        parameterizedQueryDataModel.addCondition(panel.getExpressionId(), panel
+                        if(panel.getExpressionId() == -1 ){
+                        	System.err.println("JJJ EXPRESSIONID=-1");
+                        } else {
+                        	parameterizedQueryDataModel.addCondition(panel.getExpressionId(), panel
                             .getCondition(index, ParameterizedQueryNavigationPanel.this, panel
                                 .getAttributeDisplayName()));
+                        }
                     } else if (conditionStatus == 1) {
-                        parameterizedQueryDataModel.removeCondition(panel.getExpressionId(), panel
+                        if(panel.getExpressionId() == -1 ){
+                        	System.err.println("JJJ EXPRESSIONID=-1");
+                        } else {
+
+                        	parameterizedQueryDataModel.removeCondition(panel.getExpressionId(), panel
                             .getCondition(index, ParameterizedQueryNavigationPanel.this, ""));
+                        }
                     } else {
                         return;
                     }

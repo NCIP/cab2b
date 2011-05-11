@@ -474,6 +474,8 @@ public class CommonUtils {
         Dimension maxLabelDimension = new Dimension(0, 0);
         for (AttributeInterface attribute : attributeList) {
             String formattedString = attribute.getName();
+        	logger.info("JJJ getMaxLabelDim attribute="+attribute.getId()+":"+attribute.getPublicId()+":="+attribute.getName());
+
             if (!Utility.isCategory(attribute.getEntity())) {
                 formattedString = Utility.getFormattedString(formattedString);
             }

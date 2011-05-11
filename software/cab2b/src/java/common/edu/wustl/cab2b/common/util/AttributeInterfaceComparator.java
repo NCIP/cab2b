@@ -10,6 +10,8 @@ import edu.common.dynamicextensions.domaininterface.AttributeInterface;
  * @author chetan_patil
  */
 public class AttributeInterfaceComparator implements Comparator<AttributeInterface> {
+	private static final org.apache.log4j.Logger logger = edu.wustl.common.util.logger.Logger.getLogger(AttributeInterfaceComparator.class);
+
 
 	/**
 	 * This method compares the given attributes by name
@@ -21,6 +23,7 @@ public class AttributeInterfaceComparator implements Comparator<AttributeInterfa
 	 *          1 if name of first attribute is greater
 	 */
 	public int compare(AttributeInterface attribute1, AttributeInterface attribute2) {
+		logger.info("JJJ comparing attributes"+attribute1.getId()+attribute1.getName()+" to "+attribute2.getId()+attribute2.getName());
 		return (attribute1.getName().compareToIgnoreCase(attribute2.getName()));
 	}
 
