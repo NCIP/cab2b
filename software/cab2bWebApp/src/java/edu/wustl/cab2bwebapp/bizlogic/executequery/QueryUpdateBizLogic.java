@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.log4j.Logger;
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
@@ -25,7 +24,6 @@ import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 import edu.wustl.common.querysuite.queryobject.impl.ParameterizedQuery;
 import edu.wustl.common.util.Collections;
 import edu.wustl.common.util.global.ApplicationProperties;
-import edu.wustl.common.util.global.Constants;
 import edu.wustl.common.util.global.Validator;
 
 /**
@@ -287,34 +285,6 @@ public class QueryUpdateBizLogic {
         }
         return errorMessages;
     }
-    
-    private boolean checkDate(String checkDate)
-    {
-		logger.info("JJJ in is ValidDatePattern : " + checkDate); 
-
-		String    		S  = "/" ; 
-
-    	System.out.println("separator : " +S );
-
-    	boolean result = true;
-    	try
-		{
-    		System.out.println("checkDate in isValidDatePattern : " +checkDate);
-    		//Pattern re = Pattern.compile("[0-9]{2}-[0-9]{2}-[0-9]{4}", Pattern.CASE_INSENSITIVE);
-    		Pattern re = Pattern.compile("[0-9]{4}"+S+"[0-9]{2}"+S+"[0-9]{2}", Pattern.CASE_INSENSITIVE);
-
-    		Matcher  mat =re.matcher(checkDate); 
-    		result = mat.matches();
-    		System.out.println("is Valid Date Pattern : - : "+result);
-		}
-    	catch(Exception exp)
-		{
-			logger.error("IsValidDatePattern : exp : " + exp);
-    		return false;
-		}
-    	System.out.println("JJJ returning:"+result);
-    	return result;
-    }
 
     /**
      * @param errorMessages
@@ -372,4 +342,32 @@ public class QueryUpdateBizLogic {
         }
         return errorMessages;
     }
+
+    private boolean checkDate(String checkDate)
+    {
+
+	String    		S  = "/" ; 
+
+    	System.out.println("separator : " +S );
+
+    	boolean result = true;
+    	try
+		{
+    		System.out.println("checkDate in isValidDatePattern : " +checkDate);
+    		//Pattern re = Pattern.compile("[0-9]{2}-[0-9]{2}-[0-9]{4}", Pattern.CASE_INSENSITIVE);
+    		Pattern re = Pattern.compile("[0-9]{4}"+S+"[0-9]{2}"+S+"[0-9]{2}", Pattern.CASE_INSENSITIVE);
+
+    		Matcher  mat =re.matcher(checkDate); 
+    		result = mat.matches();
+    		System.out.println("is Valid Date Pattern : - : "+result);
+		}
+    	catch(Exception exp)
+		{
+			logger.error("IsValidDatePattern : exp : " + exp);
+    		return false;
+		}
+    	System.out.println("JJJ checkDate returning:"+result);
+    	return result;
+    }
+
 }

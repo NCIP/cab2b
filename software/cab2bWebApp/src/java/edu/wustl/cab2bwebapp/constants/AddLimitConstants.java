@@ -36,7 +36,8 @@ public interface AddLimitConstants {
     public static final String NOT_BETWEEN = "Not Between";
 
     /** Constant for DATE_FORMAT */
-    public static final String DATE_FORMAT = "MM-dd-yyyy";
+    public static final String DATE_FORMAT = "yyyy/mm/dd";
+//    public static final String DATE_FORMAT = "MM-dd-yyyy";
 
     /** Constant for FILE_TYPE */
     public static final String FILE_TYPE = "file";

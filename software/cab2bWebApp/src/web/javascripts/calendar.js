@@ -318,12 +318,12 @@
     // Displayed "Today" date format
 
     //var scwDateDisplayFormat = 'dd-mm-yy';     // e.g. 'MMM-DD-YYYY' for the US
-    var scwDateDisplayFormat = 'MM-DD-YYYY';     // e.g. 'MMM-DD-YYYY' for the US
+    var scwDateDisplayFormat = 'YYYY/MM/DD';     // e.g. 'MMM-DD-YYYY' for the US
 
     // Output date format
 
     //var scwDateOutputFormat  = 'DD MMM, YYYY'; // e.g. 'MMM-DD-YYYY' for the US
-    var scwDateOutputFormat  = 'MM-DD-YYYY'; // e.g. 'MMM-DD-YYYY' for the US
+    var scwDateOutputFormat  = 'YYYY/MM/DD'; // e.g. 'MMM-DD-YYYY' for the US
 
     // Note: The delimiters used should be in scwArrDelimiters.
 

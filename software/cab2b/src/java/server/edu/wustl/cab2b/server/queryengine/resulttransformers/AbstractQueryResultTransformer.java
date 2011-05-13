@@ -233,8 +233,8 @@ public abstract class AbstractQueryResultTransformer<R extends IRecord, C extend
         try {
             QueryExecutionParameters queryParameter = new QueryExecutionParameters();
             
-            logger.info("JJJ setting alwaysAuthenticate true");
-            queryParameter.setAlwaysAuthenticate(true);
+            //logger.info("JJJ setting alwaysAuthenticate true");
+            //queryParameter.setAlwaysAuthenticate(true);
             
             TargetDataServiceQueryBehavior targetBehaviour = new TargetDataServiceQueryBehavior();
             targetBehaviour.setFailOnFirstError(false);
