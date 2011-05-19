@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.apache.log4j.Logger;
-
 import edu.common.dynamicextensions.domain.DateAttributeTypeInformation;
 import edu.common.dynamicextensions.domain.PermissibleValue;
 import edu.common.dynamicextensions.domain.UserDefinedDE;
@@ -48,9 +46,6 @@ import edu.wustl.common.util.Utility;
  * @author chetan_pundhir
  */
 public class AddLimitHTMLGeneratorBizLogic {
-	
-    private static final Logger logger = edu.wustl.common.util.logger.Logger.getLogger(AddLimitHTMLGeneratorBizLogic.class);
-
 
     /**
      * Resource bundle for text resources on dynamic UI.
@@ -65,8 +60,6 @@ public class AddLimitHTMLGeneratorBizLogic {
     private int expressionId = -1;
 
     private String attributesList = "";
-    Map<ICondition, Boolean> conditionIsUsedMap = new HashMap<ICondition, Boolean>();
-
 
     /**
      * Parameterized Constructor
@@ -91,8 +84,6 @@ public class AddLimitHTMLGeneratorBizLogic {
      * @return
      */
     public String getHTMLForSavedQuery(IQuery queryObject) {
-        logger.info("JJJ getHTMLForSavedQuery");
-
         List<IParameter<?>> parameterList = null;
         if (queryObject instanceof IParameterizedQuery) {
             IParameterizedQuery pQuery = (IParameterizedQuery) queryObject;
@@ -106,19 +97,13 @@ public class AddLimitHTMLGeneratorBizLogic {
                 for (int index = 0; index < expression.numberOfOperands(); index++) {
                     IExpressionOperand operand = expression.getOperand(index);
                     if (operand instanceof IRule) {
-
                         IRule rule = (IRule) operand;
 
                         List<ICondition> conditions = edu.wustl.common.util.Collections.list(rule);
                         EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
-                        logger.info("JJJ getHTMLForSavedQuery IS instance of"+operand+"entity="+entity);
-
 
                         EntityConditions entityConditions = new EntityConditions(entity, conditions);
                         expIdEntityConditionsMap.put(expression.getExpressionId(), entityConditions);
-                    } else {
-                        logger.info("JJJ getHTMLForSavedQuery NOT instance of"+operand);
-
                     }
                 }
             }
@@ -251,21 +236,8 @@ public class AddLimitHTMLGeneratorBizLogic {
                 if (parameter.getParameterizedObject() instanceof ICondition) {
                     ICondition paramCondition = (ICondition) parameter.getParameterizedObject();
                     if (paramCondition.getId() == condition.getId()) {
-                  		if(conditionIsUsedMap.get(condition) == null){
-                			logger.info("JJJ FIRST USE parameter="+parameter+" cond="+condition.getValues().toString());
-                			conditionIsUsedMap.put(condition, true);
-
-                			parameterized = parameter;
-                			logger.info("JJJ getParamForCond"+parameterized);
-
-                			break;
-                  		} else {
-                			logger.info("JJJ 2nd parameter="+parameter+" cond="+condition.getValues().toString());
-
-                			parameterized = parameter;
-                			logger.info("JJJ getParamForCond"+parameterized);
-
-                  		}
+                        parameterized = parameter;
+                        break;
                     }
                 }
             }
@@ -315,7 +287,6 @@ public class AddLimitHTMLGeneratorBizLogic {
         List<PermissibleValueInterface> permissibleValues = getPermissibleValuesList(attribute);
         if (attributeNameConditionMap.containsKey(attribute.getName())) {
             ICondition condition = attributeNameConditionMap.get(attribute.getName());
-            logger.info("JJJ getting attribute by name *****"+attribute.getName()+"cond="+condition);
 
             IParameter<?> parameter = getParameterForCondition(condition, parameterList);
             if (parameter != null) {

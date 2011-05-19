@@ -11,7 +11,6 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -56,13 +55,6 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
     private Cab2bComboBox filterComboBox;
 
     private Dimension maxLabelDimension;
-    
-    Map<ICondition, Boolean> conditionIsUsedMap = new HashMap<ICondition, Boolean>();
-    Map<ICondition, ArrayList<String>> conditionIsUsedMapTmp = new HashMap<ICondition, ArrayList<String>>();
-
-
-
-	private static final org.apache.log4j.Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ParameterizedQueryConditionPanel.class);
 
     /* Used as buffer to remember the sequence of the conditions on preview panel */
     private final List<AbstractTypePanel> panelIndexList = new ArrayList<AbstractTypePanel>();
@@ -86,13 +78,9 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
      * @return Dimension maxLabelDimension
      */
     private Dimension getMaximumDimensionForAttribute() {
-    	logger.info("JJJ getMaxDimForAttribute");
-
         Map<Integer, Collection<AttributeInterface>> allAttributes = queryDataModel.getAllAttributes();
         List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
-        for (Integer exprId : asSortedList(allAttributes.keySet())) { //JJJ
-        	logger.info("JJJ adding"+exprId);
-
+        for (Integer exprId : allAttributes.keySet()) {
             Collection<AttributeInterface> attributeCollection = allAttributes.get(exprId);
             attributeList.addAll(attributeCollection);
         }
@@ -128,9 +116,6 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
     private void showAllAttributePanel() {
         /* Initially create separate panel for each attributes check/update that attribute
         values with show only condition panels */
-    	
-    	logger.info("JJJ showAllAtributePanel");
-
         if (allAttributePanel == null) {
             allAttributePanel = new Cab2bPanel();
         }
@@ -141,14 +126,14 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
             TreeMap<Integer, AbstractTypePanel> panelMap = getAllConditionAttributePanels(definedAttributePanel);
 
             // first add only checked panels
-            for (Integer index : asSortedList(panelMap.keySet())) { //JJJ
+            for (Integer index : panelMap.keySet()) {
                 if (panelMap.get(index).isAttributeCheckBoxSelected()) {
                     allAttributePanel.add("br ", panelMap.get(index));
                 }
             }
 
             // now add unchecked condition panels
-            for (Integer index : asSortedList(panelMap.keySet())) { //JJJ
+            for (Integer index : panelMap.keySet()) {
                 if (!panelMap.get(index).isAttributeCheckBoxSelected()) {
                     allAttributePanel.add("br ", panelMap.get(index));
                 }
@@ -159,7 +144,7 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
         try {
             ParseXMLFile parseFile = ParseXMLFile.getInstance();
             List<AttributeInterface> allConditionAttributeList = getAllConditionAttribute(allAttributePanel);
-            for (Integer exprId : asSortedList(allAttributes.keySet())) { //JJJ
+            for (Integer exprId : allAttributes.keySet()) {
                 for (AttributeInterface attribute : allAttributes.get(exprId)) {
                     if (!allConditionAttributeList.contains(attribute)) {
                         AbstractTypePanel componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
@@ -168,7 +153,6 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
                                                                                                               maxLabelDimension);
                         componentPanel.createParametrizedPanel(attribute);
                         setConditionValues(componentPanel);
-                        logger.info("JJJ show all setting expressionID"+exprId);
                         componentPanel.setExpressionId(exprId);
                         componentPanel.setAttributeDisplayName(exprId.intValue() + "."
                                 + componentPanel.getAttributeDisplayName());
@@ -184,15 +168,6 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
         contentPanel.add("br ", allAttributePanel);
     }
 
-    
-    public static
-    <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
-      List<T> list = new ArrayList<T>(c);
-      java.util.Collections.sort(list);
-      return list;
-    }
-
-    
     /**
      * This Method checks whether the given attribute is associated with any
      * condition and sets the condition values.
@@ -201,41 +176,14 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
      * @return
      */
     private void setConditionValues(AbstractTypePanel componentPanel) {
-		logger.info("JJJ setConditionValues values="+componentPanel.getValues().toString());
         AttributeInterface attribute = componentPanel.getAttributeEntity();
-
         Map<Integer, Collection<ICondition>> conditionMap = queryDataModel.getConditions();
-       
-        
-        
-        for(Integer key : asSortedList(conditionMap.keySet())){
-
-               	
+        for (Integer key : conditionMap.keySet()) {
             for (ICondition condition : conditionMap.get(key)) {
-        		logger.info("JJJ key="+key+" about to compare attributes"+attribute.getId()+attribute.getName()+" to "+condition.getAttribute().getId()+condition.getAttribute().getName());
-
-        		
                 if (condition.getAttribute() == attribute) {
-              		if(conditionIsUsedMap.get(condition) == null){
-            			logger.info("JJJ FIRST USE key="+key+" cond="+condition.getValues().toString());
-            			conditionIsUsedMap.put(condition, true);
-//            			conditionIsUsedMapTmp.put(condition, new ArrayList<String>(condition.getValues()));
-                        componentPanel.setCondition(condition.getRelationalOperator().getStringRepresentation());
-                        logger.info("JJJ apc setting expressionID"+key);
-                        componentPanel.setExpressionId(key);
-
-
-            		} else {
-            			logger.info("JJJ SECOND USE key="+key+" cond="+condition.getValues().toString());
-//                        //componentPanel.setValues(new ArrayList<String>(condition.getValues()));
-//                        componentPanel.setValues(conditionIsUsedMapTmp.get(condition));
-//
-//                        componentPanel.setCondition(condition.getRelationalOperator().getStringRepresentation());
-                        componentPanel.setExpressionId(-1);
-            			
-
-            		}
-              		
+                    componentPanel.setValues(new ArrayList<String>(condition.getValues()));
+                    componentPanel.setCondition(condition.getRelationalOperator().getStringRepresentation());
+                    componentPanel.setExpressionId(key);
                 }
             }
         }
@@ -267,8 +215,6 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
      * Method to generate panels for specified conditions defined in dag node
      */
     private void showOnlyConditionPanel() {
-    	logger.info("JJJ showOnlyAttributePanel");
-
         if (definedAttributePanel == null) {
             definedAttributePanel = new Cab2bPanel();
         }
@@ -278,23 +224,23 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
         if (allAttributePanel != null) {
             // Add checked/unchecked conditions from the show all panel
             TreeMap<Integer, AbstractTypePanel> panelMap = getAllConditionAttributePanels(allAttributePanel);
-            for (Integer index : asSortedList(panelMap.keySet())) {
+            for (Integer index : panelMap.keySet()) {
                 definedAttributePanel.add("br ", panelMap.get(index));
             }
         }
 
         Map<Integer, Collection<ICondition>> conditionMap = queryDataModel.getConditions();
-//        /*List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
-//        for (Integer key : conditionMap.keySet()) {
-//        	for (ICondition condition : conditionMap.get(key)) {
-//        		attributeList.add(condition.getAttribute());
-//        	}
-//        }*/
+        /*List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
+        for (Integer key : conditionMap.keySet()) {
+        	for (ICondition condition : conditionMap.get(key)) {
+        		attributeList.add(condition.getAttribute());
+        	}
+        }*/
         try {
             ParseXMLFile parseFile = ParseXMLFile.getInstance();
             AbstractTypePanel componentPanel = null;
             List<AttributeInterface> allConditionAttributeList = getAllConditionAttribute(definedAttributePanel);
-            for (Integer key : asSortedList(conditionMap.keySet())) {
+            for (Integer key : conditionMap.keySet()) {
                 for (ICondition condition : conditionMap.get(key)) {
                     if (!allConditionAttributeList.contains(condition.getAttribute())) {
                         componentPanel = (AbstractTypePanel) SwingUIManager.generateUIPanel(
@@ -316,10 +262,9 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
     }
 
     private List<AttributeInterface> getAllConditionAttribute(Container basePanel) {
-    	logger.info("JJJ getAllConditionAttribute");
         Map<Integer, AbstractTypePanel> allConditionPanel = getAllConditionAttributePanels(basePanel);
         List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
-        for (Integer index : asSortedList(allConditionPanel.keySet())) { //JJJ
+        for (Integer index : allConditionPanel.keySet()) {
             attributeList.add(allConditionPanel.get(index).getAttributeEntity());
         }
         return attributeList;

@@ -21,7 +21,6 @@ import edu.wustl.cab2b.client.ui.mainframe.MainFrame;
 import edu.wustl.cab2b.client.ui.mainframe.NewWelcomePanel;
 import edu.wustl.cab2b.client.ui.util.CommonUtils;
 import edu.wustl.cab2b.client.ui.util.WindowUtilities;
-import edu.wustl.cab2b.common.util.AttributeInterfaceComparator;
 import edu.wustl.common.querysuite.queryobject.ICondition;
 
 /**
@@ -80,11 +79,6 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
      * @return Cab2bPanel ParameterizedQueryNavigationPanel
      */
     protected abstract Cab2bPanel getNavigationPanel();
-    
-	private static final org.apache.log4j.Logger logger = edu.wustl.common.util.logger.Logger.getLogger(ParameterizedQueryPreviewPanel.class);
-
-    Map<ICondition, Boolean> conditionIsUsedMap = new HashMap<ICondition, Boolean>();
-
 
     /**
      * Method to display paramaterizedQueryPreviewPanel in dialog box.
@@ -128,14 +122,6 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
         }
     }
 
-    
-    public static
-    <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
-      List<T> list = new ArrayList<T>(c);
-      java.util.Collections.sort(list);
-      return list;
-    }
-    
     /**
      * Returns max label of the attribute from condition collection map
      * @param conditionMap
@@ -143,7 +129,7 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
      */
     protected Dimension findMaxLabelDimension(Map<Integer, Collection<ICondition>> conditionMap) {
         List<AttributeInterface> attributeList = new ArrayList<AttributeInterface>();
-        for (Integer key : asSortedList(conditionMap.keySet())) {
+        for (Integer key : conditionMap.keySet()) {
             for (ICondition condition : conditionMap.get(key)) {
                 attributeList.add(condition.getAttribute());
             }
@@ -191,39 +177,12 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
     protected void setConditionValues(AbstractTypePanel componentPanel,
                                       Map<Integer, Collection<ICondition>> conditionMap) {
         AttributeInterface attribute = componentPanel.getAttributeEntity();
-        
-        
-     /*   for (Integer key : conditionMap.keySet()) {
+        for (Integer key : conditionMap.keySet()) {
             for (ICondition condition : conditionMap.get(key)) {
-            	conditionIsUsedMap.put(key,false );
-            }
-        }*/
-        
-        
-        for (Integer key : asSortedList(conditionMap.keySet())) {
-            for (ICondition condition : conditionMap.get(key)) {
-        		logger.info("JJJ about to compare attributes"+attribute.getId()+attribute.getName()+" to "+condition.getAttribute().getId()+condition.getAttribute().getName());
                 if (condition.getAttribute() == attribute) {
-            		if(attribute.getEntity().hashCode() ==  condition.getAttribute().getEntity().hashCode()){
-            			logger.info("JJJ ALSO Hash code is equal");
-            		} else {
-            			logger.info("JJJ BUT Hash code is NOT equal");
-            		}
-            		
-            		if(conditionIsUsedMap.get(condition) ==null){
-            			logger.info("JJJ FIRST USE skipped"+condition.getValues().toString());
-            			componentPanel.setValues(new ArrayList<String>(condition.getValues()));
-            			componentPanel.setCondition(condition.getRelationalOperator().getStringRepresentation());
-            			componentPanel.setExpressionId(key);
-
-            			conditionIsUsedMap.put(condition, true);
-            		} else {
-            			logger.info("JJJ SECOND USE "+condition.getValues().toString());
-                        componentPanel.setExpressionId(-1);
-
-
-
-            		}
+                    componentPanel.setValues(new ArrayList<String>(condition.getValues()));
+                    componentPanel.setCondition(condition.getRelationalOperator().getStringRepresentation());
+                    componentPanel.setExpressionId(key);
                 }
             }
         }

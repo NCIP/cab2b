@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
-
 import edu.common.dynamicextensions.domaininterface.AttributeInterface;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
 import edu.wustl.cab2b.common.queryengine.ICab2bQuery;
@@ -26,9 +24,6 @@ import edu.wustl.common.util.ObjectCloner;
  *
  */
 public class ParameterizedQueryDataModel {
-
-    private static final Logger logger =
-    edu.wustl.common.util.logger.Logger.getLogger(ParameterizedQueryDataModel.class);
 
     /**
      * Cab2b Parameterized Query
@@ -222,43 +217,19 @@ public class ParameterizedQueryDataModel {
                 Iterator<ICondition> iterator = rule.iterator();
                 while (iterator.hasNext()) {
                     ICondition condition = iterator.next();
-                    if (condition.getAttribute() == newCondition.getAttribute() ) {
-                    	logger.info("JJJ adding condition=" +newCondition+"attr="+newCondition.getAttribute()+ "and then breaking");
+                    if (condition.getAttribute() == newCondition.getAttribute()) {
                         iterator.remove();
                         rule.addCondition(newCondition);
                         isConditionAdded = true;
                         break ALL;
                     }
                 }
-                
                 if (!isConditionAdded) {
-                	logger.info("JJJ AT END adding condition=" +newCondition+"attr="+newCondition.getAttribute()+ "and then breaking");
-
                     rule.addCondition(newCondition);
                     break;
                 }
             }
         }
-        
-       for (int i = 0; i < noOfOperand; i++) {
-            IExpressionOperand expressionOperand = expression.getOperand(i);
-            if (expressionOperand instanceof IRule) {
-
-                IRule rule = (IRule) expressionOperand;
-                Iterator<ICondition> iterator2 = rule.iterator();
-                while (iterator2.hasNext()) {
-                    ICondition condition = iterator2.next();
-                    if (condition.getAttribute() == newCondition.getAttribute()) {
-                    	logger.info("JJJ CHECKING without breaking condition="+newCondition+"attr="+newCondition.getAttribute());
-                    } else {
-                    	logger.info("JJJ CHECKING (NOT EQUAL) without breaking condition="+newCondition+"attr="+newCondition.getAttribute());
-
-                    }
-                }
-            }
-        }
-                
-        
     }
 
     /**

@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -32,13 +31,6 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
 
     private ParameterizedQueryMainPanel parameterizedQueryMainPanel;
 
-    public static
-    <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
-      List<T> list = new ArrayList<T>(c);
-      java.util.Collections.sort(list);
-      return list;
-    }
-    
     public ParameterizedQueryOrderPanel(final ParameterizedQueryMainPanel parameterizedQueryMainPanel) {
         super();
         this.parameterizedQueryMainPanel = parameterizedQueryMainPanel;
@@ -141,7 +133,7 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
     private class UpArrowActionListener implements ActionListener {
         public void actionPerformed(ActionEvent arg0) {
             Map<Integer, AbstractTypePanel> panelMap = getAllSelectedPanel();
-            for (Integer index : asSortedList(panelMap.keySet())) {
+            for (Integer index : panelMap.keySet()) {
                 if (index != 0) {
                     AbstractTypePanel downPanel = (AbstractTypePanel) topConditionPanel.getComponent(index);
                     topConditionPanel.remove(downPanel);
@@ -214,7 +206,7 @@ public class ParameterizedQueryOrderPanel extends ParameterizedQueryPreviewPanel
         public void actionPerformed(ActionEvent arg0) {
             Map<Integer, AbstractTypePanel> panelMap = getAllSelectedPanel();
 
-            Integer idxs[] = asSortedList(panelMap.keySet()).toArray(new Integer[0]);
+            Integer idxs[] = panelMap.keySet().toArray(new Integer[0]);
             int count = topConditionPanel.getComponentCount();
             for (int i = idxs.length - 1; i >= 0; i--) {
                 if (idxs[i] < count - 1) {
