@@ -54,7 +54,9 @@ public class IndexServiceOperations {
                     logger.info("Database has been refreshed and is in Sync with Index Service");
                 }
             };
-            timer.scheduleAtFixedRate(timerTask, 0, 3600000 * 12);
+//            timer.scheduleAtFixedRate(timerTask, 0, 3600000 * 12);
+            timer.scheduleAtFixedRate(timerTask, 3600000 * 12, 3600000 * 12);
+
         }
     }
 

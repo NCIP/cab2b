@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import edu.common.dynamicextensions.domaininterface.EntityInterface;
 import edu.wustl.cab2b.common.util.TreeNode;
 import edu.wustl.common.querysuite.metadata.category.CategorialClass;
@@ -51,6 +53,7 @@ public class CategoryPreprocessorResult {
 
     // this would be needed when pivoting catResults...
     private List<CategorialClass> originallyRootCatClasses;
+    private static final Logger logger = Logger.getLogger(CategoryPreprocessorResult.class);
 
     /**
      * key = entity<br>
@@ -87,12 +90,17 @@ public class CategoryPreprocessorResult {
      */
     public void addExprSourcedFromCategory(EntityInterface catEntity,
                                            TreeNode<IExpression> exprNode) {
+    	logger.info("JJJ addExprSourcedFromCat catEntity="+catEntity+" node="+exprNode+" expr.value="+exprNode.getValue());
         Set<TreeNode<IExpression>> value = getExprsSourcedFromCategories().get(
                                                                                catEntity);
         if (value == null) {
             value = new HashSet<TreeNode<IExpression>>();
             getExprsSourcedFromCategories().put(catEntity, value);
+        	logger.info("JJJ addExprSourcedFromCat value is NULL so also just adding empty set to getExprsSourcedFromCategories"+" so size="+getExprsSourcedFromCategories().size());
+
         }
+    	logger.info("JJJ addExprSourcedFromCat adding "+exprNode);
+
         value.add(exprNode);
     }
 
@@ -102,6 +110,7 @@ public class CategoryPreprocessorResult {
      */
     public void setExprsSourcedFromCategories(
                                               Map<EntityInterface, Set<TreeNode<IExpression>>> exprsSourcedFromCategories) {
+		logger .info("JJJ setExprsSourcedFrom Categories"+exprsSourcedFromCategories);
         this.exprsSourcedFromCategories = exprsSourcedFromCategories;
     }
 

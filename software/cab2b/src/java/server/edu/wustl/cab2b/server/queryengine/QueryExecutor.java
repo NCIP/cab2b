@@ -133,6 +133,7 @@ public class QueryExecutor {
 		this.gc = credential;
 		this.query = query;
 		
+		logger.info("JJJ in QueryExecutor constructor");
 		recordStatus = query.getId() != null;
 		initializeQueryStatus(credential);
 		transformer =
@@ -147,6 +148,8 @@ public class QueryExecutor {
 
 		categoryPreprocessorResult = preProcessCategories();
 		ConstraintsBuilder constraintsBuilder = new ConstraintsBuilder(query, categoryPreprocessorResult);
+		logger.info("JJJ in QueryExecutor constructor about to buildConstraints() with "+constraintsBuilder);
+
 		constraintsBuilderResult = constraintsBuilder.buildConstraints();
 
 	}
@@ -156,6 +159,8 @@ public class QueryExecutor {
 	 */
 	private CategoryPreprocessorResult preProcessCategories() {
 		if (query.isKeywordSearch()) {
+			logger.info("JJJ PREPROCESS keyword Search");
+
 			query = new QueryConverter().convertToKeywordQuery((ICab2bQuery) query);
 		}
 		return new CategoryPreprocessor().processCategories(query);
@@ -355,6 +360,8 @@ public class QueryExecutor {
 	 * Method to initialize query status object. 
 	 */
 	private void initializeQueryStatus(GlobusCredential credential) {
+		logger.info("JJJ in QueryExecutor.initializeQueryStatus() with cred="+credential);
+
 		String userName = Constants.ANONYMOUS;
 		if (credential != null) {
 			userName = credential.getIdentity();
@@ -368,6 +375,8 @@ public class QueryExecutor {
 		List<String> outputUrlList = query.getOutputUrls();
 		Set<URLStatus> urlStatusCollection = new HashSet<URLStatus>(outputUrlList.size());
 		for (String url : outputUrlList) {
+			logger.info("JJJ in QueryExecutor.initializeQueryStatus() with URL="+url);
+
 			URLStatus urlStatus = new URLStatusImpl();
 			urlStatus.setStatus(AbstractStatus.Processing);
 			urlStatus.setUrl(url);

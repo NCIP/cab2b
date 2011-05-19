@@ -361,6 +361,13 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
     
 	public boolean anySecureServices(ICab2bQuery query) {								
 		boolean hasAnySecureService = false;
+		logger.info("JJJ TURN anySecureBack ON*****************!");
+		
+		// don't need to look inside constraints if category since it has no foreign targets
+		if(Utility.isCategory(query.getOutputEntity())){
+			return hasAnySecureService;
+		}
+		
 		CategoryPreprocessorResult categoryPreprocessorResult = new CategoryPreprocessor()
 				.processCategories(query);
 		ConstraintsBuilder cb = new ConstraintsBuilder(query,
@@ -394,6 +401,8 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
 
 		}
 		
+		logger.info("JJJ anySecureServices returning:"+hasAnySecureService);
+
 		return hasAnySecureService;
 
 	}

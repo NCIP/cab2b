@@ -258,13 +258,13 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
         for (Integer key : asSortedList(conditionMap.keySet())) { //JJJ
 
             Collection<ICondition> conditions = conditionMap.get(key);
-        	logger.info("JJJ "+key+" getExpressIdForCondition condition"+condition.getValue());
+        	logger.info("JJJ "+key+" getExpressIdForCondition checking condition"+condition.getValue());
 
             if (conditions.contains(condition)) {
-            	logger.info("JJJ "+key+" contains condition");
+            	logger.info("JJJ key="+key+" contains condition"+condition+"cond.val="+condition.getValue());
 
                 expressionId = key;
-                break;
+                //break;
             }
         }
         return expressionId;

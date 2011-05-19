@@ -117,6 +117,8 @@ public class ConstraintsBuilder {
     public ConstraintsBuilderResult buildConstraints() {
         createDcqlConstraintForExpression(getRootExpr());
         ConstraintsBuilderResult res = getResult();
+        logger.info("JJJ buildConstraints. getResult()="+res);
+
         if (!constrainByParentExpressions) {
             return res;
         }
@@ -132,11 +134,13 @@ public class ConstraintsBuilder {
     private Set<Integer> getCategoryOutputExpressionIds() {
         Set<TreeNode<IExpression>> outputExpressions =
                 getCategoryPreprocessorResult().getExprsSourcedFromCategories().get(getQuery().getOutputEntity());
+        logger.info("JJJ getCategoryOutputExpIds:  getQUery().getOE.name="+getQuery().getOutputEntity().getName()+"  OE.id="+getQuery().getOutputEntity().getId()+" outputExpressions:"+outputExpressions);
         Set<Integer> outputExpressionIds = new HashSet<Integer>(outputExpressions.size());
 
         for (TreeNode<IExpression> exprNode : outputExpressions) {
             outputExpressionIds.add(exprNode.getValue().getExpressionId());
         }
+        logger.info("JJJ getCatOEIds() returning"+outputExpressionIds);
         return outputExpressionIds;
     }
 
@@ -154,6 +158,8 @@ public class ConstraintsBuilder {
 
     private void constrainByParentExpressions() {
         boolean isCategoryOutput = Utility.isCategory(getOutputEntity());
+        logger.info("JJJ constrainByParentExpressions.  isCategory??"+isCategoryOutput);
+
         Set<Integer> outputExprIds = null;
         if (isCategoryOutput) {
             outputExprIds = getCategoryOutputExpressionIds();
@@ -227,14 +233,18 @@ public class ConstraintsBuilder {
 
     private DcqlConstraint createDcqlConstraintForExpression(IExpression expr) {
         List<DcqlConstraint> dcqlConstraintsList = new ArrayList<DcqlConstraint>(expr.numberOfOperands());
-
+        logger.info("JJJ createDcqlConstForExp.  #operands="+expr.numberOfOperands());
         for (int i = 0; i < expr.numberOfOperands(); i++) {
             IExpressionOperand operand = expr.getOperand(i);
             if (operand instanceof IExpression) {
                 IExpression childExpr = (IExpression) operand;
+                logger.info("JJJ createDcqlConstForExp. adding expression with child="+childExpr);
+
                 dcqlConstraintsList.add(createDcqlConstraintForChildExpression(expr.getExpressionId(), childExpr
                     .getExpressionId()));
             } else if (operand instanceof IRule) {
+                logger.info("JJJ createDcqlConstForExp. adding IRule="+operand);
+
                 dcqlConstraintsList.add(createDcqlConstraintForRule((IRule) operand));
             } else {
                 throw new RuntimeException("uknown operand type.");
@@ -268,6 +278,8 @@ public class ConstraintsBuilder {
         IExpression childExpr = getConstraints().getExpression(childExpressionId);
         DcqlConstraint childExprDcqlConstraint;
 
+        logger.info("JJJ createDcqlConstForCHILDExp. adding parentID="+parentExpressionId);
+
         if (getResult().containsExpression(childExpr)) {
             childExprDcqlConstraint = getResult().getConstraintForExpression(childExpr);
         } else {
@@ -285,6 +297,8 @@ public class ConstraintsBuilder {
 
             dcqlConstraint = associationConstraint;
         }
+        logger.info("JJJ createDcqlConstForCHILDExp. returning"+dcqlConstraint);
+
         return dcqlConstraint;
     }
 
@@ -530,6 +544,7 @@ public class ConstraintsBuilder {
      * @return category Preprocessor Result
      */
     public CategoryPreprocessorResult getCategoryPreprocessorResult() {
+    	logger.info("JJJ getCategoryPreProcessResult returning:"+categoryPreprocessorResult);
         return categoryPreprocessorResult;
     }
 

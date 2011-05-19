@@ -87,12 +87,13 @@ public class AddLimitAction extends Action {
 
                 Long queryId = Long.parseLong(request.getParameter(Constants.QUERY_ID));
                 ICab2bQuery query = savedQueryProvider.getQueryById(queryId);
+               
                 
                 List<IParameter<?>> parameters = query.getParameters();
                 for (IParameter<?> parameter : parameters) {
-                	logger.info("JJJ "+parameter.getName());
+                	logger.info("JJJ BEFORE"+parameter.getName());
                     if (parameter.getParameterizedObject() instanceof ICondition) {
-                    	logger.info("JJJ "+parameter.getName()+":"+((ICondition)parameter.getParameterizedObject()));
+                    	logger.info("JJJ BEFORE "+parameter.getName()+":"+((ICondition)parameter.getParameterizedObject()));
                     }
                 }
                 
