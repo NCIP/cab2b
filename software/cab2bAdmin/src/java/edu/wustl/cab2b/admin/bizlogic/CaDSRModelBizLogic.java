@@ -54,7 +54,10 @@ public class CaDSRModelBizLogic {
 
             if (projectLongName != null && !isProjectPresent(project, cab2bEntityGroups)) {
                 CaDSRModelDetailsBean caDSRModelDataBean = new CaDSRModelDetailsBean();
-                caDSRModelDataBean.setId(project.getId());
+
+		// Changed in caGrid 1.3
+                // caDSRModelDataBean.setId(project.getId());
+                caDSRModelDataBean.setId(project.projectShortName());
                 caDSRModelDataBean.setLongName(projectLongName);
                 caDSRModelDataBean.setDescription(project.getDescription());
                 caDSRModelDataBean.setVersion(project.getVersion());
@@ -191,7 +194,9 @@ public class CaDSRModelBizLogic {
             for (CaDSRModelDetailsBean model : modelsToLoad) {
                 LoadModelResult result = new LoadModelResult(model, true, "", null);
 
-                DomainModel domainModel = getDomainModel(model.getLongName(), model.getVersion(), result);
+		// Changed in caGrid 1.3
+                //DomainModel domainModel = getDomainModel(model.getLongName(), model.getVersion(), result);
+                DomainModel domainModel = getDomainModel(model.getId(), model.getVersion(), result);
                 if (domainModel != null) {
                     DomainModelParser parser = new DomainModelParser(domainModel);
                     try {
