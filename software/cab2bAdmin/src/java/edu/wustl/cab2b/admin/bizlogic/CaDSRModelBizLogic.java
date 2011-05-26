@@ -57,7 +57,7 @@ public class CaDSRModelBizLogic {
 
 		// Changed in caGrid 1.3
                 // caDSRModelDataBean.setId(project.getId());
-                caDSRModelDataBean.setId(project.projectShortName());
+                caDSRModelDataBean.setId(project.getShortName());
                 caDSRModelDataBean.setLongName(projectLongName);
                 caDSRModelDataBean.setDescription(project.getDescription());
                 caDSRModelDataBean.setVersion(project.getVersion());

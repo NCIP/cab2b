@@ -437,9 +437,12 @@ public class ConstraintsBuilder {
                 break;
             }
             case Date: {
+/*This does not work since format is YYYY/MM/DD
                 Date d1 = Date.valueOf(value1);
                 Date d2 = Date.valueOf(value2);
                 swapVals = d1.compareTo(d2) > 0;
+*/
+		swapVals = value1.compareTo(value2) > 0;
                 break;
             }
             default:
