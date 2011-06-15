@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-lazy="false" package="edu.wustl.common.hibernate">
+	<class name="PersistentGraph" table="COMMONS_GRAPH">
+		<cache usage="read-write" />
+
+		<id name="id" column="IDENTIFIER" type="long" length="30"
+			unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">COMMONS_GRAPH_SEQ</param>
+			</generator>
+		</id>
+
+		<set name="vertices" cascade="save-update"
+			table="COMMONS_GRAPH_TO_VERTICES">
+			<cache usage="read-write" />
+			<key column="GRAPH_ID" />
+			<many-to-any id-type="long">
+				<column name="VERTEX_CLASS" />
+				<column name="VERTEX_ID" />
+			</many-to-any>
+		</set>
+
+		<set name="edges" cascade="all-delete-orphan"
+			table="COMMONS_GRAPH_TO_EDGES">
+			<cache usage="read-write" />
+			<key column="GRAPH_ID" />
+			<many-to-many column="EDGE_ID" unique="true"
+				class="PersistentGraph$Edge" />
+		</set>
+	</class>
+
+	<class name="PersistentGraph$Edge" table="COMMONS_GRAPH_EDGE">
+		<cache usage="read-write" />
+
+		<id name="id" column="IDENTIFIER" type="long" length="30"
+			unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">COMMONS_GRAPH_EDGE_SEQ</param>
+			</generator>
+		</id>
+
+		<any name="source" id-type="long" cascade="save-update">
+			<column name="SOURCE_VERTEX_CLASS"></column>
+			<column name="SOURCE_VERTEX_ID"></column>
+		</any>
+
+		<any name="target" id-type="long" cascade="save-update">
+			<column name="TARGET_VERTEX_CLASS"></column>
+			<column name="TARGET_VERTEX_ID"></column>
+		</any>
+		<any name="edge" id-type="long" cascade="save-update">
+			<column name="EDGE_CLASS"></column>
+			<column name="EDGE_ID"></column>
+		</any>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,214 @@
+<?xml version ="1.0"?>
+
+<!--Ant Script for create Build for Common package-->
+<project name="TiTLi" default="export_jar">
+	
+	<!--general properties -->	
+	<property name="base.dir" value="."/>
+    <property name="src.dir" value="${base.dir}/src"/>
+    <property name="test.dir" value="${base.dir}/test"/>
+    <property name="target.dir" value="${base.dir}/classes"/>
+    <property name="lib.dir" value="${base.dir}/lib"/>
+    <property name="build.dir" value="${base.dir}/build"/>
+	
+	<!-- properties used by export_jar" -->
+	<property name="common.lib" value="${base.dir}/../core_CommonPackage/lib" />	
+	<property name="core.lib" value="${base.dir}/../core_catissuecore/WEB-INF/lib" />	
+	
+		
+	<!-- properties for junit -->
+    <property name="junit.dir" value="${base.dir}/junit"/>
+    <property name="junit.report.dir" value="${junit.dir}/reports"/>
+    <property name="junit.classes.dir" value="${junit.dir}/classes"/>
+	
+	
+	<!--Properties set for checkstyle "Tools that generate report of code convention violations"-->
+	<property name="checkstyle.dir" value="${base.dir}/checkstyle"/>
+	<property name="checkstyle.rules.file" value="${checkstyle.dir}/CheckStyleRules.xml"/>
+	<property name="checkstyle.report.formatter" value="${checkstyle.dir}/report_formatter/checkstyle-simple.xsl"/>
+	<property name="checkstyle.report.dir" value="${checkstyle.dir}/checkstyle_reports"/>
+	<property name="checkstyle.unformatted.report" value="${checkstyle.report.dir}/checkstyle_report.xml"/>
+	<property name="checkstyle.formatted.report" value="${checkstyle.report.dir}/TiTLi_checkstyle_report.html"/>
+	
+	<!--Properties set for checkstyle "PMD scans Java source code and looks for potential code problems"-->
+	<!--Read for more details http://pmd.sourceforge.net/cpd.html -->
+	<property name="pmd.dir" value="${base.dir}/pmd-3.8"/>
+	<property name="pmd.report.dir" value="${pmd.dir}/reports"/>
+	<property name="pmd.report.html" value="${pmd.report.dir}/TiTLi_PMD_Report.html"/>
+	
+	<path id="app.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<path id="xdoclet.classpath">
+		<path refid="app.classpath"/>
+        <pathelement location="${extra_lib.dir}/commons-net-1.2.2.jar"/>
+		<pathelement location="${extra_lib.dir}/hibernate-tools.jar"/>
+		<pathelement location="${extra_lib.dir}/servlet-api.jar"/>
+		<pathelement location="${extra_lib.dir}/xdoclet-1.2.jar"/>
+		<pathelement location="${extra_lib.dir}/xdoclet-hibernate-module-1.2.jar"/>
+		<pathelement location="${extra_lib.dir}/xdoclet-xdoclet-module-1.2.jar"/>
+		<pathelement location="${extra_lib.dir}/xerces.jar"/>
+		<pathelement location="${extra_lib.dir}/xjavadoc-1.0.2.jar"/>
+		<pathelement location="${extra_lib.dir}/xsdlib.jar"/>
+		<pathelement location="${test.dir}" />
+	</path>
+	
+	<path id="junit.classpath">
+		<path refid="app.classpath"/>
+		<pathelement location="${target.dir}"/>
+	</path>
+	
+	<path id="checkstyle.classpath">
+		<pathelement location="${build.dir}/commonpackage.jar"/>
+		<pathelement location="${lib.dir}/DynamicExtensions.jar"/>
+	</path>	
+	
+	
+	<!-- sub tasks -->
+	<target name="init">
+    	<!-- Create the time stamp -->
+	    <tstamp/>
+    	<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${target.dir}"/>
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${junit.dir}"/>
+	</target>
+	
+	<!-- Compile all files, generated and hand-written -->
+    <target name="compile" depends="init">
+    	<delete >
+			<fileset dir="${target.dir}" includes="**/*" />
+		</delete>
+
+    	<javac destdir="${target.dir}" includes="**/*.*" includeAntRuntime="false">
+            <src path="${src.dir}"/>
+        	<src path="${test.dir}"/>
+            <classpath>
+              <fileset dir="${lib.dir}">
+                  <include name="*.jar"/>
+              </fileset>
+            </classpath>       
+        </javac>
+    	<!--
+    	<copy todir="${target.dir}">
+    		<fileset dir="${src.dir}">
+    			<include name="**/*.properties"/>
+    			<include name="**/*.xml"/>
+    		</fileset>
+    		<fileset dir="${test.dir}">
+    			<include name="**/*.properties"/>
+    			<include name="**/*.xml"/>
+    		</fileset>
+    	</copy> -->
+    </target>
+
+    <target name="compileTest" depends="compile">
+    	<mkdir dir="${junit.classes.dir}"/> 
+        <javac destdir="${junit.classes.dir}" includes="**/*.*" includeAntRuntime="false">
+            <src path="${test.dir}"/>
+            <classpath>
+              <fileset dir="${lib.dir}">
+                  <include name="*.jar"/>
+              </fileset>
+            	<pathelement location="${target.dir}"/>
+            </classpath>       
+        </javac>
+    </target>
+	
+	<target name="build_code_zip" >
+		<zip destfile="${build.dir}/titli-washu-1.0-src.zip">
+	    	<fileset dir="${src.dir}" includes="**/*"/>
+	    </zip>
+	</target>
+	
+	<target name="build_jar" depends="compile" >
+        <delete>
+            <fileset dir="${build.dir}" includes="**/*"/>
+        </delete>
+        
+        <jar jarfile="${build.dir}/titli-washu-1.0.jar">
+            <fileset dir="${target.dir}" includes="**/*" />
+        </jar>
+		
+		<antcall target="build_code_zip"/>
+    </target>
+	
+	<target name="export_jar" depends="build_jar">
+		<copy file="${build.dir}/titli-washu-1.0.jar" todir="${common.lib}" />
+		<copy file="${build.dir}/titli-washu-1.0.jar" todir="${core.lib}" />
+		
+	</target>
+	
+	<target name="export_commonpackage_to_catissucore">
+		<copy todir="${core.lib}" >
+			<fileset dir="${common.lib}/../build" />
+		</copy>
+	</target>
+	
+	
+
+	 <target name="runJunit" depends="compileTest">
+	 	<mkdir dir="${junit.report.dir}"/> 
+	 	<delete>
+	 		<fileset dir="${junit.report.dir}" includes="**/*"/>
+	 	</delete>
+	    <junit printsummary="yes" haltonerror="no" haltonfailure="no" fork="yes">
+		 	<test name="titli.model.TitliTest" outfile="${junit.report.dir}/TitliTest_report"/>
+      		<formatter type="plain"/>
+      		<!--batchtest todir="${junit.report.dir}">
+      			<fileset dir="${test.dir}">
+					<include name="**/TestAll.java"/>
+			    </fileset>
+			</batchtest-->    
+			<classpath>
+				<pathelement location="${junit.classes.dir}"/>
+				<pathelement location="${target.dir}"/>
+				 <fileset dir="${lib.dir}">
+	                  <include name="*.jar"/>
+				 </fileset>
+			</classpath>
+		</junit>
+	</target>
+
+	<target name="checkstyle"  description="Generates a report of code convention violations.">
+		<taskdef resource="checkstyletask.properties" classpath="${lib.dir}/checkstyle-all-4.2.jar"/>  
+
+	    <checkstyle config="${checkstyle.rules.file}" failureProperty="checkstyle.failed" failOnViolation="false" >  <!--classpathref="checkstyle.classpath" > -->
+			<formatter type="xml" tofile="${checkstyle.unformatted.report}" />
+			<fileset dir="${src.dir}" />
+		</checkstyle>
+
+	    <style in="${checkstyle.unformatted.report}" out="${checkstyle.formatted.report}" style="${checkstyle.report.formatter}"/>
+	</target>
+	
+	
+	<!-- ,,,,,junit,logging-jakarta-commons,logging-java,migrating,,optimizations,strictexception,,,"-->
+	<target name="pmd" depends="init" description="PMD scans Java source code and looks for potential code problems.">
+		<taskdef name="pmd" classpath="${pmd.dir}/lib/pmd-3.8.jar" classname="net.sourceforge.pmd.ant.PMDTask"/>
+		<pmd shortFilenames="true">
+			<ruleset>basic</ruleset>
+			<ruleset>braces</ruleset>
+			<ruleset>clone</ruleset>
+			<ruleset>codesize</ruleset>
+			<ruleset>controversial</ruleset>
+			<ruleset>coupling</ruleset>
+			<ruleset>design</ruleset>
+			<ruleset>finalizers</ruleset>
+			<ruleset>imports</ruleset>
+			<ruleset>j2ee</ruleset>			
+			<ruleset>migrating</ruleset>
+			<ruleset>naming</ruleset>
+			<ruleset>strings</ruleset>
+			<ruleset>unusedcode</ruleset>
+			<ruleset>sunsecure</ruleset>
+			<!--ruleset>javabeans</ruleset-->
+			
+			<formatter type="html" toFile="${pmd.report.html}"/>
+			<fileset dir="${src.dir}"  includes="**/*.java"/>
+		</pmd>
+	</target> 
+		
+</project>
