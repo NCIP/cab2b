@@ -56,6 +56,14 @@
 	<!-- Working directory passed to Ant tasks -->
 	<property name="cab2b-api.base.dir" value="${software.dir}/cab2b" />
 	<property name="cab2b-webapp.base.dir" value="${software.dir}/cab2b" />
+
+
+	<property name="commonpackage.dir" value="${software.dir}/dependencies/commonpackage/HEAD_TAG_10_Jan_2007_RELEASE_BRANCH_FOR_V11" />
+	<property name="dynamicextensions.dir" value="${software.dir}/dependencies/dynamicextensions/caB2B_2009_JUN_02" />
+	<property name="query.dir" value="${software.dir}/dependencies/query/QUERY_26_NOV_08" />
+	<property name="titli.dir" value="${software.dir}/dependencies/titli/TITLI_TAG_30_MAR_2009" />
+	<property name="washucommons.dir" value="${software.dir}/dependencies/washucommons/cab2b_2009_mar_27_streamline" />
+
 	<!-- Build file names relative working dir above, if the basedir of the sub-project ant script is ".." you should set the *.basdir to and the build file should include the dir and build file name from the *.base.dir -->
 	<property name="cab2b-webapp.build.file" value="build.xml" />
 	<property name="cab2b-api.build.file" value="build.xml" />
@@ -257,6 +265,14 @@
  		clean,
  		init,
  		build:cab2b-webapp
+		">
+	</target>
+	<target name="build:commonlibs" description="Build common libararies from source" depends="
+		commonpackage,
+		dynamicextensions,
+		query,
+		titli,
+		washucommons
 		">
 	</target>
 	<target name="build:cab2b-api" depends="init" description="Call api sub-projects build target to produce artifiacts">
@@ -566,6 +582,71 @@
 		</ant>
 		-->
 	</target>
+	<target name="commonpackage">
+		<ant inheritAll="false" inheritRefs="false" 
+		antfile="${commonpackage.dir}/build.xml" 
+		target="build_jar" 
+		dir="${commonpackage.dir}">
+		</ant>
+                <copy todir="${software.dir}/cab2b/lib/common" overwrite="true">
+                        <fileset dir="${commonpackage.dir}/build">
+                                <include name="commonpackage.jar" />
+                        </fileset>
+                </copy>
+	</target>
+
+	<target name="dynamicextensions">
+		<ant inheritAll="false" inheritRefs="false" 
+		antfile="${dynamicextensions.dir}/Build.xml"
+		target="build_jar_cab2b" 
+		dir="${dynamicextensions.dir}">
+		</ant>
+                <copy todir="${software.dir}/cab2b/lib/common" overwrite="true">
+                        <fileset dir="${dynamicextensions.dir}/build">
+                                <include name="DynamicExtensions.jar" />
+                        </fileset>
+                </copy>
+	</target>
+
+	<target name="query">
+		<ant inheritAll="false" inheritRefs="false" 
+		antfile="${query.dir}/build.xml"
+		target="build.jar" 
+		dir="${query.dir}">
+		</ant>
+                <copy todir="${software.dir}/cab2b/lib/common" overwrite="true">
+                        <fileset dir="${query.dir}/workarea">
+                                <include name="query.jar" />
+                        </fileset>
+                </copy>
+	</target>
+
+	<target name="titli">
+		<ant inheritAll="false" inheritRefs="false" 
+		antfile="${titli.dir}/build.xml"
+		target="build_jar" 
+		dir="${titli.dir}">
+		</ant>
+                <copy todir="${software.dir}/cab2b/lib/server" overwrite="true">
+                        <fileset dir="${titli.dir}/build">
+                                <include name="titli-washu-1.0.jar" />
+                        </fileset>
+                </copy>
+	</target>
+
+	<target name="washucommons">
+		<ant inheritAll="false" inheritRefs="false" 
+		antfile="${washucommons.dir}/build.xml"
+		target="build.jar" 
+		dir="${washucommons.dir}">
+		</ant>
+                <copy todir="${software.dir}/cab2b/lib/common" overwrite="true">
+                        <fileset dir="${washucommons.dir}/workarea">
+                                <include name="washu-commons.jar" />
+                        </fileset>
+                </copy>
+	</target>
+
 	<target name="test:cab2b-webapp" depends="init" description="Calls test target for sub-project">
 		<ant inheritAll="false" inheritRefs="false" antfile="${cab2b-webapp.test.file}" target="test" dir="${cab2b-webapp.base.dir}">
 			<property name="dist.dir" value="${cab2b-webapp.dist.dir}" />

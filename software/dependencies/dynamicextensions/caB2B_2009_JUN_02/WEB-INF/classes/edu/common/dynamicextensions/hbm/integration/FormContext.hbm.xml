@@ -1,0 +1,108 @@
+<?xml version='1.0'?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-lazy="false">
+    <class
+        name="edu.common.dynamicextensions.domain.integration.FormContext"
+        table="DYEXTN_FORM_CONTEXT"
+        dynamic-update="false"
+        dynamic-insert="false"
+    >
+
+        <id
+            name="id"
+            column="IDENTIFIER"
+            type="long"
+            length="30"
+            unsaved-value="null"
+        >
+            <generator class="native">
+                <param name="sequence">DYEXTN_FORM_CONTEXT_SEQ</param>
+            </generator>
+        </id>
+
+        <property
+            name="isInfiniteEntry"
+            type="boolean"
+            update="true"
+            insert="true"
+            column="IS_INFINITE_ENTRY"
+            length="5"
+        />
+
+        <many-to-one
+            name="entityMap"
+            class="edu.common.dynamicextensions.domain.integration.EntityMap"
+            cascade="none"
+            outer-join="auto"
+            update="true"
+            insert="true"
+            column="ENTITY_MAP_ID"
+        />
+
+        <property
+            name="studyFormLabel"
+            type="string"
+            update="true"
+            insert="true"
+            column="STUDY_FORM_LABEL"
+            length="255"
+        />
+
+        <property
+            name="noOfEntries"
+            type="int"
+            update="true"
+            insert="true"
+            column="NO_OF_ENTRIES"
+            length="30"
+        />
+
+        <set
+            name="entityMapConditionCollection"
+            table="DYEXTN_ENTITY_MAP_CONDNS"
+            lazy="false"
+            inverse="true"
+            cascade="save-update"
+            sort="unsorted"
+        >
+
+              <key
+                  column="FORM_CONTEXT_ID"
+              />
+
+              <one-to-many
+                  class="edu.common.dynamicextensions.domain.integration.EntityMapCondition"
+              />
+        </set>
+
+        <set
+            name="entityMapRecordCollection"
+            table="DYEXTN_ENTITY_MAP_RECORD"
+            lazy="false"
+            inverse="true"
+            cascade="save-update"
+            sort="unsorted"
+        >
+
+              <key
+                  column="FORM_CONTEXT_ID"
+              />
+
+              <one-to-many
+                  class="edu.common.dynamicextensions.domain.integration.EntityMapRecord"
+              />
+        </set>
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-FormContext.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+    </class>
+
+</hibernate-mapping>
