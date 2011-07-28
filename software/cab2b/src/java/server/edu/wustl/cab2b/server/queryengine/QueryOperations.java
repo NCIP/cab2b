@@ -361,7 +361,7 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
     
 	public boolean anySecureServices(ICab2bQuery query) {								
 		boolean hasAnySecureService = false;
-		logger.info("JJJ TURN anySecureBack ON*****************!");
+		logger.info("JJJ  anySecureBack ");
 		
 		// don't need to look inside constraints if category since it has no foreign targets
 		if(Utility.isCategory(query.getOutputEntity())){

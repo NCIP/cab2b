@@ -479,8 +479,8 @@ public class ConstraintsObjectBuilder implements IConstraintsObjectBuilderInterf
      */
     public boolean isPathCreatesCyclicGraph(int sourceExpressionId, int destExpressionId,
             IPath path) {
-	System.out.println("JJJ isPathCreateCyclicGraphc CHEATING, just blindly returning FALSE!!");
-/*
+	//System.out.println("JJJ isPathCreateCyclicGraphc CHEATING, just blindly returning FALSE!!");
+
         try {
             List<Integer> intermediateExpressionIds = addPath(sourceExpressionId, destExpressionId, path);
             if (0 == intermediateExpressionIds.size()) {
@@ -496,8 +496,8 @@ public class ConstraintsObjectBuilder implements IConstraintsObjectBuilderInterf
         } catch (CyclicException e) {
             return true;
         }
-*/
-	return false;
+
+//	return false;
     }
 
     public int addExpression(EntityInterface entity) {

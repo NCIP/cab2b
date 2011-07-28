@@ -218,6 +218,7 @@ public class ParameterizedQueryDataModel {
                 while (iterator.hasNext()) {
                     ICondition condition = iterator.next();
                     if (condition.getAttribute() == newCondition.getAttribute()) {
+                    	System.out.println("JJJ REMOVE/ADDING condition="+newCondition.getValue()+" id="+newCondition.getId());
                         iterator.remove();
                         rule.addCondition(newCondition);
                         isConditionAdded = true;
@@ -225,6 +226,8 @@ public class ParameterizedQueryDataModel {
                     }
                 }
                 if (!isConditionAdded) {
+                	System.out.println("JJJ ADDING condition="+newCondition.getValue()+" id="+newCondition.getId());
+
                     rule.addCondition(newCondition);
                     break;
                 }

@@ -151,6 +151,8 @@ public class ConstraintsBuilder {
     private List<Integer> exprIdList(List<IExpression> exprList) {
         List<Integer> res = new ArrayList<Integer>();
         for (IExpression expr : exprList) {
+            logger.info("JJJ# adding to exprIdList(" + expr.getExpressionId()+" )");
+
             res.add(expr.getExpressionId());
         }
         return res;
@@ -158,7 +160,6 @@ public class ConstraintsBuilder {
 
     private void constrainByParentExpressions() {
         boolean isCategoryOutput = Utility.isCategory(getOutputEntity());
-        logger.info("JJJ constrainByParentExpressions.  isCategory??"+isCategoryOutput);
 
         Set<Integer> outputExprIds = null;
         if (isCategoryOutput) {
@@ -166,12 +167,19 @@ public class ConstraintsBuilder {
         }
         Set<Integer> currExprIds = new HashSet<Integer>();
         currExprIds.add(getRootExpr().getExpressionId());
+        
+        logger.info("JJJ #constnByPtExpr cat?"+isCategoryOutput+" # rootExpr="+currExprIds.size());
+
 
         while (!currExprIds.isEmpty()) {
             Set<Integer> nextExprIds = new HashSet<Integer>();
             for (Integer currExprId : currExprIds) {
+
                 IExpression currExpr = getExpression(currExprId);
+                logger.info("JJJ constByParentExp.getExpression(" + currExprId+" ) QueryEntity=" +currExpr.getQueryEntity());
+                
                 List<Integer> parentExprIds = exprIdList(getJoinGraph().getParentList(currExpr));
+                
 
                 // assert processedExpressions.containsAll(parentExprIds);
                 constrainChildByParents(currExprId, parentExprIds);
@@ -183,6 +191,7 @@ public class ConstraintsBuilder {
                 if (!isOutputExpr) {
                     nextExprIds.addAll(exprIdList(getJoinGraph().getChildrenList(currExpr)));
                 }
+
             }
             currExprIds = nextExprIds;
         }
@@ -193,6 +202,8 @@ public class ConstraintsBuilder {
     private void constrainChildByParents(int childExprId, List<Integer> parentExprIds) {
         IExpression childExpr = getExpression(childExprId);
         DcqlConstraint childConstraint = getResult().getConstraintForExpression(childExpr);
+        
+        logger.info("JJJ constCByP CConstType="+childConstraint.getConstraintType()+" Const"+childConstraint);
 
         LogicalOperator operator = LogicalOperator.And;
         if (query.isKeywordSearch()) {
@@ -206,13 +217,20 @@ public class ConstraintsBuilder {
             IAssociation association = getJoinGraph().getAssociation(parentExpr, childExpr);
             if (!association.isBidirectional()) {
                 logger.warn("Unidirectional association found " + association + ". Results could be incorrect.");
+                logger.info("JJJ#UNI: constCByP: parentId=" + parentExprId+" childId="+childExprId+" not adding reverse assoc");
+
                 continue;
             }
             DcqlConstraint parentConstraint = getResult().getConstraintForExpression(parentExpr);
             AbstractAssociationConstraint associationConstraint = createAssociation(association.reverse());
             associationConstraint.addChildConstraint(parentConstraint);
             group.addConstraint(associationConstraint);
+            logger.info("JJJ#constCByP: parentId=" + parentExprId+" childId="+childExprId+" assocConstType="+associationConstraint.getConstraintType());
+
         }
+        
+        logger.info("JJJ#constCByP FINALLY puttingConstrt: childExpr=" + childExpr+" childId="+childExprId+" childQueryEntity"+childExpr.getQueryEntity());
+
         getResult().putConstraintForExpression(childExpr, group.getDcqlConstraint(), true);
     }
 
@@ -524,7 +542,7 @@ public class ConstraintsBuilder {
     /**
      * @return IConstraints
      */
-    public IConstraints getConstraints() {
+    public IConstraints getConstraints() {   	
         return getQuery().getConstraints();
     }
 
@@ -540,6 +558,7 @@ public class ConstraintsBuilder {
      * @return IExpression
      */
     private IExpression getExpression(int expressionId) {
+    	IConstraints icon = getConstraints();
         return getConstraints().getExpression(expressionId);
     }
 

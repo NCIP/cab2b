@@ -45,6 +45,8 @@ public class ResolveAmbiguity {
      * @param pathFinder
      */
     public ResolveAmbiguity(Vector<AmbiguityObject> ambiguityObjects, IPathFinder pathFinder) {
+    	logger.info("JJJ ResolveAmbiguity");
+
         ambiguityObjectsVector = ambiguityObjects;
         iPathFinder = pathFinder;
     }
@@ -55,6 +57,8 @@ public class ResolveAmbiguity {
      * @param pathFinder
      */
     public ResolveAmbiguity(AmbiguityObject ambiguityObject, IPathFinder pathFinder) {
+    	logger.info("JJJ ResolveAmbiguity");
+
         ambiguityObjectsVector = new Vector<AmbiguityObject>();
         ambiguityObjectsVector.add(ambiguityObject);
         iPathFinder = pathFinder;
@@ -65,6 +69,8 @@ public class ResolveAmbiguity {
      * @return Map<AmbiguityObject, List<IPath>>
      */
     public Map<AmbiguityObject, List<IPath>> getPathsForAllAmbiguities() {
+    	logger.info("JJJ ResolveAmbiguity.getPathsForAllAmbiguities");
+
         for (int i = 0; i < ambiguityObjectsVector.size(); i++) {
             AmbiguityObject ambiguityObject = ambiguityObjectsVector.get(i);
             Map<String, List<IPath>> allPathMap = getPaths(ambiguityObject.getSourceEntity(),
@@ -116,6 +122,9 @@ public class ResolveAmbiguity {
     private Map<String, List<IPath>> getPaths(EntityInterface sourceEntity, EntityInterface destinationEntity) {
         Set<ICuratedPath> allCuratedPaths = iPathFinder.getCuratedPaths(sourceEntity, destinationEntity);
         logger.debug("  getCuratedPaths() executed : " + allCuratedPaths.size());
+        
+    	logger.info("JJJ ResolveAmbiguity.getPaths");
+
 
         List<IPath> selectedPaths = new ArrayList<IPath>();
         List<IPath> curatedPaths = new ArrayList<IPath>();

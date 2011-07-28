@@ -177,13 +177,23 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
      */
     private void setConditionValues(AbstractTypePanel componentPanel) {
         AttributeInterface attribute = componentPanel.getAttributeEntity();
+        
+    	System.out.println("*** In setCondVals for attribute "+attribute.getName()+" att.id="+attribute.getId()+" component="+componentPanel.getName()+" comp.expid="+componentPanel.getExpressionId());
+    	
         Map<Integer, Collection<ICondition>> conditionMap = queryDataModel.getConditions();
         for (Integer key : conditionMap.keySet()) {
             for (ICondition condition : conditionMap.get(key)) {
+            	System.out.println("*** setCondVals "+condition.getValues()+" for condmap.key="+key+" condition.id="+condition.getId()+" condRelOp="+condition.getRelationalOperator().getStringRepresentation());
                 if (condition.getAttribute() == attribute) {
-                    componentPanel.setValues(new ArrayList<String>(condition.getValues()));
-                    componentPanel.setCondition(condition.getRelationalOperator().getStringRepresentation());
-                    componentPanel.setExpressionId(key);
+                   	if(componentPanel.getExpressionId() == key){
+                   		System.out.println("*** MATCH!! SETEXP ID setCondVals "+condition.getValues()+" for key="+key+" condition.id="+condition.getId()+" condRelOp="+condition.getRelationalOperator().getStringRepresentation());             	
+                   
+                    	
+                	System.out.println("*** setCondVals 0?"+(componentPanel.getExpressionId() ==0)+"cond.val="+condition.getValues()+" for key="+key+" condition.id="+condition.getId()+" condRelOp="+condition.getRelationalOperator().getStringRepresentation());
+                   	componentPanel.setValues(new ArrayList<String>(condition.getValues()));
+                   	componentPanel.setCondition(condition.getRelationalOperator().getStringRepresentation());
+                   	//componentPanel.setExpressionId(key);
+                   	}
                 }
             }
         }
@@ -247,11 +257,17 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
                                                                                             parseFile,
                                                                                             condition.getAttribute(),
                                                                                             maxLabelDimension);
+                    	System.out.println("*** Created ParamPanel for cond="+condition.getValue()+" id="+condition.getId()+" attribute.name="+condition.getAttribute().getName()+" conditionmap.key="+key);
+
                         componentPanel.createParametrizedPanel(condition);
+                       	componentPanel.setExpressionId(key);
+
                         setConditionValues(componentPanel);
                         componentPanel.setAttributeDisplayName(key.intValue() + "."
                                 + componentPanel.getAttributeDisplayName());
                         definedAttributePanel.add("br ", componentPanel);
+                    } else {
+                    	System.out.println("*** EXCLUDED in the allConditionAttributeList");
                     }
                 }
             }

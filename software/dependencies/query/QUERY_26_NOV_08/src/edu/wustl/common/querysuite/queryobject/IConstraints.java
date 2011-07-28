@@ -1,5 +1,6 @@
 package edu.wustl.common.querysuite.queryobject;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -70,7 +71,9 @@ public interface IConstraints extends IBaseQueryObject, Iterable<IExpression> {
      * 
      * @return Set of all Constraint Entities.
      */
-    Set<IQueryEntity> getQueryEntities();
+//    Set<IQueryEntity> getQueryEntities();
+
+    ArrayList<IQueryEntity> getQueryEntities();
 
     /**
      * Deos not support removal.

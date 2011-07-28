@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 // TODO
 // path related methods check when source == target
 
@@ -45,6 +47,7 @@ public class Graph<V, W> implements Serializable, Cloneable {
     private HashMap<V, Map<V, W>> outgoingEdgeMap;
 
     private int numEdges = 0;
+    private static final Logger logger = org.apache.log4j.Logger.getLogger(Graph.class);
 
     public Graph() {
         initMaps();
@@ -216,8 +219,10 @@ public class Graph<V, W> implements Serializable, Cloneable {
      */
     public boolean addVertex(V vertex) {
         checkNull(vertex);
-        if (containsVertex(vertex))
+        if (containsVertex(vertex)){
+        	System.out.println("JJJ Already contains Vertex!!!!!!!!!! return false vertex="+vertex);
             return false;
+        }
         else {
             incomingEdgeMap.put(vertex, new HashMap<V, W>());
             outgoingEdgeMap.put(vertex, new HashMap<V, W>());
@@ -351,10 +356,12 @@ public class Graph<V, W> implements Serializable, Cloneable {
      *         this graph.
      */
     public Set<V> getUnreachableVertices() {
+    	logger.info("JJJ getUnreachableVertices");
         Set<V> res = new HashSet<V>();
         for (Map.Entry<V, Map<V, W>> entry : incomingEdgeMap.entrySet()) {
             if (entry.getValue().isEmpty() || Collections.singleton(entry.getKey()).equals(entry.getValue().keySet())) {
-                res.add(entry.getKey());
+            	logger.info("JJJ getUnreachableVertices added"+entry.getKey()+" entry.value="+entry.getValue()+" entry.val.keyset="+entry.getValue().keySet()+"because empty?"+entry.getValue().isEmpty());
+                logger.info("JJJ add succeeded?"+res.add(entry.getKey()));
             }
         }
         return res;

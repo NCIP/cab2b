@@ -93,13 +93,29 @@ public class AddLimitAction extends Action {
                 for (IParameter<?> parameter : parameters) {
                 	logger.info("JJJ BEFORE"+parameter.getName());
                     if (parameter.getParameterizedObject() instanceof ICondition) {
-                    	logger.info("JJJ BEFORE "+parameter.getName()+":"+((ICondition)parameter.getParameterizedObject()));
+                    	logger.info("JJJ BEFORE isIcondition "+parameter.getName()+":"+((ICondition)parameter.getParameterizedObject()));
+                    } else {
+                    	logger.info("JJJ BEFORE NOT Icondition "+parameter.getName()+":");
+
                     }
                 }
                 
                 
                 Collection<ICondition> nonPara = QueryUtility.getAllNonParameteriedConditions(query);
+                
+                for (ICondition icon : nonPara) {
+                	logger.info("JJJ BEFORE NON parameterized condition "+icon.getValue()+" id="+icon.getId());
+
+                }
+                
                 Collection<ICondition> paraCond = QueryUtility.getAllParameterizedConditions(query);
+                
+                for (ICondition icon2 : paraCond) {
+                    	logger.info("JJJ BEFORE PARAMETERIZED COND "+icon2.getValue()+": id="+icon2.getId());
+                }
+
+                
+                
                 logger.info("JJJ addlimitaction:"+nonPara+":parmConds:"+paraCond);
 
                 response.setContentType("text/html");

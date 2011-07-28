@@ -148,7 +148,7 @@ public class JoinGraph extends BaseQueryObject implements IJoinGraph {
         }
 
         if (unReachableNode.size() != 1) {
-            throw new MultipleRootsException("Multiple Root Exist for the Joing Graph");
+            throw new MultipleRootsException("Multiple Root Exist for the Join Graph");
         }
         return unReachableNode.iterator().next();
     }

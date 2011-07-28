@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.ArrayList;
+
 
 import edu.common.dynamicextensions.domaininterface.EntityGroupInterface;
 import edu.wustl.cab2b.admin.action.BaseAction;
@@ -47,7 +49,8 @@ public class ServiceGroupAction extends BaseAction {
 		this.query = queryLogic.loadQuery(Long.parseLong(selectedQuery));
 		System.out.println(selectedQuery);
 		System.out.println(query);
-		Set<IQueryEntity> queryEntities = query.getConstraints().getQueryEntities();
+		//Set<IQueryEntity> queryEntities = query.getConstraints().getQueryEntities();
+		ArrayList<IQueryEntity> queryEntities = query.getConstraints().getQueryEntities();
 		ServiceURLOperations serviceUrlOps = new ServiceURLOperations();
 		serviceUrls = new HashMap<String, List<ServiceURLInterface>>();
 		for(IQueryEntity queryEntity : queryEntities) {

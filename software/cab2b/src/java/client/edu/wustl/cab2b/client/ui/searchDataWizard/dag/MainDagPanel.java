@@ -186,6 +186,7 @@ public class MainDagPanel extends Cab2bPanel {
      * @param queryObject
      */
     public void setQueryObject(IClientQueryBuilderInterface queryObject) {
+    	logger.info("JJJ maindagpanel.setQueryObject");
         dagQueryObject = queryObject;
     }
 
@@ -238,6 +239,8 @@ public class MainDagPanel extends Cab2bPanel {
      * 
      */
     public void updateGraph() {
+    	logger.info("JJJ maindagpanel.updateGraph");
+
         try {
             IQuery query = dagQueryObject.getQuery();
             IConstraints constraints = query.getConstraints();
@@ -282,6 +285,8 @@ public class MainDagPanel extends Cab2bPanel {
      */
     private List<IAssociation> addAssociations(IConstraints constraints, IJoinGraph joinGraph,
                                                IExpression parentExpr) {
+    	logger.info("JJJ maindagpanel.addAssociations");
+
         List<IAssociation> associations = null;
         IAssociation association = null;
         List<IExpression> intermediateExpressions = new ArrayList<IExpression>();
@@ -350,6 +355,8 @@ public class MainDagPanel extends Cab2bPanel {
      * @throws MultipleRootsException 
      */
     public void updateGraph(int expressionId) throws MultipleRootsException {
+    	logger.info("JJJ maindagpanel.updateGraph2");
+
         IExpression expression = getExpression(expressionId);
         IQueryEntity constraintEntity = expression.getQueryEntity();
 
@@ -405,6 +412,8 @@ public class MainDagPanel extends Cab2bPanel {
      * @return boolean
      */
     private boolean isLinkingValid(List<ClassNode> selectedNodes) {
+    	logger.info("JJJ maindagpanel.linkingValid?");
+
         boolean status = true;
         if (currentNodeList.size() < 2 || selectedNodes.size() != 2 || selectedNodes == null) {
             String errorMessage = "Please select two nodes for linking";
@@ -419,6 +428,8 @@ public class MainDagPanel extends Cab2bPanel {
      *
      */
     public void linkNodes() {
+    	logger.info("JJJ maindagpanel.linkNodes");
+
         List<ClassNode> selectedNodes = viewController.getCurrentNodeSelection();
         // If number of nodes to connect is not 2, set warning user
         if (isLinkingValid(selectedNodes)) {
@@ -439,6 +450,8 @@ public class MainDagPanel extends Cab2bPanel {
      * @return List of selected paths between source and destination
      */
     protected List<IPath> getPaths(ClassNode sourceNode, ClassNode destNode) {
+
+    	logger.info("JJJ maindagpanel.getPaths");
 
         IQuery query = dagQueryObject.getQuery();
         IConstraints constraints = query.getConstraints();
@@ -463,6 +476,8 @@ public class MainDagPanel extends Cab2bPanel {
      * @param destNode Target node to connect
      */
     protected void linkNode(final ClassNode sourceNode, final ClassNode destNode) {
+    	logger.info("JJJ maindagpanel.linkNode");
+
         List<IPath> paths = getPaths(sourceNode, destNode);
         if (paths == null || paths.isEmpty()) {
             JOptionPane.showMessageDialog(MainDagPanel.this,
@@ -494,8 +509,12 @@ public class MainDagPanel extends Cab2bPanel {
         logger.debug("Linking nodes: " + sourceNode.getID() + " and " + destNode.getID() + "; Intermediate exps: "
                 + intermediateExpressionsIds.toString());
 
+    	logger.info("JJJ maindagpanel.linkTwoNodes");
+
         // Update query object to have this association path set
         if (updateQueryRequired) {
+        	logger.info("JJJ maindagpanel.linkTwoNodes update required");
+
             try {
                 intermediateExpressionsIds = dagQueryObject.addPath(sourceNode.getExpressionId(),
                                                                     destNode.getExpressionId(), path);
@@ -534,6 +553,8 @@ public class MainDagPanel extends Cab2bPanel {
                 updateQueryObject(link, sourceNode, destNode, sourcePort);
             }
         } else {
+        	logger.info("JJJ maindagpanel no update required");
+
             IConstraints constraints = MainDagPanel.this.dagQueryObject.getQuery().getConstraints();
             int sourceExpId = sourceNode.getExpressionId();
             IExpression sourceExp = constraints.getExpression(sourceExpId);
@@ -584,7 +605,9 @@ public class MainDagPanel extends Cab2bPanel {
      */
     private void updateQueryObject(PathLink link, ClassNode sourceNode, ClassNode destNode, GraphPort sourcePort) {
         // If the first association is added, put operator between attribute condition and association
-        String operator = null;
+    	logger.info("JJJ maindagpanel.updateQueryObject");
+
+    	String operator = null;
         if (sourcePort == null) {
             operator = sourceNode.getOperatorBetAttrAndAss();
         } else { // Get the logical operator associated with previous association

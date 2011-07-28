@@ -2,6 +2,7 @@ package edu.wustl.common.querysuite.queryobject.impl;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -98,7 +99,12 @@ public class Constraints extends BaseQueryObject implements IConstraints {
 
         exprIdToExpr.put(expression.getExpressionId(), expression);
         expressions.add(expression);
-        ((JoinGraph) joinGraph).addIExpression(expression);
+        System.out.println("JJJ JoinGraph added? "+((JoinGraph) joinGraph).addIExpression(expression));
+        
+        System.out.println("JJJ %%AddedExpression "+expression.getExpressionId()+" queryEntity="+expression.getQueryEntity()+" #expressions="+expressions.size());
+        
+        System.out.println("JJJ %%Added--- exprIdToExpr size="+exprIdToExpr.size());		
+        
         return expression;
     }
 
@@ -108,6 +114,7 @@ public class Constraints extends BaseQueryObject implements IConstraints {
      * @see edu.wustl.common.querysuite.queryobject.IConstraints#removeExpressionWithId(edu.wustl.common.querysuite.queryobject.IExpression)
      */
     public IExpression removeExpressionWithId(int expressionId) {
+    	System.out.println("REMOVE expression id="+expressionId);
         JoinGraph theJoinGraph = (JoinGraph) joinGraph;
         IExpression expression = getExpression(expressionId);
 
@@ -123,6 +130,8 @@ public class Constraints extends BaseQueryObject implements IConstraints {
     }
 
     public void removeExpression(IExpression expr) {
+    	System.out.println("REMOVE expression Entity="+expr.getQueryEntity());
+
         removeExpressionWithId(expr.getExpressionId());
     }
 
@@ -147,11 +156,16 @@ public class Constraints extends BaseQueryObject implements IConstraints {
      * @return Set of all Constraint Entities.
      * @see edu.wustl.common.querysuite.queryobject.IConstraints#getQueryEntities()
      */
-    public Set<IQueryEntity> getQueryEntities() {
-        Set<IQueryEntity> constraintEntitySet = new HashSet<IQueryEntity>();
+    public ArrayList<IQueryEntity> getQueryEntities() {
+//        Set<IQueryEntity> constraintEntitySet = new HashSet<IQueryEntity>();
+
+        ArrayList<IQueryEntity> constraintEntitySet = new ArrayList<IQueryEntity>();
         for (IExpression expression : expressions) {
+        	System.out.println("JJJ getQueryEntities.adding"+expression.getQueryEntity());
             constraintEntitySet.add(expression.getQueryEntity());
         }
+    	System.out.println("JJJ returning"+constraintEntitySet.size());
+
         return constraintEntitySet;
     }
 

@@ -669,7 +669,9 @@ public class CommonUtils {
      */
     public static boolean isServiceURLConfigured(ICab2bQuery query, Container container) {
         boolean isServiceURLConfigured = true;
-        Set<IQueryEntity> entitySet = query.getConstraints().getQueryEntities();
+        //Set<IQueryEntity> entitySet = query.getConstraints().getQueryEntities();
+        ArrayList<IQueryEntity> entitySet = query.getConstraints().getQueryEntities();
+
 
         //If user selected urls from 3rd step then return true
         if (!query.getOutputUrls().isEmpty()) {

@@ -15,6 +15,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -52,6 +53,9 @@ import edu.wustl.cab2b.client.ui.util.WindowUtilities;
 import edu.wustl.cab2b.client.ui.viewresults.DataListPanel;
 import edu.wustl.cab2b.client.ui.viewresults.ViewSearchResultsPanel;
 import edu.wustl.cab2b.common.datalist.IDataRow;
+import edu.wustl.cab2b.common.ejb.EjbNamesConstants;
+import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineBusinessInterface;
+import edu.wustl.cab2b.common.ejb.queryengine.QueryEngineHome;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeHandler;
 import edu.wustl.cab2b.common.queryengine.Cab2bQuery;
@@ -62,6 +66,7 @@ import edu.wustl.cab2b.common.util.Utility;
 import edu.wustl.common.querysuite.exceptions.MultipleRootsException;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IQueryEntity;
+import edu.wustl.common.util.ObjectCloner;
 import edu.wustl.common.util.global.ApplicationProperties;
 
 /**
@@ -548,7 +553,11 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
     private Collection<EntityGroupInterface> getAllEntityGroups() {
         Collection<EntityGroupInterface> selectedEntityList = new HashSet<EntityGroupInterface>();
         final IQuery b2bquery = mainSearchPanel.queryObject.getQuery();
-        Set<IQueryEntity> iQuerySet = b2bquery.getConstraints().getQueryEntities();
+        //Set<IQueryEntity> iQuerySet = b2bquery.getConstraints().getQueryEntities();
+        
+        ArrayList<IQueryEntity> iQuerySet = b2bquery.getConstraints().getQueryEntities();
+
+        
         for (IQueryEntity iqueryEntity : iQuerySet) {
             selectedEntityList.addAll(iqueryEntity.getDynamicExtensionsEntity().getEntityGroupCollection());
         }
@@ -660,6 +669,29 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
             Cab2bQuery query = (Cab2bQuery) mainSearchPanel.getQueryObject().getQuery();
             if (CommonUtils.isServiceURLConfigured(query, mainSearchPanel.getParent())) {
+            	System.out.println("JJJ **********TESTING isAnySecure against query1 and 2");
+            	
+            	QueryEngineBusinessInterface queryEngineBus =
+                    (QueryEngineBusinessInterface) CommonUtils
+                        .getBusinessInterface(EjbNamesConstants.QUERY_ENGINE_BEAN, QueryEngineHome.class);
+            
+    			try {
+	            	System.out.println("JJJ **********TESTING #ORIG# isAnySecure="+queryEngineBus.anySecureServices(query));
+
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		
+    			try {
+	            	System.out.println("JJJ **********TESTING #CLONE# isAnySecure="+queryEngineBus.anySecureServices(new ObjectCloner().clone(query)));
+
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+            	
                 parameterizedQueryMainPanel =
                         new ParameterizedQueryMainPanel(new ParameterizedQueryDataModel(query));
                 parameterizedQueryMainPanel.showInDialog();

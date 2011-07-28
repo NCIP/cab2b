@@ -18,6 +18,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JViewport;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTitledPanel;
 import org.jdesktop.swingx.painter.gradient.BasicGradientPainter;
@@ -81,6 +82,9 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
     private JSplitPane m_outerPane = null;
 
     private static final String ADD_LIMIT_TITLE = "Define Limit";
+    
+    private static final Logger logger = Logger.getLogger(AddLimitPanel.class);
+
 
     /**
      * Default constructor
@@ -94,6 +98,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      * components.
      */
     private void initGUI() {
+    	logger.info("JJJ addlimitpanel.initGUI");
         this.setLayout(new BorderLayout());
         /*
          * Pass the reference , so that the child can cause the parent to
@@ -244,6 +249,8 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      * @see edu.wustl.cab2b.client.ui.ContentPanel#setQueryObject(edu.wustl.cab2b.client.ui.query.IClientQueryBuilderInterface)
      */
     public void setQueryObject(IClientQueryBuilderInterface query) {
+    	logger.info("JJJ addlimitpanel.setQueryObject");
+
         mainDagPanel.setQueryObject(query);
     }
 
@@ -253,6 +260,8 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
      * @see edu.wustl.cab2b.client.ui.IUpdateAddLimitUIInterface#editAddLimitUI(edu.wustl.common.querysuite.queryobject.IExpression)
      */
     public void editAddLimitUI(IExpression expression) {
+    	logger.info("JJJ addlimitpanel.editAddLimitUI");
+
         if (expression != null) {
             IQueryEntity entity = expression.getQueryEntity();
             JXPanel[] panels = getSearchResultPanel().createEditLimitPanels(expression);
@@ -265,6 +274,7 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
             for (int i = 0; i < rule.size(); i++) {
                 ICondition condition = rule.getCondition(i);
                 setValueForAttribute(components, condition);
+
             }
             validate();
         }
@@ -280,6 +290,8 @@ public class AddLimitPanel extends ContentPanel implements IUpdateAddLimitUIInte
             AbstractTypePanel panel = (AbstractTypePanel) components[i];
             AttributeInterface attribute = panel.getAttributeEntity();
             if (attribute == condition.getAttribute()) {
+            	logger.info("JJJ addlimitpanel.setValueForAttribute "+attribute+"=="+condition.getAttribute());
+
                 RelationalOperator operator = condition.getRelationalOperator();
                 panel.setCondition(edu.wustl.cab2b.client.ui.query.Utility.displayStringForRelationalOperator(operator));
                 List<String> values = condition.getValues();

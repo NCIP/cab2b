@@ -38,6 +38,7 @@ import edu.wustl.common.querysuite.queryobject.IParameterizedQuery;
 import edu.wustl.common.querysuite.queryobject.IQuery;
 import edu.wustl.common.querysuite.queryobject.IRule;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
+import edu.wustl.common.querysuite.utils.QueryUtility;
 import edu.wustl.common.util.ParseXMLFile;
 import edu.wustl.common.util.Utility;
 
@@ -88,11 +89,52 @@ public class AddLimitHTMLGeneratorBizLogic {
         if (queryObject instanceof IParameterizedQuery) {
             IParameterizedQuery pQuery = (IParameterizedQuery) queryObject;
             parameterList = pQuery.getParameters();
+            
+   // JJJ         
+            Collection<ICondition> JJJparamConditions = QueryUtility.getAllParameterizedConditions(pQuery);
+            System.out.println("JJJ # parameterList size="+parameterList.size());
+            
+            for(ICondition p : JJJparamConditions){
+            	if(p == null){
+            		System.out.println("@@@ NULL PARAMETER");
+            	} else {
+            		
+            		System.out.println("@@@ val="+p.getValue() +" attribute="+
+            		p.getAttribute()+" p.valueS="+
+            		p.getValues()+" p.getId="+
+            		p.getId()+ " p="+p);
+            		
+//                    ICondition paramCondition = (ICondition) ((IParameter<?>) p).getParameterizedObject();
+//            		System.out.println("&&&& p.getName="+
+//                    		p.getName()+ " getParamObj="+
+//                    		p.getParameterizedObject()+" parmCondition.getId= "+paramCondition.getId());
+            	}
+            }
+  // JJJ
+
         }
+        System.out.println("JJJ # parameterList size="+parameterList.size());
+        
+        for(IParameter<?> p : parameterList){
+        	if(p == null){
+        		System.out.println("&&&& NULL PARAMETER");
+        	} else {
+        		
+                ICondition paramCondition = (ICondition) p.getParameterizedObject();
+        		System.out.println("&&&& p.getName="+
+                		p.getName()+ " getParamObj="+
+                		p.getParameterizedObject()+" parmCondition.getId= "+paramCondition.getId()+"p cond="+paramCondition);
+        	}
+        }
+        
+        
+
+
 
         final StringBuffer htmlString = new StringBuffer();
         if (!parameterList.isEmpty()) {
             Map<Integer, EntityConditions> expIdEntityConditionsMap = new HashMap<Integer, EntityConditions>();
+            System.out.println("JJJ # constraints to LOOP over="+queryObject.getConstraints().size());
             for (IExpression expression : queryObject.getConstraints()) {
                 for (int index = 0; index < expression.numberOfOperands(); index++) {
                     IExpressionOperand operand = expression.getOperand(index);
@@ -102,8 +144,14 @@ public class AddLimitHTMLGeneratorBizLogic {
                         List<ICondition> conditions = edu.wustl.common.util.Collections.list(rule);
                         EntityInterface entity = expression.getQueryEntity().getDynamicExtensionsEntity();
 
+
                         EntityConditions entityConditions = new EntityConditions(entity, conditions);
                         expIdEntityConditionsMap.put(expression.getExpressionId(), entityConditions);
+                    	System.out.println("JJJ AddLimitHTML added "+entity+" for e.id="+expression.getExpressionId()+" with conditions "+conditions);
+
+                    } else {
+                    	System.out.println("JJJ AddLimitHTML NOT an IRULE"+operand);
+                    	
                     }
                 }
             }
@@ -152,6 +200,8 @@ public class AddLimitHTMLGeneratorBizLogic {
             for (Integer expressionId : expressionIds) {
                 EntityConditions entityConditions = expIdEntityConditionsMap.get(expressionId);
                 final EntityInterface entity = entityConditions.getEntity();
+                
+            	System.out.println("JJJ getnerateHTML4SQ expID="+expressionId+" entity="+entity);
 
                 generatedHTML.append(generateSaveQueryForEntity(expressionId, entityConditions, parameterList));
 
@@ -194,9 +244,13 @@ public class AddLimitHTMLGeneratorBizLogic {
         boolean isBGColor = false;
         for (AttributeInterface attribute : entityAttributes) {
             final String attributeName = attribute.getName();
+            System.out.println("JJJ generateSQ4Ent attributeName="+attribute.getName()+" att.id="+attribute.getId());
             if (attribNameConditionMap.containsKey(attributeName)) {
-                attributeCollection.add(attribute);
 
+                attributeCollection.add(attribute);
+                System.out.println("JJJ generateSQ4Ent ADDING attributeName="+attribute.getName()+" att.id="+attribute.getId()+"total atts="+attributeCollection.size());
+
+                
                 String styleSheetClass = "formfieldspanel";
                 if (!isBGColor) {
                     isBGColor = !isBGColor;
@@ -212,12 +266,16 @@ public class AddLimitHTMLGeneratorBizLogic {
                     generatedHTML
                         .append("<td valign='top' align='left' class='querylimittext' nowrap='nowrap' width=\"15%\">"
                                 + paramater.getName());
+                	System.out.println("JJJ ###parameter for attName="+attributeName+" appended"+paramater.getName());
+
 
                     if (attribute.getDataType().equalsIgnoreCase(AddLimitConstants.DATE)) {
                         generatedHTML.append("\n(" + AddLimitConstants.DATE_FORMAT + ")");
                     }
 
                     generatedHTML.append("</b></td>\n");
+                } else {
+                	System.out.println("JJJ ###parameter null for attName="+attributeName);
                 }
                 generatedHTML.append(generateHTMLForConditions(attribute, attribNameConditionMap, parameterList))
                     .append("\n</tr>");
@@ -226,22 +284,43 @@ public class AddLimitHTMLGeneratorBizLogic {
         generatedHTML.append("<input type='hidden' id='" + expressionID + ":"
                 + Utility.parseClassName(entity.getName()) + "_attributeList'" + "value="
                 + getAttributesString(attributeCollection) + " />");
+        System.out.println("JJJ GSQ4E HTMLGEN="+generatedHTML);
         return generatedHTML;
     }
 
     private IParameter<?> getParameterForCondition(ICondition condition, List<IParameter<?>> parameterList) {
         IParameter<?> parameterized = null;
+        
+    	System.out.println("JJJ $$gp4c looping over"+parameterList.size()+" parameters in parameterList for cond.id="+condition.getId()+" cond="+condition+"val="+condition.getValue());
+
+        
         if (condition != null) {
             for (IParameter<?> parameter : parameterList) {
+            	System.out.println("JJJ $$gp4c checking param:"+parameter.getName()+" parm="+parameter);
                 if (parameter.getParameterizedObject() instanceof ICondition) {
                     ICondition paramCondition = (ICondition) parameter.getParameterizedObject();
+                	System.out.println("JJJ $$gp4c checking paramCondId=condition.getId"+paramCondition.getId()+"?="+condition.getId()+" paramCond="+paramCondition+" parmCond.val="+paramCondition.getValue()+ " condValue="+condition.getValue());
+
                     if (paramCondition.getId() == condition.getId()) {
                         parameterized = parameter;
+                        
+                        // JJJ param lacking Identifier2 and Identifier4
+                    	System.out.println("$$gp4c MATCH paramCondId="+paramCondition.getId()+" paramcond="+paramCondition.getValue()+" paramname="+parameter.getName());
+
                         break;
                     }
+                } else {
+                	System.out.println("JJJ $$gp4c not ICondition"+parameter.getParameterizedObject());
+                	
                 }
             }
+        } 
+        
+        if(parameterized==null){
+        	System.out.println("$$gp4c NO MATCH cond.id="+condition.getId()+" cond="+condition);
+        	
         }
+
         return parameterized;
     }
 
@@ -290,6 +369,9 @@ public class AddLimitHTMLGeneratorBizLogic {
 
             IParameter<?> parameter = getParameterForCondition(condition, parameterList);
             if (parameter != null) {
+            	//JJJ try forcing anyway
+            	System.out.println("JJJ *******************************WARNING, gonna try forcing HTML generation in generateHTMLForConditions");
+            } //JJJ
                 String operator = condition.getRelationalOperator().getStringRepresentation();
                 generatedHTML.append('\n').append(
                                                   generateHTMLForOperators(attribute, operatorsList, operator,
@@ -311,7 +393,7 @@ public class AddLimitHTMLGeneratorBizLogic {
                                                       generateHTMLForTextBox(attribute, isBetween, values,
                                                                              operator, "querylimittext"));
                 }
-            }
+            //}
         } else {
             generatedHTML.append(generateHTMLForConditionNull(attribute, operatorsList, permissibleValues,
                                                               isBetween));
@@ -368,8 +450,13 @@ public class AddLimitHTMLGeneratorBizLogic {
         Map<String, ICondition> attributeNameConditionMap = new HashMap<String, ICondition>();
         if (conditions != null && !conditions.isEmpty()) {
             for (ICondition condition : conditions) {
+                System.out.println("JJJ MAKING CONDITIONMAP^ condition.value="+condition.getValue()+" ^^^att.name="+condition.getAttribute().getName()+" att.id="+condition.getAttribute().getId()+" Map size="+
+                		attributeNameConditionMap.size());
+
                 attributeNameConditionMap.put(condition.getAttribute().getName(), condition);
             }
+        } else {
+        	System.out.println("JJJ ###^ NO CONDITIONS conditions="+conditions);
         }
         return attributeNameConditionMap;
     }
