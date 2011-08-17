@@ -66,6 +66,7 @@ public class PersistentGraph<V, E> extends Graph<V, E> {
         @SuppressWarnings("unchecked")
         @Override
         public boolean equals(Object obj) {
+        	System.out.println("!!! PersistentGraph this="+this+" obj="+obj+" target="+target+ " source="+source);
             if (this == obj) {
                 return true;
             }
@@ -73,8 +74,24 @@ public class PersistentGraph<V, E> extends Graph<V, E> {
                 return false;
             }
             Edge<V, E> o = (Edge<V, E>) obj;
-            return source.equals(o.source) && target.equals(o.target)
-                    && (edge == null ? o.edge == null : edge.equals(o.edge));
+        	System.out.println("!!! PersistentGraph o="+o);    	
+        	System.out.println("!!! PersistentGraph o.src="+o.source);
+        	System.out.println("!!! PersistentGraph o.dest="+o.target);
+        	System.out.println("!!! PersistentGraph edge="+edge);
+        	System.out.println("!!! PersistentGraph o.edge="+o.edge);
+
+        	System.out.println("!!! PersistentGraph source.equals(o.source)="+source.equals(o.source));
+
+
+
+
+            return source.equals(
+            		o.source) 
+            		&& target.equals(
+            				o.target)
+                    && (edge == null ? 
+                    		o.edge == null : 
+                    			edge.equals(o.edge));
         }
 
         @Override

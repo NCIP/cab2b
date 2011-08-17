@@ -160,6 +160,7 @@ public class InterModelAssociation extends ModelAssociation implements IInterMod
      */
     @Override
     public boolean equals(Object object) {
+    	System.out.println("INTERMODELequals this="+this+" object=:"+object+" this?=object:"+(this == object));
         boolean isEqual = false;
         if (this == object) {
             isEqual = true;
@@ -170,12 +171,38 @@ public class InterModelAssociation extends ModelAssociation implements IInterMod
             String sourceServiceURL = interModelAssociation.getSourceServiceUrl();
             String targetServiceURL = interModelAssociation.getTargetServiceUrl();
 
-            if ((sourceAttribute != null && this.getSourceAttribute().equals(sourceAttribute))
-                    && (targetAttribute != null && this.getTargetAttribute().equals(targetAttribute))
-                    && (sourceServiceURL != null && this.getSourceServiceUrl().equals(sourceServiceURL))
-                    && (targetServiceURL != null && this.getTargetServiceUrl().equals(targetServiceURL))) {
-                isEqual = true;
+        	System.out.println("INTERMODELequals srcAtt="+sourceAttribute+" this.getSourceAtt="+this.getSourceAttribute());
+
+        	System.out.println("Intermodel this.getsourceAttribute().equals:"+this.getSourceAttribute().equals(sourceAttribute));
+        	
+        	System.out.println("Intermodel this.getTargetAttribute().equals:"+this.getTargetAttribute().equals(targetAttribute));
+
+        	
+        	System.out.println("Intermodel sourceURL="+this.getSourceServiceUrl()+" ?= "+sourceServiceURL);
+        	System.out.println("Intermodel targetURL="+this.getTargetServiceUrl()+" ?= "+(targetServiceURL));
+        	
+        	
+            if ((sourceAttribute != null) && (this.getSourceAttribute().equals(sourceAttribute))
+                    && ((targetAttribute != null) && (this.getTargetAttribute().equals(targetAttribute)))){
+            	
+            	if((sourceServiceURL !=null) && (this.getSourceServiceUrl() != null)){
+            		if(this.getSourceServiceUrl().equals(sourceServiceURL)){
+            			isEqual = true;
+            		} else {
+            			isEqual = false; 
+            		}
+            		
+            	} else {
+            		if((sourceServiceURL == null) && (this.getSourceServiceUrl() == null)){
+            			isEqual = true;
+            		} else {
+            			// one is null one is not
+            			isEqual = false;
+            		}
+            	}                    
+            	//isEqual = true;
             }
+
         }
         return isEqual;
     }

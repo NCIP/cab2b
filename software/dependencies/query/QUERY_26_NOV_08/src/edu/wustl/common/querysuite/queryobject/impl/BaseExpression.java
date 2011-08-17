@@ -218,6 +218,12 @@ abstract class BaseExpression<P extends IBinaryOperator, V extends IOperand> ext
      * @see edu.wustl.common.querysuite.queryobject.IBaseExpression#indexOfOperand(edu.wustl.common.querysuite.queryobject.IOperand)
      */
     public int indexOfOperand(V operand) {
+    	
+    	System.out.println("***Index of Operand # operands="+expressionOperands.size()+" operand="+operand+" indexOf="+
+    	    	expressionOperands.indexOf(operand)+
+    			" lastindexOf="+expressionOperands.lastIndexOf(operand));
+
+    	    	
         return expressionOperands.indexOf(operand);
     }
 

@@ -488,6 +488,7 @@ public class MainDagPanel extends Cab2bPanel {
 
         if (!dagQueryObject.isPathCreatesCyclicGraph(sourceNode.getExpressionId(), destNode.getExpressionId(),
                                                      paths.get(0))) {
+        	System.out.println("linkNode PATHS.size="+paths.size());
             for (int i = 0; i < paths.size(); i++) {
                 linkTwoNode(sourceNode, destNode, paths.get(i), new ArrayList<Integer>(), true);
             }
@@ -640,6 +641,7 @@ public class MainDagPanel extends Cab2bPanel {
      * Method to clear all the paths (Clear all the assoications)
      */
     public void clearAllPaths() {
+    	System.out.println("MAINDAGPANEL clearAllPaths");
         viewController.clearAllPaths();
         expressionPanel.setText(getExprssionString());
     }
@@ -668,11 +670,18 @@ public class MainDagPanel extends Cab2bPanel {
      * @param destinationNode target entity of path
      */
     public void deletePath(PathLink link) {
+    	
+
         List<Integer> expressionIds = link.getAssociationExpressions();
+        
+    	System.out.println("MAINDAGPANEL deletePath link.srcid="+link.getSourceExpressionId()+" link.destid="+link.getDestinationExpressionId()+    			" tooltip= "+link.getTooltipText()+" eids.size="+expressionIds.size());
+
         // If the association is direct association, remove the respective association 
         if (0 == expressionIds.size()) {
             dagQueryObject.removeAssociation(link.getSourceExpressionId(), link.getDestinationExpressionId());
         } else {
+        	System.out.println("MAINDAGPANEL deletePath removingExpressions eids.size="+expressionIds.size());
+
             for (int i = 0; i < expressionIds.size(); i++) {
                 dagQueryObject.removeExpression(expressionIds.get(i));
             }
