@@ -66,8 +66,10 @@ public class AuthenticationProcessor implements Filter {
 	logger.info("JJJ Admin doFilter");
         if (!(request.getMethod().trim().equalsIgnoreCase("GET") || request.getMethod().trim()
             .equalsIgnoreCase("POST"))) {
+	logger.info("JJJ Admin error");
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
         } else {
+	logger.info("JJJ Admin checking");
             //To make check on cross site scripting (XSS).
             //Check each parameter in the request for XssVulnerability using RegEx=[<>] (useful for POST requests).
             //If any parameter is found to be XssVulnerable, then redirect to home page.
@@ -88,6 +90,7 @@ public class AuthenticationProcessor implements Filter {
         ServletContext application = fc.getServletContext();
         if (request.getSession().getAttribute(AdminConstants.USER_OBJECT) == null
                 || request.getParameter("userName") != null) {
+	logger.info("JJJ Admin point1");
             String userName = request.getParameter("userName");
             UserInterface user = null;
             if (application.getAttribute("invalidLoginCount" + userName) != null
@@ -98,6 +101,7 @@ public class AuthenticationProcessor implements Filter {
             }
             if (application.getAttribute("invalidLoginCount" + userName) != null
                     && Integer.parseInt(application.getAttribute("invalidLoginCount" + userName).toString()) == 6) {
+	logger.info("JJJ Admin login # check");
                 if (new GregorianCalendar().getTimeInMillis()
                         - (Long) application.getAttribute("lastInvalidLoginAttemptTime" + userName) > 60 * 60 * 1000) {
                     application.removeAttribute("invalidLoginCount" + userName);
@@ -112,13 +116,16 @@ public class AuthenticationProcessor implements Filter {
             }
             request.getSession().removeAttribute(AdminConstants.USER_OBJECT);
             if (request.getParameter("userName") == null) {
+	logger.info("JJJ Admin login username null");
                 request.setAttribute("error",
                                      "Your session has been timed out because of long period of inactivity!");
                 request.getRequestDispatcher("/jsp/default.jsp").forward(request, response);
             } else {
+	logger.info("JJJ Admin login username NOT null");
                 String password = request.getParameter("password");
                 if (!(XSSVulnerableDetector.isXssSQLVulnerable(userName) || XSSVulnerableDetector
                     .isXssSQLVulnerable(password))) {
+	logger.info("JJJ Admin login username NOT XssVulnerable");
                     user = new UserOperations().getUserByName(userName);
                     if (user != null && ((User) user).getPassword().compareTo(password) == 0) {
                         request.getSession().setAttribute(AdminConstants.USER_OBJECT, user);
@@ -129,6 +136,9 @@ public class AuthenticationProcessor implements Filter {
                     }
                 }
                 if (user != null) {
+	logger.info("JJJ Admin login username NOT not null 2");
+	    	    generateNewSession((HttpServletRequest) request);
+
                     int invalidLoginCount =
                             application.getAttribute("invalidLoginCount" + userName) == null ? 0 : Integer
                                 .parseInt(application.getAttribute("invalidLoginCount" + userName).toString());
