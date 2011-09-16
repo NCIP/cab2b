@@ -1,0 +1,10 @@
+@import url("common.css");
+@import url("displaytag.css");
+
+#content {
+	padding: 0% 0.2% 0.5em 0.2%;
+}
+
+#toppanel {
+	margin: 2 0 0 0;
+}
