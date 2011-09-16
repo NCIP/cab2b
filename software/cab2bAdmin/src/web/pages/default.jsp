@@ -61,11 +61,11 @@
 			</tr>
 			<tr>
 				<td colspan="2"><img src="images/spacer.gif" width="1"
-					height="1" /></td>
+					height="1" alt="spacer" /></td>
 			</tr>
 			<tr>
 				<td colspan="2"><img src="images/spacer.gif" width="1"
-					height="10"></td>
+					height="10" alt="spacer"></td>
 			</tr>
 		</table>
 		<table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -77,40 +77,40 @@
 					<tr>
 						<td align="left" valign="middle" background="images/title_bg.gif"
 							class="font_bl2_b"><img src="images/c1.gif" width="12"
-							height="24" align="absmiddle" />&nbsp;&nbsp;Quick Links</td>
+							height="24" align="absmiddle" alt="c1"/>&nbsp;&nbsp;Quick Links</td>
 						<td align="left" valign="top" background="images/title_bg.gif"
 							class="td_dblue2">&nbsp;</td>
 						<td align="right" valign="top" background="images/title_bg.gif"
 							class="td_dblue2"><img src="images/c2.gif" width="12"
-							height="24" /></td>
+							height="24" alt="c2" /></td>
 					</tr>
 					<tr>
 						<td colspan="3" align="left" valign="top" class="td_orange"><img
-							src="images/spacer.gif" width="1" height="1"></td>
+							src="images/spacer.gif" width="1" height="1" alt="spacer"></td>
 					</tr>
 				</table>
 				<table width="100%" border="0" align="center" cellpadding="3"
 					cellspacing="3">
 					<tr>
 						<td width="15" align="right" valign="middle"><img
-							src="images/arrow.gif" width="12" height="11"></td>
+							src="images/arrow.gif" width="12" height="11" alt="arrow"></td>
 						<td class="font_blk_b"><a href="https://cabig.nci.nih.gov/" target="_blank" CLASS="set3">caBIG Home </a></td>
 					</tr>
 					<tr>
 						<td align="right" valign="middle"><img src="images/arrow.gif"
-							width="12" height="11"></td>
+							width="12" height="11" alt="arrow"></td>
 						<td class="font_blk_b"><A href="../webpage" target="_blank" CLASS="set3">caB2B Webpage </a></td>
 					</tr>
                                 <tr>
-                                                <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td>
+                                                <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11" alt="arrow"></td>
                                                 <td class="font_blk_b"><A href="../" CLASS="set3">caB2B Web Client</a></td>
                                 </tr>
                                 <tr>
-                                                <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td>
+                                                <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11" alt="arrow"></td>
                                                 <td class="font_blk_b"><A href="../webpage/jnlp/cab2b_client_webstart.jnlp" CLASS="set3">caB2B Client Application</a></td>
                                 </tr>
                                 <tr>
-                                                <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td>
+                                                <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11" alt="arrow"></td>
                                                 <td class="font_blk_b"><A href="../admin" CLASS="set3">caB2B Admin</a></td>
                                 </tr>
 
@@ -118,25 +118,25 @@
 				</table>
 				</td>
 				<td align="center" valign="top"><img
-					src="images/concept_image.jpg" width="500" height="500"></td>
+					src="images/concept_image.jpg" width="500" height="500" alt="concept image"></td>
 				<td width="252" align="center" valign="top">
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
 						<td rowspan="2" valign="top"><img src="images/bg.gif"
-							width="13" height="458" /></td>
+							width="13" height="458" alt="bg" /></td>
 						<td align="left" valign="top">
 						<table width="100%" border="0" cellpadding="4" cellspacing="0">
 							<tr>
 								<td class="error_font_b" colspan="2">${requestScope.error}</td>
 							</tr>
 							<tr>
-								<td nowrap="nowrap" class="font_blk_b">User Name:</td>
+								<th nowrap="nowrap" class="font_blk_b">User Name:</th>
 								<td align="left"><input name="userName" type="text"
 									class="font_blk_s" value="" id="userName" autocomplete="off" />
 								</td>
 							</tr>
 							<tr>
-								<td nowrap="nowrap"><span class="font_blk_b">Password:</span></td>
+								<th nowrap="nowrap"><span class="font_blk_b">Password:</span></th>
 								<td align="left"><input name="password" type="password"
 									class="font_blk_s" value="" id="password" autocomplete="off" /></td>
 							</tr>
@@ -190,7 +190,7 @@
 			</tr>
 			<tr>
 				<td align="right" valign="bottom" class="td_blue"><img
-					src="images/c5.gif" width="12" height="20" /></td>
+					src="images/c5.gif" width="12" height="20" alt="c5" /></td>
 				<td colspan="2">&nbsp;</td>
 			</tr>
 			<tr>

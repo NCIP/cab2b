@@ -21,8 +21,8 @@
             <tr>
               <td width="75" height="35" colspan="4" align="left" valign="top" background="\\"><table width="200" border="0" cellpadding="0" cellspacing="0" class="td_dgrey">
                 <tr>
-                  <td><img src="images/spacer.gif" width="10" height="1"></td>
-                  <td><img src="images/arrow.gif" width="12" height="11" hspace="5" align="absmiddle"><span class="font_bl2_b">Cab2b Admin </span></td>
+                  <td><img src="images/spacer.gif" width="10" height="1" alt="spacer" ></td>
+                  <td><img src="images/arrow.gif" width="12" height="11" hspace="5" align="absmiddle" alt="arrow"><span class="font_bl2_b">Cab2b Admin </span></td>
                   <td align="right" valign="top"><img src="images/c6.gif" width="15" height="23"></td>
                 </tr>
               </table></td>

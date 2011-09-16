@@ -179,7 +179,7 @@ toolTipId = null;
 		<BR style="line-height:0.2em;">
 		<HR style="height:1;color:#bbb">	
 		
-		<DIV style="font-size:0.85em;display:none" id="queryInProgressMessage"><IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"/> 
+		<DIV style="font-size:0.85em;display:none" id="queryInProgressMessage"><IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;" ALT="page loading"/> 
 			<logic:notPresent name="userName">
 				<bean:message key="message.query.inprogress.anonymous.user"/>
 			</logic:notPresent>
@@ -192,7 +192,7 @@ toolTipId = null;
 	</DIV>
 	<DIV id="pageoverlay"></DIV>
 	<DIV id="failedservicespanel">
-		<DIV id="failedservicespanelheader" class="title"><bean:message key="title.failedserviceinstances"/><IMG style='cursor:pointer;position:absolute;right:0.6em;' alt='Close' src='images/close.jpg' onmouseover=this.src='images/close_hover.jpg' onmouseout=this.src='images/close.jpg' onclick="document.getElementById('pageoverlay').style.display='none';document.getElementById('failedservicespanel').style.display='none'"/></DIV>
+		<DIV id="failedservicespanelheader" class="title"><bean:message key="title.failedserviceinstances"/><IMG style='cursor:pointer;position:absolute;right:0.6em;' alt='Close' src='images/close.jpg' onmouseover=this.src='images/close_hover.jpg' onmouseout=this.src='images/close.jpg' alt='close'  onclick="document.getElementById('pageoverlay').style.display='none';document.getElementById('failedservicespanel').style.display='none'"/></DIV>
 		<DIV id="failedservicespanelbody">
 		</DIV>
 	</DIV>

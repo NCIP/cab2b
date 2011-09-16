@@ -23,7 +23,7 @@
             <tr>
               <td align="center" valign="bottom" background="images/bg_top.gif" >&nbsp;</td>
               <td align="left" valign="bottom" background="images/bg_top.gif" class="td_white">&nbsp;</td>
-              <td align="right" valign="top" background="images/bg_top.gif" class="td_white"><a href="Logout.action" class="font_bl1_b">Sign Out</a><img src="images/spacer.gif" width="10" height="10" align="absmiddle"></td>
+              <td align="right" valign="top" background="images/bg_top.gif" class="td_white"><a href="Logout.action" class="font_bl1_b">Sign Out</a><img src="images/spacer.gif" width="10" height="10" align="absmiddle" alt="spacer"></td>
             </tr>
             <tr>
               <td width="10" align="center" valign="bottom" background="images/bg_top.gif" >&nbsp;</td>
@@ -34,7 +34,7 @@
                     <td width="108"><a href="#" name="link4" id="link3" onMouseOut="MM_swapImgRestore();MM_startTimeout()" onMouseOver="MM_swapImage('Image12','','images/exp1.gif',1);MM_showMenu(window.mm_menu_1203115052_0,2,23,null,'Image12')"><img src="images/exp2.gif" name="Image12" width="115" height="23" border="0" id="Image12" /></a></td>
                   </tr>
               </table></td>
-              <td align="right" valign="middle" background="images/bg_top.gif" class="td_white"><span class="font_bl2_b">Welcome, <%=session.getAttribute("UserName")%><img src="images/spacer.gif" width="10" height="10" align="absmiddle"></span></td>
+              <td align="right" valign="middle" background="images/bg_top.gif" class="td_white"><span class="font_bl2_b">Welcome, <%=session.getAttribute("UserName")%><img src="images/spacer.gif" width="10" height="10" align="absmiddle" alt="spacer"></span></td>
             </tr>
             
             
@@ -56,7 +56,7 @@
               <td width="75" height="35" colspan="4" align="left" valign="top" background="\\"><table width="200" border="0" cellpadding="0" cellspacing="0" class="td_dgrey">
                 <tr>
                   <td><img src="images/spacer.gif" width="10" height="1"></td>
-                  <td><img src="images/arrow.gif" width="12" height="11" hspace="5" align="absmiddle"><span class="font_bl2_b">Server Problem </span></td>
+                  <td><img src="images/arrow.gif" width="12" height="11" hspace="5" align="absmiddle" alt="arrow"><span class="font_bl2_b">Server Problem </span></td>
                   <td align="right" valign="top"><img src="images/c6.gif" width="15" height="23"></td>
                 </tr>
               </table></td>

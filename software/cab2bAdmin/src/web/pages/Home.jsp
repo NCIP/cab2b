@@ -12,11 +12,11 @@
 				</tr>
 				<tr>
 					<td align="left" valign="middle" background="images/title_bg.gif" class="font_bl2_b">
-						<img src="images/c1.gif" width="1" height= "24" align="absmiddle" /> &nbsp;&nbsp;Quick Links
+						<img src="images/c1.gif" width="1" height= "24" align="absmiddle" alt="c1" /> &nbsp;&nbsp;Quick Links
 					</td>
 					<td align="left" valign="top" background="images/title_bg.gif" class="td_dblue2"></td>
 					<td align="right" valign="top" background="images/title_bg.gif" class="td_dblue2">
-						<img src="images/c2.gif" width="12" height="24" /></td>
+						<img src="images/c2.gif" width="12" height="24" alt="c2"/></td>
 				</tr>
 				<tr>
 					<td colspan="3" align="left" valign="top" class="td_orange" height="1"></td>
@@ -24,24 +24,24 @@
 			</table>
 			<table width="100%" border="0" align="center" cellpadding="3" cellspacing="3">
 				<tr>
-					<td width="15" align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td> 
+					<td width="15" align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11" alt="arrow"></td> 
 					<td class="font_blk_b"><a href="https://cabig.nci.nih.gov/" target="_blank" CLASS="set3">caBIG Home </a></td>
 				</tr>
 				<tr>
 						<td align="right" valign="middle"><img src="images/arrow.gif"
-							width="12" height="11"></td>
+							width="12" height="11" alt="arrow"></td>
 						<td class="font_blk_b"><A href="../webpage" target="_blank" CLASS="set3">caB2B Webpage </a></td>
 				</tr>
                                 <tr>
-                                                <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td>
+                                                <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11" alt="arrow"></td>
                                                 <td class="font_blk_b"><A href="../" CLASS="set3">caB2B Web Client</a></td>
                                 </tr>
                                 <tr>
-                                                <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td>
+                                                <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11" alt="arrow"></td>
                                                 <td class="font_blk_b"><A href="../webpage/jnlp/cab2b_client_webstart.jnlp" CLASS="set3">caB2B Client Application</a></td>
                                 </tr>
                                 <tr>
-                                                <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11"></td>
+                                                <td align="right" valign="middle"><img src="images/arrow.gif" width="12" height="11" alt="arrow"></td>
                                                 <td class="font_blk_b"><A href="../admin" CLASS="set3">caB2B Admin</a></td>
                                 </tr>
 			</table>
@@ -56,7 +56,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td align="right" valign="bottom" class="td_blue"><img src="images/c5.gif" width="12" height="20" /></td>
+		<td align="right" valign="bottom" class="td_blue"><img src="images/c5.gif" width="12" height="20" alt="c5" /></td>
 		<td colspan="2">&nbsp;</td>
 	</tr>
 	<tr>

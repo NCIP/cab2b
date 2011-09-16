@@ -5,7 +5,7 @@
 <DIV id="preResultsQueryInfoPanel" style="display:none;" class="text" align="center" valign="middle">
 	<logic:present name="keyword">
 		<br><br><br><br>
-		<IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"> <b style="font-size: 1.3em;"><bean:message key="message.preresults.keyword" arg0="${sessionScope.keyword}" arg1="${sessionScope.selectedQueryName}"/></b><br><br>
+		<IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;" ALT="Page loading"> <b style="font-size: 1.3em;"><bean:message key="message.preresults.keyword" arg0="${sessionScope.keyword}" arg1="${sessionScope.selectedQueryName}"/></b><br><br>
 		<logic:present name="userName">
 			<IMG style="height:1.3em;width:1.3em;" src="images/more_info.gif" title="<bean:message key="message.offlineexecution.signedin.user.moreinfo"/>" />
 			<bean:message key="message.preresults.signedin.user"/><br><br>
@@ -17,7 +17,7 @@
 	</logic:present>
 	<logic:notPresent name="keyword">
 		<br><br><br><br>
-		<IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;"> <b style="font-size: 1.3em;"><bean:message key="message.preresults.formbased" arg0="${sessionScope.selectedQueryName}"/></b><br><br>
+		<IMG SRC="images/PageLoading.gif" style="height:1.2em;width:1.2em;" alt="page loading"> <b style="font-size: 1.3em;"><bean:message key="message.preresults.formbased" arg0="${sessionScope.selectedQueryName}"/></b><br><br>
 		<logic:present name="userName">
 			<IMG style="height:1.3em;width:1.3em;" src="images/more_info.gif" title="<bean:message key="message.offlineexecution.signedin.user.moreinfo"/>" />
 			<bean:message key="message.preresults.signedin.user"/><br><br>

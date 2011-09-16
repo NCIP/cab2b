@@ -160,11 +160,12 @@
                     <thead>
                     <tr><td>&nbsp;</td><td>&nbsp;</td></tr></thead>
                     <tbody>
+<caption><strong>Registration Form</strong></caption>
 		    <tr><td style="padding-right:5px; text-align:right"></td><td>(If you prefer you can email the information directly to ncicb at pop.nci.nih.gov)</td><tr>
-                    <tr><td style="padding-right:5px; text-align:right">Full Name:</td><td><input name="userName" type="text" autocomplete="off" value="" size="29"/></td></tr>
-                    <tr><td style="padding-right:5px; text-align:right">Email Address:</td><td><input name="email" type="text" autocomplete="off" value="" size="29"/></td></tr>
-                    <tr><td style="padding-right:5px; text-align:right">Phone:</td><td><input name="phone" type="text" autocomplete="off" value="" size="29"/></td></tr>
-                    <tr><td style="padding-right:5px; text-align:right">Institution:</td><td><input name="institution" type="text" autocomplete="off" value="" size="29"/></td></tr>
+                    <tr><th scope="row" style="padding-right:5px; text-align:right">Full Name:</th><td><input name="userName" type="text" autocomplete="off" value="" size="29"/></td></tr>
+                    <tr><th scope="row" style="padding-right:5px; text-align:right">Email Address:</th><td><input name="email" type="text" autocomplete="off" value="" size="29"/></td></tr>
+                    <tr><th scope="row" style="padding-right:5px; text-align:right">Phone:</th><td><input name="phone" type="text" autocomplete="off" value="" size="29"/></td></tr>
+                    <tr><th scope="row" style="padding-right:5px; text-align:right">Institution:</th><td><input name="institution" type="text" autocomplete="off" value="" size="29"/></td></tr>
 		    <tr><td><br></td></tr>
                     <tr><td style="padding-right:5px; text-align:right"><input type="submit" value="Send"></td></tr>
 		    <tr><td><br></td></tr>
