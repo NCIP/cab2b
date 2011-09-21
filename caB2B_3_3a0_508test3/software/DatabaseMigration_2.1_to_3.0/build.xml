@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Database Migration" basedir=".">
+	<property file="conf/database.properties"/>
+	
+	<property name="conf.dir" location="conf"/>
+	<property name="migration.scripts.dir" location="resources/caB2B_2.1TocaB2B_3.0"/>
+	<property name="migration.src.dir" location="src/edu/wustl/cab2b/"/>
+	<property name="src.classes.dir" location="workarea/Classes"/>
+		
+	<path id="lib.classpath">
+		<fileset dir="../cab2b/lib/server">
+			<include name="mysql-connector-java-5.0.8-bin.jar" />
+		</fileset>
+	</path>
+	
+	<path id="class.classpath">
+		<pathelement location="${src.classes.dir}"/>
+		<path refid="lib.classpath"/>
+	</path>
+	
+	<target name="migrate.db.2_1_to_3_0" description="Migrates caB2B v2.1 database to caB2B v3.0">
+		<echo>Creating Temporary Database...</echo>
+		<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${database.server.ip}:${database.server.port}/" userid="${database.username}" password="${database.password}" onerror="continue" classpathref="lib.classpath"> 
+			DROP DATABASE IF EXISTS CAB2B_TEMP; 
+			CREATE DATABASE CAB2B_TEMP;
+		</sql>
+		<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${database.server.ip}:${database.server.port}/cab2b_temp" userid="${database.username}" password="${database.password}" onerror="continue" classpathref="lib.classpath"> 
+			<fileset dir="${migration.scripts.dir}">
+				<include name="Create*.sql" />
+			</fileset>
+		</sql>
+	
+		<mkdir dir="${src.classes.dir}"/>
+		<javac srcdir="${migration.src.dir}" destdir="${src.classes.dir}" fork="true" memoryMaximumSize="1024m" includes="**/*.java" debug="on" deprecation="true" failonerror="true" nowarn="on" classpathref="lib.classpath"/>
+		<copy file="${conf.dir}/database.properties" todir="${src.classes.dir}"/> 
+		<java failonerror="true" classname="edu.wustl.cab2b.migration.DatabaseMigration" classpathref="class.classpath" fork="yes" />
+		
+		<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${database.server.ip}:${database.server.port}/${database.name}" userid="${database.username}" password="${database.password}" onerror="continue" classpathref="lib.classpath">
+			<fileset dir="${migration.scripts.dir}">
+				<include name="Alter*.sql" />
+			</fileset>
+		</sql>
+		<echo>Database Migrated Successfully</echo>
+	</target>
+</project>

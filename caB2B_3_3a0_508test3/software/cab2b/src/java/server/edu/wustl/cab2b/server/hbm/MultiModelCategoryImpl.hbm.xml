@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 2.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-lazy="false">
+	<class name="edu.wustl.cab2b.common.multimodelcategory.MultiModelCategoryImpl" table="CAB2B_MMC" dynamic-update="false"
+		dynamic-insert="false">
+		<cache usage="read-write" />
+
+		<id name="id" column="ID" type="long" length="30" unsaved-value="null">
+			<generator class="increment" />
+		</id>
+
+		<set name="multiModelAttributes" table="CAB2B_MMA" lazy="false" inverse="false" cascade="all-delete-orphan"
+			sort="unsorted">
+			<key column="MMC_ID" not-null="true" />
+			<one-to-many class="edu.wustl.cab2b.common.multimodelcategory.MultiModelAttributeImpl" />
+		</set>
+
+		<property name="entity" column="ENTITY_ID" update="true" insert="true" not-null="true" length="30">
+			<type name="edu.wustl.common.hibernate.CanonicalFormType">
+				<param name="canonical-form-provider">edu.wustl.metadata.hibernate.EntityCanonicalFormProvider</param>
+			</type>
+		</property>
+
+		<many-to-one name="applicationGroup" class="edu.wustl.cab2b.common.modelgroup.ModelGroup" column="APP_GROUP_ID"
+			cascade="none" update="true" insert="true" not-null="false" />
+
+		<property name="categoryIds" type="string" update="true" insert="true" column="CATEGORY_IDS" length="254"
+			not-null="true" />
+
+		<!--
+			To add non XDoclet property mappings, create a file named
+			hibernate-properties-MultiModelCategoryImpl.xml
+			containing the additional properties and place it in your merge dir.
+		-->
+	</class>
+</hibernate-mapping>

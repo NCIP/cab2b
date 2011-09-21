@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<validator-rules>
+	<validator-rule>
+		<rule-name>required</rule-name>
+		<rule-class>edu.common.cawebeav.validation.RequiredValidator</rule-class>
+		<error-key>eav.validation.required</error-key>
+	</validator-rule>
+	
+	<validator-rule>
+		<rule-name>range</rule-name>
+		<param>min</param>
+		<param>max</param>
+		<rule-class>edu.common.cawebeav.validation.RangeValidator</rule-class>
+	</validator-rule>
+	
+	<validator-rule>
+		<rule-name>number</rule-name>
+		<rule-class>edu.common.cawebeav.validation.NumberValidator</rule-class>
+	</validator-rule>
+	
+	<validator-rule>
+		<rule-name>date</rule-name>
+		<rule-class>edu.common.cawebeav.validation.DateValidator</rule-class>
+	</validator-rule>
+</validator-rules>
