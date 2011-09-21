@@ -53,7 +53,7 @@
 { 
    if(responseReceiver &&  hideLoadingImage!=1)
   {
-	document.getElementById(responseReceiver).innerHTML = "<TABLE style='height:100%;width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif'></TD></TR></TABLE>";
+	document.getElementById(responseReceiver).innerHTML = "<TABLE style='height:100%;width:100%;'><TR><TD style='text-align:center;vertical-align:middle;'><IMG style='position:relative;top:-20' src='images/PageLoading.gif' alt='page loading'></TD></TR></TABLE>";
   }
   var httpRequest = XMLHTTPObject();
   httpRequest.open("POST", requestURL, true);

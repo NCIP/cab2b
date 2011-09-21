@@ -50,7 +50,7 @@
 		<td width="252" align="center" valign="top">
 			<table width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr>
-					<td rowspan="2" valign="top"><img src="images/bg.gif" width="13" height="458" alt="bg"/></td>
+					<th scope="col" rowspan="2" valign="top"><img src="images/bg.gif" width="13" height="458" alt="bg"/></th>
 				</tr>
 			</table>
 		</td>

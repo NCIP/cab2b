@@ -122,21 +122,21 @@
 				<td width="252" align="center" valign="top">
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
-						<td rowspan="2" valign="top"><img src="images/bg.gif"
-							width="13" height="458" alt="bg" /></td>
+						<th scope="col" rowspan="2" valign="top"><img src="images/bg.gif"
+							width="13" height="458" alt="bg" /></th>
 						<td align="left" valign="top">
 						<table width="100%" border="0" cellpadding="4" cellspacing="0">
 							<tr>
 								<td class="error_font_b" colspan="2">${requestScope.error}</td>
 							</tr>
 							<tr>
-								<th nowrap="nowrap" class="font_blk_b">User Name:</th>
+								<th scope="row" nowrap="nowrap" class="font_blk_b">User Name:</th>
 								<td align="left"><input name="userName" type="text"
 									class="font_blk_s" value="" id="userName" autocomplete="off" />
 								</td>
 							</tr>
 							<tr>
-								<th nowrap="nowrap"><span class="font_blk_b">Password:</span></th>
+								<th scope="row" nowrap="nowrap"><span class="font_blk_b">Password:</span></th>
 								<td align="left"><input name="password" type="password"
 									class="font_blk_s" value="" id="password" autocomplete="off" /></td>
 							</tr>
@@ -153,8 +153,8 @@
 						<td align="left" valign="bottom">
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tr>
-								<td width="15" rowspan="5">&nbsp;</td>
-								<td class="font_bl1_b">Certified Browsers</td>
+								<th scope="col" width="15" rowspan="5">&nbsp;</th>
+								<th scope="col" class="font_bl1_b">Certified Browsers</th>
 							</tr>
 							<tr>
 								<td class="font_blk_s"><img src="images/logo_ie.gif"
