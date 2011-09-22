@@ -33,6 +33,10 @@
 </SCRIPT>
 </HEAD>
 <BODY onLoad="document.forms[0].userName.focus()">
+<div id="skipmenu">
+<a href="#skip" class="skippy">Skip Navigation</a>
+<a name="top"></a>
+</div> <!-- end skipmenu -->
 	<%@ include file="header.jsp" %>
 	<jsp:include page="leftpanel.jsp"/>
 	<DIV id="content">
@@ -68,7 +72,8 @@
                     <thead>
                     <tr><td>&nbsp;</td><td>&nbsp;</td></tr></thead>
                     <tbody>
-                    <tr><td style="padding-right:5px; text-align:right">Username:</td><td><input name="userName" type="text" autocomplete="off" value="" size="29"/></td></tr><tr><td style="padding-right:5px; text-align:right;">Password:</td><td><input id="password" name="password" type="password" value="" autocomplete="off" size="29"/></td></tr><tr><td style="padding-right:5px; text-align:right;"> 
+<a name="skip"></a>
+                    <tr><td style="padding-right:5px; text-align:right"><label for="userName">Username:</label></td><td><input name="userName" id="userName" type="text" autocomplete="off" value="" size="29"/></td></tr><tr><td style="padding-right:5px; text-align:right;"><label for="password">Password:</label></td><td><input id="password" name="password" type="password" value="" autocomplete="off" size="29"/></td></tr><tr><td style="padding-right:5px; text-align:right;"> 
 					<logic:present name="secondaryAuthName">Identity Provider:</td><td>
 						<SELECT name="auth">
 							<OPTION value="1"><bean:write name="authName"/></OPTION>

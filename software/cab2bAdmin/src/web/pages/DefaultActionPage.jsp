@@ -3,13 +3,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>caBench-To-Bedside</title>
 <link href="css/cab2b.css" rel="stylesheet" type="text/css" />
-<link href="css/cab2b_1024.css" rel="stylesheet" type="text/css">
 <script src="js/menu_popup.js">
 </script>
 <script language="JavaScript" src="js/mm_menu.js"></script>
 </head>
 
 <body  >
+<div id="skipmenu">
+<a href="#skip" class="skippy">Skip Navigation</a>
+<a name="top"></a>
+</div> <!-- end skipmenu -->
 <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="content_table">
   <tr>
     <td align="left" valign="top"><!--Begin content area -->
@@ -37,6 +40,7 @@
           <td height="130" align="center" valign="middle"><table width="570" border="0" cellpadding="1" cellspacing="0" class="td_grey">
               <tr>
                 <td align="center" valign="middle"><table width="100%" border="0" cellpadding="4" cellspacing="0" bgcolor="#FFFFFF">
+<a name="skip"></a>
                   <form id="form1" name="form1" method="post" action="">
                     <tr>
                       <td height="50" align="center" valign="middle" nowrap="nowrap" ><span class="font_bl1_b"><img src="images/ic_info.gif" alt="Success" width="32" height="32" hspace="5" align="absmiddle"></span><span class="font_blk_s">Not yet implemented. <a href="#" class="set4"></a></span></td>

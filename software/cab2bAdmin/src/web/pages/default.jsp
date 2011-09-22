@@ -5,7 +5,6 @@
 
 <link href="css/cab2b.css" rel="stylesheet" type="text/css" />
 <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
-<link href="css/cab2b_1024.css" rel="stylesheet" type="text/css">
 <script type="text/JavaScript">
 	function submitForm()
 	{
@@ -38,6 +37,10 @@
 </head>
 
 <body onLoad="<%if(request.getAttribute("invalidRequest")!=null){%>alert('Invalid request. Redirected to login page.');<%}%>">
+<div id="skipmenu">
+<a href="#skip" class="skippy">Skip Navigation</a>
+<a name="top"></a>
+</div> <!-- end skipmenu -->
 <form id="form1" name="form1" method="post" action="Login.action"
 	onsubmit="return submitForm();">
 <table width="100%" border="0" align="center" cellpadding="0"
@@ -117,6 +120,7 @@
 
 				</table>
 				</td>
+<a name="skip"></a>
 				<td align="center" valign="top"><img
 					src="images/concept_image.jpg" width="500" height="500" alt="concept image"></td>
 				<td width="252" align="center" valign="top">
@@ -130,15 +134,15 @@
 								<td class="error_font_b" colspan="2">${requestScope.error}</td>
 							</tr>
 							<tr>
-								<th scope="row" nowrap="nowrap" class="font_blk_b">User Name:</th>
-								<td align="left"><input name="userName" type="text"
+								<th scope="row" nowrap="nowrap" class="font_blk_b"><label for="userName">User Name:</label></th>
+								<td align="left"><input name="userName" id="userName" type="text"
 									class="font_blk_s" value="" id="userName" autocomplete="off" />
 								</td>
 							</tr>
 							<tr>
-								<th scope="row" nowrap="nowrap"><span class="font_blk_b">Password:</span></th>
-								<td align="left"><input name="password" type="password"
-									class="font_blk_s" value="" id="password" autocomplete="off" /></td>
+ 								<th scope="row" nowrap="nowrap"><span class="font_blk_b"><label for="password">Password:</label></span></th>
+								<td align="left">
+<input name="password" type="password" class="font_blk_s" value="" id="password" autocomplete="off" /></td>
 							</tr>
 
 							<tr>

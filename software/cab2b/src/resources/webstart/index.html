@@ -32,9 +32,42 @@
 			padding-top: 5;
 			text-align: center;
 		}
+div#skipmenu{
+position:relative;
+}
+div#skipmenu a.skippy{
+position:absolute;
+top: -1000px;
+left:-1000px;
+height: 1px;
+width: 1px;
+overflow:hidden;
+}
+
+div#skipmenu a.skippy:active, div#skipmenu a.skippy:focus, div#skipmenu a.skippy:hover{
+position: absolute;
+top:auto;
+left:auto;
+width:100%;
+height: 1em;
+width: auto;
+font-size:1em;
+font-weight:bold;
+width:100%;
+padding-bottom:15px;
+color: black;
+z-index:100;
+text-align:right;
+margin-bottom:25px;
+}
+
 		</style>		
 	</head>
 	<body style='font-family:Verdana' TOPMARGIN='0' BOTTOMMARGIN='0' LEFTMARGIN='0' RIGHTMARGIN='0'>
+<div id="skipmenu">
+<a href="#skip" class="skippy">Skip Navigation</a>
+<a name="top"></a>
+</div> <!-- end skipmenu -->
 		<table width='100%' cellpadding='0' cellspacing='0'>
 			<tr>
 				<td valign='top' width='100%'><img width='100%' src="images/banner.gif" alt="banner"></td>
@@ -150,6 +183,7 @@
 						<tr>
 							<td colspan='2'>
 							<!--	<span style='font-size:16.0pt'>Welcome to caBench-to-Bedside (caB2B)</span>-->
+<a name="skip"></a>
 								<span style='font-size:10.0pt;'>
 									<p>The NCI caBIG™ project creates a common, extensible platform that integrates diverse data types and supports interoperable analytic tools. caBIG™ is developing applications to facilitate individual steps involved in micro-array analysis. caGrid, an infrastructure for caBIG, is used to perform investigations involving integration of data and analytical services from diverse research communities. caB2B leverages these tools in a user-friendly graphical user interface (GUI). caB2B can be used by the physician scientist to perform operations such as the following: </p>
 									<ul><li>Query any caGrid data service to obtain data.<br>

@@ -7,7 +7,6 @@
 <title>caBench-To-Bedside</title>
 <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
 <link href="css/cab2b.css" rel="stylesheet" type="text/css" />
-<link href="css/cab2b_1024.css" rel="stylesheet" type="text/css">
 <script src="javascript/menu_popup.js">
 </script>
 <script language="JavaScript" src="javascript/menu_create.js"></script>

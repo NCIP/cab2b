@@ -413,3 +413,32 @@ opacity: 0.8;
 .noBorder td {
 	border: 0;
 }
+div#skipmenu{
+position:relative;
+}
+div#skipmenu a.skippy{
+position:absolute;
+top: -1000px;
+left:-1000px;
+height: 1px;
+width: 1px;
+overflow:hidden;
+}
+
+div#skipmenu a.skippy:active, div#skipmenu a.skippy:focus, div#skipmenu a.skippy:hover{
+position: absolute;
+top:auto;
+left:auto;
+width:100%;
+height: 1em;
+width: auto;
+font-size:1em;
+font-weight:bold;
+width:100%;
+padding-bottom:15px;
+color: black;
+z-index:100;
+text-align:right;
+margin-bottom:25px;
+}
+

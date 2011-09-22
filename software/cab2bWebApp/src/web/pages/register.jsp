@@ -140,6 +140,10 @@
 </SCRIPT>
 <!--<BODY onLoad="setPage()">-->
 <BODY> 
+<div id="skipmenu">
+<a href="#skip" class="skippy">Skip Navigation</a>
+<a name="top"></a>
+</div> <!-- end skipmenu -->
 	<FORM name="form" method="post" action="mailto:ncicb@pop.nci.nih.gov?SUBJECT=caB2B Registration" onSubmit="return validate()" enctype="text/plain">
 
 		<jsp:include page="header.jsp">
@@ -154,6 +158,7 @@
 			Register For Accounts
 				</DIV>
 			<BR/>
+<a name="skip"></a>
 			Register for National Cancer Institute Credentials:<br/>
 
 <table>
@@ -162,10 +167,10 @@
                     <tbody>
 <caption><strong>Registration Form</strong></caption>
 		    <tr><td style="padding-right:5px; text-align:right"></td><td>(If you prefer you can email the information directly to ncicb at pop.nci.nih.gov)</td><tr>
-                    <tr><td style="padding-right:5px; text-align:right">Full Name:</td><td><input name="userName" type="text" autocomplete="off" value="" size="29"/></td></tr>
-                    <tr><td style="padding-right:5px; text-align:right">Email Address:</td><td><input name="email" type="text" autocomplete="off" value="" size="29"/></td></tr>
-                    <tr><td style="padding-right:5px; text-align:right">Phone:</td><td><input name="phone" type="text" autocomplete="off" value="" size="29"/></td></tr>
-                    <tr><td style="padding-right:5px; text-align:right">Institution:</td><td><input name="institution" type="text" autocomplete="off" value="" size="29"/></td></tr>
+                    <tr><td style="padding-right:5px; text-align:right"><label for="userName">Full Name:</label></td><td><input name="userName" id="userName" type="text" autocomplete="off" value="" size="29"/></td></tr>
+                    <tr><td style="padding-right:5px; text-align:right"><label for="email">Email Address:</label></td><td><input name="email" id="email" type="text" autocomplete="off" value="" size="29"/></td></tr>
+                    <tr><td style="padding-right:5px; text-align:right"><label for="phone">Phone:</label></td><td><input name="phone" id="phone" type="text" autocomplete="off" value="" size="29"/></td></tr>
+                    <tr><td style="padding-right:5px; text-align:right"><label for="institution">Institution:</label></td><td><input name="institution" type="text" autocomplete="off" value="" size="29"/></td></tr>
 		    <tr><td><br></td></tr>
                     <tr><td style="padding-right:5px; text-align:right"><input type="submit" value="Send"></td></tr>
 		    <tr><td><br></td></tr>
