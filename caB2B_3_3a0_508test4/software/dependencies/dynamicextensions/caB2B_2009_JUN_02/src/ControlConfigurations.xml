@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<controls>
+	<!-- rules for text control start-->
+	<control name="TextControl"
+		display-label="eav.caption.TextControlCaption"
+		jspName="/pages/toolTypeHTML/TextControl.jsp"
+		image-path="images/controlimages/TextControlImage.jpeg">
+		<validations>
+			<common-validation-rule name="unique" isImplicit="false" />
+			<common-validation-rule name="required" isImplicit="false" />
+		</validations>
+		<datatypes>
+			<dataType name="Text">
+				<validations>
+					<validation-rule name="textLength" isImplicit="true" />
+				</validations>
+			</dataType>
+			<dataType name="Number">
+				<validations>
+					<validation-rule name="number" isImplicit="true" />
+					<validation-rule name="range" isImplicit="false" />
+				</validations>
+			</dataType>
+		</datatypes>
+	</control>
+	<!-- rules for text control end-->
+
+	<!-- rules for Checkbox control start-->
+	<control name="CheckboxControl"
+		display-label="eav.caption.CheckboxControlCaption"
+		jspName="/pages/toolTypeHTML/CheckboxControl.jsp"
+		image-path="images/controlimages/CheckBoxImage.jpeg">
+		<validations>
+		</validations>
+	</control>
+	<!-- rules for CheckboxControl control end-->
+
+	<!-- rules for Radio button control start-->
+	<control name="RadioButtonControl"
+		display-label="eav.caption.RadioButtonControlCaption"
+		jspName="/pages/toolTypeHTML/RadioButtonControl.jsp"
+		image-path="images/controlimages/RadioButtonImage.jpeg">
+	</control>
+	<!-- rules for Radio button  control end-->
+
+	<!-- rules for ComboboxControl control start-->
+	<control name="ComboboxControl"
+		display-label="eav.caption.ComboboxControlCaption"
+		jspName="/pages/toolTypeHTML/ComboboxControl.jsp"
+		image-path="images/controlimages/ComboboxImage.jpeg">
+		<validations>
+			<common-validation-rule name="required" isImplicit="false" />
+		</validations>
+		<datatypes>
+			<dataType name="Text">
+				<validations></validations>
+			</dataType>
+			<dataType name="Number">
+				<validations></validations>
+			</dataType>
+			<dataType name="Yes/No">
+				<validations></validations>
+			</dataType>
+		</datatypes>
+	</control>
+	<!-- rules for ComboboxControl control end-->
+
+	<!-- rules for Date control start-->
+	<control name="DateControl"
+		display-label="eav.caption.DateControlCaption"
+		jspName="/pages/toolTypeHTML/DateControl.jsp"
+		image-path="images/controlimages/DateControlImage.jpeg">
+		<validations>
+			<common-validation-rule name="date" isImplicit="true" />
+			<common-validation-rule name="required" isImplicit="false" />
+			<common-validation-rule name="dateRange" isImplicit="false" />
+
+		</validations>
+		<datatypes>
+			
+		</datatypes>
+	</control>
+	<!-- rules for Date control end-->
+	
+	<!-- rules for File Upload control start -->
+	<control name="FileUploadControl"
+		display-label="eav.caption.FileUploadControlCaption"
+		jspName="/pages/toolTypeHTML/FileUploadControl.jsp"
+		image-path="images/controlimages/FileUploadImage.jpeg">
+		<validations>
+			<common-validation-rule name="required" isImplicit="false" />
+		</validations>
+	</control>
+		<!-- rules for File Upload control end-->	
+	<!-- <control name="AddSubFormControl"
+		display-label="eav.caption.AddSubFormControl">
+	</control>
+	-->
+</controls>

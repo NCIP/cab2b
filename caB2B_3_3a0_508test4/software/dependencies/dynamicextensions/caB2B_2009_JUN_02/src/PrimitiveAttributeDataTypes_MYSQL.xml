@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Primitive-Attributes>
+    <Primitive-Attribute>
+		  <name>String</name>
+	  	  <database-datatype>text</database-datatype>
+    </Primitive-Attribute>
+    
+    <Primitive-Attribute>
+		  <name>Boolean</name>
+	  	  <database-datatype>bool</database-datatype>
+    </Primitive-Attribute>
+    
+     <Primitive-Attribute>
+		  <name>Integer</name>
+	  	  <database-datatype>int(38)</database-datatype>
+    </Primitive-Attribute>
+    
+     <Primitive-Attribute>
+		  <name>Long</name>
+	  	  <database-datatype>bigint(38)</database-datatype>
+    </Primitive-Attribute>
+    
+    <Primitive-Attribute>
+		  <name>Double</name>
+	  	  <database-datatype>double</database-datatype>
+    </Primitive-Attribute>
+    
+    <Primitive-Attribute>
+		  <name>Float</name>
+	  	  <database-datatype>float</database-datatype>
+    </Primitive-Attribute>
+    
+    <Primitive-Attribute>
+		  <name>Short</name>
+	  	  <database-datatype>smallint</database-datatype>
+    </Primitive-Attribute>
+    
+     <Primitive-Attribute>
+		  <name>Date</name>
+	  	  <database-datatype>date</database-datatype>
+    </Primitive-Attribute>
+    
+    <Primitive-Attribute>
+		  <name>DateTime</name>
+	  	  <database-datatype>datetime</database-datatype>
+    </Primitive-Attribute>
+    
+	<Primitive-Attribute>
+		  <name>File</name>
+	  	  <database-datatype>blob</database-datatype>
+    </Primitive-Attribute>
+    
+        <Primitive-Attribute>
+		  <name>Object</name>
+	  	  <database-datatype>blob</database-datatype>
+    </Primitive-Attribute>
+        
+</Primitive-Attributes>
