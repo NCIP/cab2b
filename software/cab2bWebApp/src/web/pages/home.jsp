@@ -152,8 +152,8 @@
     <legend>Model Groups</legend>
 								<logic:iterate name="modelGroupDVOList" id="modelGroupDVO" type="edu.wustl.cab2bwebapp.dvo.ModelGroupDVO" indexId="index">
 									<DIV class="myselectboxitem" style="border-style:solid;border-width:1;border-color:#fff;" onmouseover="this.style.borderColor='#ccc';this.style.backgroundColor='#eee';" onmouseout="this.style.borderColor='#fff';this.style.backgroundColor='#fff';" onblur="this.style.borderColor='#fff';this.style.backgroundColor='#fff';" onClick="document.getElementById('<bean:write name="modelGroupDVO" property="modelGroupName"/>').checked=true;setDropDown(0);showSavedSearches(document.getElementById('<bean:write name="modelGroupDVO" property="modelGroupName"/>'), <bean:write name="modelGroupDVO" property="secured"/> <logic:notPresent name="userName">&& true</logic:notPresent><logic:present name="userName">&& false</logic:present>)">
+                                                                                <LABEL for="<bean:write name="modelGroupDVO" property="modelGroupName"/>" style="margin-left:0.3em;line-height:1.5em;"><bean:write name="modelGroupDVO" property="modelGroupName"/><logic:equal name="modelGroupDVO" property="secured" value="true">&nbsp;<IMG src="images/lock.gif" alt="<bean:message key="img.alt.secureservice"/>"></logic:equal></LABEL>
 										<INPUT type="radio" style="display:none;" name="modelGroups" id="<bean:write name="modelGroupDVO" property="modelGroupName"/>" value="<bean:write name="modelGroupDVO" property="modelGroupName"/>" title="<bean:write name="modelGroupDVO" property="modelGroupName"/>" <logic:equal name="modelGroupDVO" property="selected" value="true">checked</logic:equal>>
-                                                                                <LABEL style="margin-left:0.3em;line-height:1.5em;"><bean:write name="modelGroupDVO" property="modelGroupName"/><logic:equal name="modelGroupDVO" property="secured" value="true">&nbsp;<IMG src="images/lock.gif" alt="<bean:message key="img.alt.secureservice"/>"></logic:equal></LABEL>
 									</DIV>
 								</logic:iterate>
 </fieldset>
@@ -167,7 +167,7 @@
 			</DIV>
 			<DIV id="keywordsearchpanel">
 				<DIV class="label"><LABEL for="keyword">Keyword</Label></DIV> 
-<INPUT type="text" class="textbox examplevalue" name="keyword" title="keyword" value="<bean:message key="textbox.keywordsearch.examplevalue"/>" onFocus="setKeywordSearchTextBox(this, keywordSearchExample.value, 'focus')" onBlur="setKeywordSearchTextBox(this, keywordSearchExample.value, 'blur')"><INPUT type="hidden" title="keyword example" name="keywordSearchExample" value="<bean:message key="textbox.keywordsearch.examplevalue"/>"> <INPUT type="submit" title="Submit" class="button" value="<bean:message key="button.keywordsearch"/>">
+<INPUT type="text" class="textbox examplevalue" name="keyword" id="keyword" title="keyword" value="<bean:message key="textbox.keywordsearch.examplevalue"/>" onFocus="setKeywordSearchTextBox(this, keywordSearchExample.value, 'focus')" onBlur="setKeywordSearchTextBox(this, keywordSearchExample.value, 'blur')"><INPUT type="hidden" title="keyword example" name="keywordSearchExample" value="<bean:message key="textbox.keywordsearch.examplevalue"/>"/><INPUT type="submit" title="Submit" class="button" value="<bean:message key="button.keywordsearch"/>"/>
 			</DIV>		
 			<DIV id="savedsearchespanel">
 				<DIV class="titlebar collapsible">

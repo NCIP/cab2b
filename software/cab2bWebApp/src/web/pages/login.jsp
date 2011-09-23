@@ -55,27 +55,14 @@
 					</DIV>
 				</DIV>
 				<DIV id="loginpanelbody">
-<!--					<DIV class="label">
-						<bean:message key="label.username"/>
-					</DIV>
-					<DIV style="width:60%;float:right">
-						<INPUT type="text" class="textbox" name="userName" autocomplete="off"/>
-					</DIV>
-					<BR/>
-					<DIV class="label">
-						<bean:message key="label.password"/>
-					</DIV>
-					<DIV style="width:60%;float:right">
-						<INPUT type="password" class="textbox" name="password" autocomplete="off"/>
-					</DIV>-->
  <table>
                     <thead>
                     <tr><td>&nbsp;</td><td>&nbsp;</td></tr></thead>
                     <tbody>
 <a name="skip"></a>
                     <tr><td style="padding-right:5px; text-align:right"><label for="userName">Username:</label></td><td><input name="userName" id="userName" type="text" autocomplete="off" value="" size="29"/></td></tr><tr><td style="padding-right:5px; text-align:right;"><label for="password">Password:</label></td><td><input id="password" name="password" type="password" value="" autocomplete="off" size="29"/></td></tr><tr><td style="padding-right:5px; text-align:right;"> 
-					<logic:present name="secondaryAuthName">Identity Provider:</td><td>
-						<SELECT name="auth">
+					<logic:present name="secondaryAuthName"><LABEL for="auth">Identity Provider:</LABEL></td><td>
+						<SELECT name="auth" id="auth">
 							<OPTION value="1"><bean:write name="authName"/></OPTION>
 							<OPTION value="2"><bean:write name="secondaryAuthName"/></OPTION>
 						</SELECT>

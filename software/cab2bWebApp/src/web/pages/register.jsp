@@ -144,7 +144,6 @@
 <a href="#skip" class="skippy">Skip Navigation</a>
 <a name="top"></a>
 </div> <!-- end skipmenu -->
-	<FORM name="form" method="post" action="mailto:ncicb@pop.nci.nih.gov?SUBJECT=caB2B Registration" onSubmit="return validate()" enctype="text/plain">
 
 		<jsp:include page="header.jsp">
 			<jsp:param name="home" value="home"/>
@@ -159,6 +158,7 @@
 				</DIV>
 			<BR/>
 <a name="skip"></a>
+	<FORM name="form" method="post" action="mailto:ncicb@pop.nci.nih.gov?SUBJECT=caB2B Registration" onSubmit="return validate()" enctype="text/plain">
 			Register for National Cancer Institute Credentials:<br/>
 
 <table>
@@ -170,13 +170,14 @@
                     <tr><td style="padding-right:5px; text-align:right"><label for="userName">Full Name:</label></td><td><input name="userName" id="userName" type="text" autocomplete="off" value="" size="29"/></td></tr>
                     <tr><td style="padding-right:5px; text-align:right"><label for="email">Email Address:</label></td><td><input name="email" id="email" type="text" autocomplete="off" value="" size="29"/></td></tr>
                     <tr><td style="padding-right:5px; text-align:right"><label for="phone">Phone:</label></td><td><input name="phone" id="phone" type="text" autocomplete="off" value="" size="29"/></td></tr>
-                    <tr><td style="padding-right:5px; text-align:right"><label for="institution">Institution:</label></td><td><input name="institution" type="text" autocomplete="off" value="" size="29"/></td></tr>
+                    <tr><td style="padding-right:5px; text-align:right"><label for="institution">Institution:</label></td><td><input name="institution" id="institution" type="text" autocomplete="off" value="" size="29"/></td></tr>
 		    <tr><td><br></td></tr>
                     <tr><td style="padding-right:5px; text-align:right"><input type="submit" value="Send"></td></tr>
 		    <tr><td><br></td></tr>
 		    <tr><td></td></tr>
 </table>
 <HR/>
+</FORM>
 						Register for caGrid Dorian Credentials:
 			</DIV>
 						<BR/>
@@ -190,6 +191,5 @@
 </DIV>
 		</DIV>
 </DIV>
-	</FORM>
 </BODY>
 </HTML>
