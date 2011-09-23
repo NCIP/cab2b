@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="4.2">
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\controller\IndexRefresherInvoker.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\controller\RecordIdentifier.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\controller\interfaces\ColumnInterface.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\controller\interfaces\DatabaseInterface.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\controller\interfaces\IndexRefresherInterface.java">
+<error line="0" severity="error" message="Got an exception - java.lang.RuntimeException: Unable to get class information for TitliException." source="com.puppycrawl.tools.checkstyle.TreeWalker"/>
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\controller\interfaces\MatchInterface.java">
+<error line="0" severity="error" message="Got an exception - java.lang.RuntimeException: Unable to get class information for TitliFetchException." source="com.puppycrawl.tools.checkstyle.TreeWalker"/>
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\controller\interfaces\MatchListInterface.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\controller\interfaces\ResultGroupInterface.java">
+<error line="0" severity="error" message="Got an exception - java.lang.RuntimeException: Unable to get class information for TitliFetchException." source="com.puppycrawl.tools.checkstyle.TreeWalker"/>
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\controller\interfaces\SortedResultMapInterface.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\controller\interfaces\TableInterface.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\controller\interfaces\TitliInterface.java">
+<error line="0" severity="error" message="Got an exception - java.lang.RuntimeException: Unable to get class information for TitliException." source="com.puppycrawl.tools.checkstyle.TreeWalker"/>
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\controller\interfaces\entry\EntryInterface.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\controller\interfaces\entry\SubEntryInterface.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\controller\interfaces\record\RecordInterface.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\controller\interfaces\record\RecordListInterface.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\Column.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\Database.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\Entry.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\RDBMSReader.java">
+<error line="0" severity="error" message="Got an exception - java.lang.RuntimeException: Unable to get class information for TitliException." source="com.puppycrawl.tools.checkstyle.TreeWalker"/>
+<error line="134" severity="error" message="Line matches the illegal pattern &apos;System\.out\.println&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+<error line="144" severity="error" message="Line matches the illegal pattern &apos;System\.out\.println&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+<error line="167" severity="error" message="Line matches the illegal pattern &apos;System\.out\.println&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+<error line="228" severity="error" message="Line matches the illegal pattern &apos;System\.out\.println&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+<error line="229" severity="error" message="Line matches the illegal pattern &apos;printStackTrace&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\Table.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\Titli.java">
+<error line="0" severity="error" message="Got an exception - java.lang.RuntimeException: Unable to get class information for TitliException." source="com.puppycrawl.tools.checkstyle.TreeWalker"/>
+<error line="383" severity="error" message="Line matches the illegal pattern &apos;System\.out\.println&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+<error line="405" severity="error" message="Line matches the illegal pattern &apos;System\.out\.println&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+<error line="417" severity="error" message="Line matches the illegal pattern &apos;printStackTrace&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+<error line="436" severity="error" message="Line matches the illegal pattern &apos;System\.out\.println&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+<error line="441" severity="error" message="Line matches the illegal pattern &apos;printStackTrace&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+<error line="448" severity="error" message="Line matches the illegal pattern &apos;System\.out\.println&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\TitliConstants.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\TitliException.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\fetch\Fetcher.java">
+<error line="0" severity="error" message="Got an exception - java.lang.RuntimeException: Unable to get class information for TitliFetchException." source="com.puppycrawl.tools.checkstyle.TreeWalker"/>
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\fetch\Record.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\fetch\RecordList.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\fetch\TitliFetchException.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\index\IndexRefresher.java">
+<error line="0" severity="error" message="Got an exception - java.lang.RuntimeException: Unable to get class information for TitliException." source="com.puppycrawl.tools.checkstyle.TreeWalker"/>
+<error line="285" severity="error" message="Line matches the illegal pattern &apos;System\.out\.println&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+<error line="290" severity="error" message="Line matches the illegal pattern &apos;printStackTrace&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+<error line="300" severity="error" message="Line matches the illegal pattern &apos;System\.out\.println&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+<error line="311" severity="error" message="Line matches the illegal pattern &apos;System\.out\.println&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+<error line="315" severity="error" message="Line matches the illegal pattern &apos;System\.out\.println&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\index\Indexer.java">
+<error line="0" severity="error" message="Got an exception - java.lang.RuntimeException: Unable to get class information for TitliIndexException." source="com.puppycrawl.tools.checkstyle.TreeWalker"/>
+<error line="424" severity="error" message="Line matches the illegal pattern &apos;System\.out\.println&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\index\TitliIndexException.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\index\TitliIndexRefresherException.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\search\Match.java">
+<error line="0" severity="error" message="Got an exception - java.lang.RuntimeException: Unable to get class information for TitliFetchException." source="com.puppycrawl.tools.checkstyle.TreeWalker"/>
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\search\MatchComparator.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\search\MatchList.java">
+<error line="0" severity="error" message="Got an exception - java.lang.RuntimeException: Unable to get class information for TitliException." source="com.puppycrawl.tools.checkstyle.TreeWalker"/>
+<error line="126" severity="error" message="Line matches the illegal pattern &apos;System\.out\.println&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+<error line="141" severity="error" message="Line matches the illegal pattern &apos;System\.out\.println&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+<error line="152" severity="error" message="Line matches the illegal pattern &apos;System\.out\.println&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+<error line="156" severity="error" message="Line matches the illegal pattern &apos;System\.out\.println&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\search\ResultGroup.java">
+<error line="0" severity="error" message="Got an exception - java.lang.RuntimeException: Unable to get class information for TitliFetchException." source="com.puppycrawl.tools.checkstyle.TreeWalker"/>
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\search\Searcher.java">
+<error line="0" severity="error" message="Got an exception - java.lang.RuntimeException: Unable to get class information for TitliException." source="com.puppycrawl.tools.checkstyle.TreeWalker"/>
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\search\SortedResultMap.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\search\TitliSearchException.java">
+</file>
+<file name="E:\juber\workspace\TiTLi_WashU\src\titli\model\util\IndexUtility.java">
+<error line="0" severity="error" message="Got an exception - java.lang.RuntimeException: Unable to get class information for TitliException." source="com.puppycrawl.tools.checkstyle.TreeWalker"/>
+<error line="63" severity="error" message="Line matches the illegal pattern &apos;printStackTrace&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+<error line="66" severity="error" message="Line matches the illegal pattern &apos;System\.out\.println&apos;." source="com.puppycrawl.tools.checkstyle.checks.GenericIllegalRegexpCheck"/>
+</file>
+</checkstyle>
