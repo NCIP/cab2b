@@ -15,6 +15,7 @@
 </script>
 
 <script type="text/javascript" language="javascript">
+
 function trim(str, chars) {
 	return ltrim(rtrim(str, chars), chars);
 }
@@ -48,7 +49,7 @@ function rtrim(str, chars) {
    }
 
 	if(checkSpecialCharacter(title)==false){
-	alert("Please remove special character  from "+ title);
+	alert("please remove special character  from "+ title);
 	titleField.focus();
 	return false;
 	}	
@@ -58,6 +59,53 @@ function rtrim(str, chars) {
  
 </script>
 </head>
+<%!
+public String filterSpecialChars(String value) {
+        if (value == null) { return "";
+        }
+
+        StringBuffer result = new StringBuffer(value.length());
+        for (int i=0; i<value.length(); ++i) {
+          switch (value.charAt(i)) {
+
+                case '<':
+                        result.append("&lt;");
+                        break;
+                case '>':
+                        result.append("&gt;");
+                        break;
+                case '"':
+                        result.append("&quot;");
+                        break;
+                case '\'':
+                        result.append("&#39;");
+                        break;
+                case '%':
+                        result.append("&#37;");
+                        break;
+                case ';':
+                        result.append("&#59;");
+                        break;
+                case '(':
+                        //result.append("&#40;");
+                        break;
+                case ')':
+                        //result.append("&#41;");
+                        break;
+                case '&':
+                        result.append("&amp;");
+                        break;
+                case '+':
+                        result.append("&#43;");
+                        break;
+                default:
+                        result.append(value.charAt(i)); break;
+          }
+        }
+        return result.toString();
+}
+%>
+
 <body>
 
 <!--Begin content area -->
@@ -97,7 +145,7 @@ function rtrim(str, chars) {
                  
                     <tr>
                       <td align="left" ><img src="images/star.gif" width="5" height="5" hspace="3" vspace="3" align="absmiddle"><span class="font_blk_s">Category Title: </span></td>
-                      <td align="left" valign="middle" nowrap><input name="title" id="title" type="text" class="font_blk_s" value="${param.title}" size="40" />
+                      <td align="left" valign="middle" nowrap><input name="title" id="title" type="text" class="font_blk_s" value="<%= filterSpecialChars(request.getParameter("title")) %>" size="40" />
                       <!--   
                           <span class="font_blk_s"><img src="images/ic_list2.gif" alt="List Existing Categories"  hspace="3" vspace="3" border="0" align="absbottom" disabled="true" />List Existing Categories</span>  
                        -->

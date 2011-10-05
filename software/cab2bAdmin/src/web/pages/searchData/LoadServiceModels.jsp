@@ -127,8 +127,7 @@ public String filterSpecialChars(String value) {
                         <tr>
                           <td rowspan="2" align="left" width="15">&nbsp;</td>
                           <td align="left"> <span class="font_blk_s"> Search For </span></td>
-                          <!--<td align="left">&nbsp;<input id="searchText"  type="text" class="input_tbox" name="textbox" value="${param.textbox}" onKeyDown="setFocusOnSearchButton(event)" size="30" /></td>-->
-                          <td align="left">&nbsp;<input id="searchText"  type="text" class="input_tbox" name="textbox" value="<%=searchString%>" onKeyDown="setFocusOnSearchButton(event)" size="30" /></td>
+                          <td align="left">&nbsp;<input id="searchText"  type="text" class="input_tbox" name="textbox" value="<%= filterSpecialChars(searchString) %>" onKeyDown="setFocusOnSearchButton(event)" size="30" /></td>
                           <td align="left"><input  type="checkbox" id ="includeDescription" name="includeDescription" value="checked" ${param.includeDescription}/>
                               <span class="font_blk_s"> Include Description </span></td>
                           <td align="left">
@@ -250,7 +249,7 @@ if(loadEntity.size()>0){
 %> 
                         
                         	<pg:prev>
-<%  String url = request.getAttribute("URL") + pageUrl.substring(pageUrl.indexOf("?"))+"&textbox="+searchString;
+<%  String url = request.getAttribute("URL") + pageUrl.substring(pageUrl.indexOf("?"))+"&textbox="+filterSpecialChars(searchString);
 %>            		
             		  <a href="<%= url %>" class="set4"><nobr>[<< Prev ]</nobr></a> </pg:prev>
                       <pg:pages>
@@ -261,14 +260,14 @@ if(loadEntity.size()>0){
 								   <b><%= pageNumber %>&nbsp;|</b>
 						<%  }  
 							else
-							{String url = request.getAttribute("URL") + pageUrl.substring(pageUrl.indexOf("?"))+"&textbox="+searchString;
+							{String url = request.getAttribute("URL") + pageUrl.substring(pageUrl.indexOf("?"))+"&textbox="+filterSpecialChars(searchString);
 								
 								%>
 							   <a href="<%=url %>" class="set4"> <%= pageNumber %>&nbsp;|</a> 
 						  <%}%>
  					</pg:pages>
 					<pg:next>
-<%  String url = request.getAttribute("URL") + pageUrl.substring(pageUrl.indexOf("?"))+"&textbox="+searchString;
+<%  String url = request.getAttribute("URL") + pageUrl.substring(pageUrl.indexOf("?"))+"&textbox="+filterSpecialChars(searchString);
 %>
 							<a href="<%= url  %>" class="set4"><nobr>[ Next  >> ]</nobr></a>					</pg:next>
                         
