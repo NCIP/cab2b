@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-lazy="false">
+	<class name="edu.wustl.common.querysuite.queryobject.impl.Constraints"
+		table="QUERY_CONSTRAINTS" dynamic-update="false" dynamic-insert="false">
+		<cache usage="read-write" />
+
+		<id name="id" column="IDENTIFIER" type="long" length="30"
+			unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">QUERY_CONSTRAINT_SEQ</param>
+			</generator>
+		</id>
+
+		<set name="expressions" cascade="all-delete-orphan"
+			table="QUERY_CONSTRAINT_TO_EXPR">
+			<cache usage="read-write" />
+
+			<key column="CONSTRAINT_ID" />
+
+			<many-to-many column="EXPRESSION_ID"
+				class="edu.wustl.common.querysuite.queryobject.impl.Expression"
+				unique="true" />
+		</set>
+
+		<many-to-one name="joinGraph"
+			class="edu.wustl.common.querysuite.queryobject.impl.JoinGraph" cascade="all"
+			column="QUERY_JOIN_GRAPH_ID" unique="true" />
+
+	</class>
+
+</hibernate-mapping>
