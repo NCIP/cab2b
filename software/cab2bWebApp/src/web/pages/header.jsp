@@ -2,7 +2,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 
 <bean:define id="home" value="${param.home}"/>
-<!--<SCRIPT language="JavaScript" src="javascript/overlay.js"></SCRIPT>-->
+<SCRIPT language="JavaScript" src="javascript/overlay.js"></SCRIPT>
 <SCRIPT language="JavaScript" src="javascript/ajax.js"></SCRIPT>
 <DIV id="header">
 	<IMG alt="<bean:message key="img.alt.cab2b"/>" src="images/logo.gif" id="headerlogo">
