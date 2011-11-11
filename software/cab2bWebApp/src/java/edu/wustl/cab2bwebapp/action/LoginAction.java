@@ -58,6 +58,7 @@ public class LoginAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
         try {
+	    saveToken(request);
             HttpSession session = request.getSession();
             
             session.removeAttribute(Constants.SEARCH_RESULTS);

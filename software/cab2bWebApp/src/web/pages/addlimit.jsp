@@ -53,6 +53,7 @@
 			</DIV>
 		</DIV>
 		<DIV id="definelimitspanelbody">
+		<INPUT name="jtoken" type="hidden" value="<%=(int) (java.lang.Math.random()*1000000000)%>">
 		</DIV>
 		<DIV id="definelimitspanelfooter">
 			<INPUT type="button" class="button" value="<bean:message key="button.back"/>" onClick="document.forms[0].action='Home.do';document.forms[0].submit();">&nbsp;<INPUT type="submit" class="button" value="<bean:message key="button.executequery"/>">

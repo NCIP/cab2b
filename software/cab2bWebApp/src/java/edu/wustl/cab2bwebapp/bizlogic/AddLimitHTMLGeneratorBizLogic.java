@@ -160,6 +160,8 @@ public class AddLimitHTMLGeneratorBizLogic {
             htmlString.append(generateHTMLForSavedQuery(expIdEntityConditionsMap, parameterList))
                 .append("</table>");
         }
+
+
         return htmlString.toString();
     }
 
