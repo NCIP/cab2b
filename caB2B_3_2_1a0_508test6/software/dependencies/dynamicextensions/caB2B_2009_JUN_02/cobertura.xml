@@ -1,0 +1,74 @@
+<!-- =================================================================== -->
+        <!-- Build file                                                          -->
+        <!-- =================================================================== -->
+<project name="DynamicExtensions.cobertura" default="instrument" basedir=".">
+
+	
+  <!-- =================================================================== -->
+  <!-- Instrument class files                                              -->
+  <!-- =================================================================== -->
+	
+
+	
+  <target name="instrument">
+  	
+  	<delete dir="./cobertura/instrumented"/>
+  	<delete file = "./cobertura/coverage.ser"/>
+	<mkdir dir="./cobertura/instrumented"/>
+  	
+    <!-- Remove the coverage data file and any old instrumentation.
+    <delete file="${output.cobertura.result.dir}/coverage.ser"/>  -->
+
+    <!--
+       Instrument the application classes, writing the
+       instrumented classes into ${build.instrumented.dir}.
+    -->
+    <cobertura-instrument datafile="./cobertura/coverage.ser"
+                          todir="./cobertura/instrumented">
+      <!--
+         The following line causes instrument to ignore any
+         source line containing a reference to log4j, for the
+         purposes of coverage reporting.
+      -->
+      <ignore regex="org.apache.log4j.*"/>
+
+      <fileset dir="./WEB-INF/classes">
+        	<include name="**/entitymanager/*.class"/>
+      		<exclude name="**/entitymanager/*Test.class"/>
+      	
+       </fileset>
+    </cobertura-instrument>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Generate converage report                                           -->
+  <!-- =================================================================== -->
+  <target name="coverage.report">
+  		
+  	<delete dir="./cobertura/report"/>
+   	<mkdir dir="./cobertura/report"/>
+  		
+    <cobertura-report datafile="./cobertura/coverage.ser"
+                      srcdir="./src/**/entitymanager"
+                      destdir="./cobertura/report"
+                      format="html"/>
+
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Fail if coverage is below threshold                                 -->
+  <!-- =================================================================== -->
+  <target name="coverage.check">
+    <cobertura-check datafile="./cobertura/coverage.ser"
+                     branchrate="0"
+                     linerate="60"
+                     totalbranchrate="0"
+                     totallinerate="0">
+		
+  	</cobertura-check> 	
+    	
+  </target>
+  <!--removed the leading '9' for every number ie. 4 is 94, 0 is 90, ...-->
+
+</project>

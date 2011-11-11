@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="false" default-lazy="false"
+	package="edu.wustl.common.querysuite.queryobject.impl">
+	<subclass name="CustomFormula" discriminator-value="form"
+		extends="edu.wustl.common.querysuite.queryobject.IExpressionOperand">
+		<list name="rhs" lazy="false" inverse="false"
+			cascade="all-delete-orphan" table="QUERY_FORMULA_RHS">
+			<cache usage="read-write" />
+			<key column="CUSTOM_FORMULA_ID" />
+			<index column="POSITION" />
+			<many-to-many class="Term" column="RHS_TERM_ID" />
+		</list>
+		<join table="QUERY_CUSTOM_FORMULA">
+			<key column="IDENTIFIER" />
+			<property name="operator" column="OPERATOR">
+				<type name="edu.wustl.common.hibernate.EnumType">
+					<param name="enum-name">
+						edu.wustl.common.querysuite.queryobject.RelationalOperator
+					</param>
+				</type>
+			</property>
+			<many-to-one name="lhs" class="Term" cascade="save-update,delete"
+				column="LHS_TERM_ID" />
+		</join>
+	</subclass>
+
+</hibernate-mapping>

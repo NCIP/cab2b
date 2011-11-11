@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-lazy="false">
+	<class name="edu.wustl.common.querysuite.queryobject.impl.OutputAttribute"
+		table="QUERY_OUTPUT_ATTRIBUTE" dynamic-update="false"
+		dynamic-insert="false">
+		<cache usage="read-write" />
+
+		<id name="id" column="IDENTIFIER" type="long" length="30"
+			unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">QUERY_OUTPUT_ATTRIBUTE_SEQ</param>
+			</generator>
+		</id>
+
+		<many-to-one name="expression"
+			class="edu.wustl.common.querysuite.queryobject.impl.Expression"
+			cascade="save-update,persist" column="EXPRESSION_ID" />
+
+		<property name="attribute" column="ATTRIBUTE_ID" not-null="true">
+			<type name="edu.wustl.common.hibernate.CanonicalFormType">
+				<param name="canonical-form-provider">
+					edu.wustl.metadata.hibernate.AttributeCanonicalFormProvider
+				</param>
+			</type>
+		</property>
+	</class>
+</hibernate-mapping>
