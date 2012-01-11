@@ -138,6 +138,9 @@
 	<property name="lib.dir" location="${lib.dir}" />
 	<get src="https://ncimvn.nci.nih.gov/nexus/content/repositories/thirdparty//xmlconfig/xmlconfig/0.1.9/xmlconfig-0.1.9.jar" dest="${bda-utils.dir}" />
 	<get src="https://ncimvn.nci.nih.gov/nexus/content/repositories/thirdparty/org/tigris/svnant/1.2.1/svnant-1.2.1.jar" dest="${bda-utils.dir}" />
+	<get src="https://ncimvn.nci.nih.gov/nexus/content/repositories/thirdparty/org/tigris/svnant/svnkit/1.2.1/svnkit-1.2.1.jar" dest="${bda-utils.dir}" />
+	<get src="https://ncimvn.nci.nih.gov/nexus/content/repositories/thirdparty/org/tigris/svnjavahl/1.2.1/svnjavahl-1.2.1.jar" dest="${bda-utils.dir}" />
+	<get src="https://ncimvn.nci.nih.gov/nexus/content/repositories/thirdparty//org/tigris/svnclientadapter/1.2.1/svnclientadapter-1.2.1.jar" dest="${bda-utils.dir}" />
 	<get src="https://ncimvn.nci.nih.gov/nexus/content/repositories/thirdparty/oopsconsultancy/xmltask/1.15.1/xmltask-1.15.1.jar" dest="${bda-utils.dir}" />
 		<property name="bda.version" value="${bda.version}" />
 		<property name="bda-utils.dir" location="${bda-utils.dir}" />
