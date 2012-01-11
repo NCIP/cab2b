@@ -36,12 +36,13 @@
 	<property name="common.dir" location="${software.dir}/common" />
 	<property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
 	<property name="target.dir" location="${software.dir}/target" />
-	<property name="bda-download.dir" location="${target.dir}/bda-download" />
+	<property name="bda-download.dir" location="${software.dir}/bda-download" />
 	<property name="ivy.settings.dir" location="${common.dir}/ivy" />
 	<property name="lib.dir" location="${target.dir}/lib" />
 	<property name="temp.dir" location="${target.dir}/temp" />
 	<property name="reports.dir" location="${target.dir}/reports" />
-	<property name="bda-utils.dir" location="${target.dir}/bda-utils" />
+<!--	<property name="bda-utils.dir" location="${target.dir}/bda-utils" />-->
+	<property name="bda-utils.dir" location="${software.dir}/bda-utils" />
 	<property name="log.dir" location="${target.dir}/logs" />
 	<property name="dist.dir" location="${target.dir}/dist" />
 	<property name="download.dir" location="${target.dir}/download" />
@@ -115,16 +116,17 @@
 	<!-- retrive ivy files then retrieve bda files and librarires -->
 	<property name="commonlibrary.dir" value="" />
 	<property name="bda-download.file" value="bda-ivy-build.xml" />
-	<mkdir dir="${bda-download.dir}" />
-	<property name="bda-download.src.url" value="http://gforge.nci.nih.gov/svnroot/automation/trunk/software/bda-download/${bda-download.file}" />
-	<get src="${bda-download.src.url}" dest="${bda-download.dir}/${bda-download.file}" />
-	<ant inheritAll="false" inheritRefs="false" antfile="${bda-download.file}" target="retrieve-bda" dir="${bda-download.dir}">
+<!--	<mkdir dir="${bda-download.dir}" /> -->
+<!--	<property name="bda-download.src.url" value="http://gforge.nci.nih.gov/svnroot/automation/trunk/software/bda-download/${bda-download.file}" /> -->
+<!--	<get src="${bda-download.src.url}" dest="${bda-download.dir}/${bda-download.file}" /> -->
+<!--	<ant inheritAll="false" inheritRefs="false" antfile="${bda-download.file}" target="retrieve-bda" dir="${bda-download.dir}">
 		<property name="bda.version" value="${bda.version}" />
 		<property name="bda-utils.dir" location="${bda-utils.dir}" />
 		<property name="lib.dir" location="${lib.dir}" />
 		<property name="software.dir" location="${software.dir}" />
 		<property name="commonlibrary.dir" location="${commonlibrary.dir}" />
 	</ant>
+-->
 
 	<!-- Paths -->
 	<path id="bda-utils.classpath">
@@ -381,6 +383,8 @@
 		<get src="${jbosscp.src.url}" dest="${jbosscp.dest.file}" />
 	</target>
 	<target name="dist:tools:retrieve:jboss" unless="jboss.tools.exists" description="Downloads JBOSS from binary repository and verifies checksum">
+	<echo message="jboss.src.url= ${jboss.src.url}." />
+	<echo message="jboss.dest.file = ${jboss.dest.file}." />
 		<get src="${jboss.src.url}" dest="${jboss.dest.file}" />
 		<get src="${jboss.src.url}.MD5" dest="${jboss.dest.file}.MD5" />
 		<checksum file="${jboss.dest.file}" verifyProperty="jboss.cksum.ok" />
