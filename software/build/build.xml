@@ -11,7 +11,6 @@
 	<property file="project.properties" />
 	<property name="properties.file" value="install.properties" />
 	<property name="upgrade.properties.file" value="upgrade.properties" />
-	<echo message="Using properties file of ${properties.file}." />
 	<available file="${properties.file}" property="properties.file.exists" />
 	<fail unless="properties.file.exists" message="The properties.file ${properties.file} does not exist, please make sure that you pass in an accurate file name with the 'ant -Dproperties.file=somepath/somefile', otherwise the build will fail." />
 	<replaceregexp file="${properties.file}" byline="true" match="^([\w\d.]+)=(.*[\w\d\/\{\}\\]+)[ \t]+\r*$" replace="\1=\2" />
@@ -41,8 +40,8 @@
 	<property name="lib.dir" location="${target.dir}/lib" />
 	<property name="temp.dir" location="${target.dir}/temp" />
 	<property name="reports.dir" location="${target.dir}/reports" />
-<!--	<property name="bda-utils.dir" location="${target.dir}/bda-utils" />-->
-	<property name="bda-utils.dir" location="${software.dir}/bda-utils" />
+	<property name="bda-utils.dir" location="${target.dir}/bda-utils" />
+	<property name="static-bda-utils.dir" location="${software.dir}/bda-utils" />
 	<property name="log.dir" location="${target.dir}/logs" />
 	<property name="dist.dir" location="${target.dir}/dist" />
 	<property name="download.dir" location="${target.dir}/download" />
@@ -116,6 +115,7 @@
 	<!-- retrive ivy files then retrieve bda files and librarires -->
 	<property name="commonlibrary.dir" value="" />
 	<property name="bda-download.file" value="bda-ivy-build.xml" />
+
 <!--	<mkdir dir="${bda-download.dir}" /> -->
 <!--	<property name="bda-download.src.url" value="http://gforge.nci.nih.gov/svnroot/automation/trunk/software/bda-download/${bda-download.file}" /> -->
 <!--	<get src="${bda-download.src.url}" dest="${bda-download.dir}/${bda-download.file}" /> -->
@@ -127,6 +127,23 @@
 		<property name="commonlibrary.dir" location="${commonlibrary.dir}" />
 	</ant>
 -->
+	<mkdir dir="${lib.dir}" />
+	<mkdir dir="${bda-utils.dir}" />
+	<copy todir="${bda-utils.dir}" overwrite="true">
+                        <fileset dir="${static-bda-utils.dir}">
+                                <include name="**/*" />
+                        </fileset>
+	</copy>
+
+	<property name="lib.dir" location="${lib.dir}" />
+	<get src="https://ncimvn.nci.nih.gov/nexus/content/repositories/thirdparty//xmlconfig/xmlconfig/0.1.9/xmlconfig-0.1.9.jar" dest="${bda-utils.dir}" />
+	<get src="https://ncimvn.nci.nih.gov/nexus/content/repositories/thirdparty/org/tigris/svnant/1.2.1/svnant-1.2.1.jar" dest="${bda-utils.dir}" />
+	<get src="https://ncimvn.nci.nih.gov/nexus/content/repositories/thirdparty/oopsconsultancy/xmltask/1.15.1/xmltask-1.15.1.jar" dest="${bda-utils.dir}" />
+		<property name="bda.version" value="${bda.version}" />
+		<property name="bda-utils.dir" location="${bda-utils.dir}" />
+		<property name="lib.dir" location="${lib.dir}" />
+		<property name="software.dir" location="${software.dir}" />
+		<property name="commonlibrary.dir" location="${commonlibrary.dir}" />
 
 	<!-- Paths -->
 	<path id="bda-utils.classpath">
@@ -134,6 +151,7 @@
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
+
 	<path id="ivy.classpath">
 		<fileset dir="${lib.dir}">
 			<include name="${ivy.file}" />
