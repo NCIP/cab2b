@@ -1,0 +1,13 @@
+/*
+ * $Name:  $
+ * $Log: ApplicationVersionInfo.txt,v $
+ * Revision 1.1  2006/11/27 06:23:45  sujay_narkar
+ * Creation version
+ *
+ * Revision 1.2  2006/07/04 10:51:09  Kapil
+ * File to keep cvs tag information
+ *
+ * Revision 1.1  2006/06/28 14:02:17  Kapil
+ * Test cvs keywords
+ *	
+ */
