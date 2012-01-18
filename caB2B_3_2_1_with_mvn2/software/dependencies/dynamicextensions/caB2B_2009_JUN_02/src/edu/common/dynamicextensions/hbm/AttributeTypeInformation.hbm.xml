@@ -1,0 +1,285 @@
+<?xml version='1.0'?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-lazy="false">
+    <class
+        name="edu.common.dynamicextensions.domain.AttributeTypeInformation"
+        table="DYEXTN_ATTRIBUTE_TYPE_INFO"
+        dynamic-update="false"
+        dynamic-insert="false"
+    >
+
+        <id
+            name="id"
+            column="IDENTIFIER"
+            type="long"
+            length="30"
+            unsaved-value="null"
+        >
+            <generator class="native">
+                <param name="sequence">DYEXTN_ATTRIBUTE_TYPE_INFO_SEQ</param>
+            </generator>
+        </id>
+
+        <set
+            name="dataElementCollection"
+            table="DYEXTN_DATA_ELEMENT"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            sort="unsorted"
+        >
+            <cache 
+                usage="read-write" 
+             />
+
+              <key
+                  column="ATTRIBUTE_TYPE_INFO_ID"
+              />
+
+              <one-to-many
+                  class="edu.common.dynamicextensions.domain.DataElement"
+              />
+        </set>
+
+        <set
+            name="defaultValueCollection"
+            table="DYEXTN_PERMISSIBLE_VALUE"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            sort="unsorted"
+        >
+            <cache 
+                usage="read-write" 
+             />
+
+              <key
+                  column="ATTRIBUTE_TYPE_INFO_ID"
+              />
+
+              <one-to-many
+                  class="edu.common.dynamicextensions.domain.PermissibleValue"
+              />
+        </set>
+
+        <!--
+            To add non XDoclet property mappings, create a file named
+                hibernate-properties-AttributeTypeInformation.xml
+            containing the additional properties and place it in your merge dir.
+        -->
+
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.ByteArrayAttributeTypeInformation"
+            table="DYEXTN_BYTE_ARRAY_TYPE_INFO"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+        <property
+            name="contentType"
+            type="string"
+            update="true"
+            insert="true"
+            column="CONTENT_TYPE"
+        />
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.FileAttributeTypeInformation"
+            table="DYEXTN_FILE_TYPE_INFO"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        <set
+            name="fileExtensionCollection"
+            table="DYEXTN_FILE_EXTENSIONS"
+            lazy="false"
+            inverse="false"
+            cascade="all-delete-orphan"
+            sort="unsorted"
+        >
+            <cache 
+                usage="read-write" 
+             />
+
+              <key
+                  column="ATTRIBUTE_ID"
+              />
+
+              <one-to-many
+                  class="edu.common.dynamicextensions.domain.FileExtension"
+              />
+        </set>
+
+        <property
+            name="maxFileSize"
+            type="float"
+            update="true"
+            insert="true"
+            column="MAX_FILE_SIZE"
+        />
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.StringAttributeTypeInformation"
+            table="DYEXTN_STRING_TYPE_INFO"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        <property
+            name="size"
+            type="integer"
+            update="true"
+            insert="true"
+            column="MAX_SIZE"
+        />
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.ObjectAttributeTypeInformation"
+            table="DYEXTN_OBJECT_TYPE_INFO"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.DateAttributeTypeInformation"
+            table="DYEXTN_DATE_TYPE_INFO"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+        <property
+            name="format"
+            type="string"
+            update="true"
+            insert="true"
+            column="FORMAT"
+        />
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.BooleanAttributeTypeInformation"
+            table="DYEXTN_BOOLEAN_TYPE_INFO"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.NumericAttributeTypeInformation"
+            table="DYEXTN_NUMERIC_TYPE_INFO"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+        <property
+            name="measurementUnits"
+            type="string"
+            update="true"
+            insert="true"
+            column="MEASUREMENT_UNITS"
+        />
+
+        <property
+            name="decimalPlaces"
+            type="int"
+            update="true"
+            insert="true"
+            column="DECIMAL_PLACES"
+        />
+
+        <property
+            name="digits"
+            type="int"
+            update="true"
+            insert="true"
+            column="NO_DIGITS"
+        />
+
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.DoubleAttributeTypeInformation"
+            table="DYEXTN_DOUBLE_TYPE_INFO"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.ShortAttributeTypeInformation"
+            table="DYEXTN_SHORT_TYPE_INFO"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.IntegerAttributeTypeInformation"
+            table="DYEXTN_INTEGER_TYPE_INFO"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.LongAttributeTypeInformation"
+            table="DYEXTN_LONG_TYPE_INFO"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        </joined-subclass>
+        <joined-subclass
+            name="edu.common.dynamicextensions.domain.FloatAttributeTypeInformation"
+            table="DYEXTN_FLOAT_TYPE_INFO"
+            dynamic-update="false"
+            dynamic-insert="false"
+        >
+        <key
+            column="IDENTIFIER"
+        />
+
+        </joined-subclass>
+
+        </joined-subclass>
+
+    </class>
+
+</hibernate-mapping>
