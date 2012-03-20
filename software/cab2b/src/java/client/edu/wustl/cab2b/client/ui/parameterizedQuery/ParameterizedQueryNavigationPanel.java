@@ -143,15 +143,11 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
                     AbstractTypePanel panel = (AbstractTypePanel) condtionPanel.getComponent(index);
                     int conditionStatus = panel.isConditionValidBeforeSaving(parameterizedQueryMainPanel);
                     if (conditionStatus == 0) {
-                    	System.out.println("JJJ component:"+index+"conditionStatus="+conditionStatus+ " cond.id="+panel.getCondition(index,ParameterizedQueryNavigationPanel.this, panel.getAttributeDisplayName()).getId()+" for "+panel.getAttributeDisplayName()           			);
-
                         validCondition = true;
                         parameterizedQueryDataModel.addCondition(panel.getExpressionId(), panel
                             .getCondition(index, ParameterizedQueryNavigationPanel.this, panel
                                 .getAttributeDisplayName()));
                     } else if (conditionStatus == 1) {
-                    	System.out.println("JJJ component:"+index+"conditionStatus="+conditionStatus+ " cond.id="+panel.getCondition(index,ParameterizedQueryNavigationPanel.this, "").getId()          			);
-
                         parameterizedQueryDataModel.removeCondition(panel.getExpressionId(), panel
                             .getCondition(index, ParameterizedQueryNavigationPanel.this, ""));
                     } else {
@@ -184,7 +180,6 @@ public class ParameterizedQueryNavigationPanel extends Cab2bPanel {
          * Method to save parameterized query
          */
         private void saveQuery() {
-        	System.out.println("JJJ ParameterizedQueryNavitationPanel.saveQuery");
             ICab2bQuery cab2bParameterizedQuery =
                     parameterizedQueryMainPanel.getParameterizedQueryDataModel().getQuery();
             try {

@@ -23,7 +23,6 @@ public class AttributeInterfaceComparator implements Comparator<AttributeInterfa
 	 *          1 if name of first attribute is greater
 	 */
 	public int compare(AttributeInterface attribute1, AttributeInterface attribute2) {
-		logger.info("JJJ comparing attributes"+attribute1.getId()+attribute1.getName()+" to "+attribute2.getId()+attribute2.getName());
 		return (attribute1.getName().compareToIgnoreCase(attribute2.getName()));
 	}
 

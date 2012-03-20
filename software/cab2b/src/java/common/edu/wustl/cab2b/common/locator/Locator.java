@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import javax.ejb.EJBHome;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import java.util.Properties;
 import org.apache.log4j.Logger;
 import edu.wustl.cab2b.common.BusinessInterface;
 import edu.wustl.cab2b.common.errorcodes.ErrorCodeConstants;
@@ -31,6 +32,7 @@ public class Locator {
         System.setProperty(Context.PROVIDER_URL, CommonPropertyLoader.getJndiUrl());
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.naming.HttpNamingContextFactory");
         //System.setProperty(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
+
     }
 
     /**
@@ -63,9 +65,22 @@ public class Locator {
 
         logger.debug("Finding Bean : " + ejbName + "\n Home Interface is : " + homeClassForEJB.getName());
         try {
+/* JJJ
             logger.debug("Contacting to :" + System.getProperty("java.naming.provider.url"));
             Context ctx = new InitialContext();
             obj = ctx.lookup(ejbName);
+*/
+
+	Properties props = new Properties();
+	props.put("java.naming.factory.initial", "org.jboss.naming.HttpNamingContextFactory");
+	props.put("java.naming.provider.url", CommonPropertyLoader.getJndiUrl());
+	props.put("java.naming.factory.url.pkgs", "org.jboss.naming");
+
+	Context ctx = new InitialContext(props);
+	obj = ctx.lookup(ejbName);
+
+
+
 
         } catch (Throwable e) {
             if(e instanceof Exception) {

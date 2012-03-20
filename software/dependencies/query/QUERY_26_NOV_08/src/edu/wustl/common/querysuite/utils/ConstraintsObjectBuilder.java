@@ -87,7 +87,6 @@ public class ConstraintsObjectBuilder implements IConstraintsObjectBuilderInterf
      *      edu.common.dynamicextensions.domaininterface.EntityInterface)
      */
     public int addExpression(IRule rule, EntityInterface entity) {
-    	System.out.println("addExpression ");
         IQueryEntity queryEntity = QueryObjectFactory.createQueryEntity(entity);
         IExpression expression = query.getConstraints().addExpression(queryEntity);
         expression.setInView(true);
@@ -119,7 +118,6 @@ public class ConstraintsObjectBuilder implements IConstraintsObjectBuilderInterf
      * @return The IExpression of the expression removed.
      */
     public IExpression removeExpression(int iExpressionId) {
-	System.out.println("JJJ removeExpression("+iExpressionId+")");
         return query.getConstraints().removeExpressionWithId(iExpressionId);
     }
 
@@ -134,16 +132,14 @@ public class ConstraintsObjectBuilder implements IConstraintsObjectBuilderInterf
             IAssociation association) throws CyclicException {
         IExpression sourceExpression = exprFromId(sourceExpressionId);
         IExpression destExpression = exprFromId(destExpressionId);
-	System.out.println("JJJ assAssociation*****"+sourceExpressionId+", dest="+destExpressionId);
         addAssociationToQuery(sourceExpressionId, destExpressionId, association);
         sourceExpression.addOperand(destExpression);
         if (association instanceof IInterModelAssociation) {
-        	System.out.println("JJJ assAssociation***** INTERMODEL");
 
             String sourceUrl = getServiceUrls(association.getSourceEntity())[0];
             if (sourceUrl == null) {
                 // TODO throw proper exception
-            	System.out.println("JJJ assAssociation***** INTERMODEL source SERVICE URL NULL!!!!!!");
+            	System.err.println("***** INTERMODEL source SERVICE URL NULL!!!!!!");
 
             } else {
                 ((IInterModelAssociation) association).setSourceServiceUrl(sourceUrl);
@@ -151,7 +147,7 @@ public class ConstraintsObjectBuilder implements IConstraintsObjectBuilderInterf
 
             String targetUrl = getServiceUrls(association.getTargetEntity())[0];
             if (targetUrl == null) {
-            	System.out.println("JJJ assAssociation***** INTERMODEL Target SERVICE URL NULL!!!!!!");
+            	System.err.println("***** INTERMODEL Target SERVICE URL NULL!!!!!!");
 
                 // TODO throw proper exception
             } else {
@@ -188,13 +184,10 @@ public class ConstraintsObjectBuilder implements IConstraintsObjectBuilderInterf
      */
     private void addAssociationToQuery(int sourceExpressionId, int destExpressionId,
             IAssociation association) throws CyclicException {
-	System.out.println("JJJ addAssociationToQuery "+sourceExpressionId+":"+destExpressionId);
         try {
-		System.out.println("JJJ addAssociationToQuery "+sourceExpressionId+":"+destExpressionId);
             query.getConstraints().getJoinGraph()
                     .putAssociation(exprFromId(sourceExpressionId), exprFromId(destExpressionId), association);
         } catch (CyclicException cycExp) {
-	     System.out.println("JJJ caught Exception");
              System.err.println("Cyclic Exception while putting association between "
              + sourceExpressionId
              + " and "
@@ -219,11 +212,6 @@ public class ConstraintsObjectBuilder implements IConstraintsObjectBuilderInterf
 
     	boolean b2= query.getConstraints().getJoinGraph().removeAssociation(exprFromId(sourceExpressionId), exprFromId(destExpressionId));
 
-    	System.out.println("REMOVEASSOCIATION src,dest = " +sourceExpressionId+","+destExpressionId+
-    			" srcExpFID="+exprFromId(sourceExpressionId)+ " destExpId="+exprFromId(destExpressionId)+" b1"+b1+" b2="+b2);
-
-    	
-    	
     	return b1 & b2;
     			
 //        return exprFromId(sourceExpressionId).removeOperand(exprFromId(destExpressionId))
@@ -231,7 +219,6 @@ public class ConstraintsObjectBuilder implements IConstraintsObjectBuilderInterf
     }
 
     private IExpression exprFromId(int id) {
-	System.out.println("JJJ exprFromID for id="+id+" returning"+query.getConstraints().getExpression(id) );
         return query.getConstraints().getExpression(id);
     }
     /**
@@ -433,8 +420,6 @@ public class ConstraintsObjectBuilder implements IConstraintsObjectBuilderInterf
         List<Integer> intermediateExpressionIds = new ArrayList<Integer>();
         List<IAssociation> associations = path.getIntermediateAssociations();
         
-    	System.out.println("addPath src,dest = " +sourceExpressionId+","+destExpressionId+" path="+path);
-
         // No intermediate path between source and target entity
         int srcExpressionId = sourceExpressionId;
         for (int i = 0; i < associations.size() - 1; i++) {
@@ -443,13 +428,11 @@ public class ConstraintsObjectBuilder implements IConstraintsObjectBuilderInterf
             IExpression targetExpression = this.exprFromId(targetExpressionId);
             //targetExpression.setVisible(false);
             targetExpression.setVisible(true);
-		System.out.println("JJJ adding intermediateExpressionId"+targetExpressionId);
             intermediateExpressionIds.add(targetExpressionId);
             try {
                 addAssociation(srcExpressionId, targetExpressionId, associations.get(i));
             } catch (CyclicException cycExp) {
                 // remove the associations from here
-		System.out.println("!!!!!!JJJ exception.  Need to remove Expressions");
                 for (int j = 0; j < intermediateExpressionIds.size(); j++) {
                     this.removeExpression(intermediateExpressionIds.get(j));
                 }
@@ -457,10 +440,6 @@ public class ConstraintsObjectBuilder implements IConstraintsObjectBuilderInterf
             }
             srcExpressionId = targetExpressionId;
         }
-	System.out.println("JJJ before addAssociation called associations are....");
-        for (int i = 0; i < associations.size() ; i++) {
-		System.out.println("JJJ association("+i+") ="+associations.get(i));
-	}
         addAssociation(srcExpressionId, destExpressionId, associations.get(associations.size() - 1));
         return intermediateExpressionIds;
     }
@@ -489,8 +468,6 @@ public class ConstraintsObjectBuilder implements IConstraintsObjectBuilderInterf
      * @param expressionId ExpressionId to be removed from visible list
      */
     public void removeExressionIdFromVisibleList(int expressionId) {
-    	System.out.println("REMOVEExpressionFromVisibleList id= " +expressionId);
-
         m_visibleExpressions.remove(expressionId);
     }
 
@@ -504,11 +481,9 @@ public class ConstraintsObjectBuilder implements IConstraintsObjectBuilderInterf
      */
     public boolean isPathCreatesCyclicGraph(int sourceExpressionId, int destExpressionId,
             IPath path) {
-	System.out.println("JJJ isPathCreateCyclicGraphc src="+sourceExpressionId+" destExpressionID="+destExpressionId);
 
         try {
             List<Integer> intermediateExpressionIds = addPath(sourceExpressionId, destExpressionId, path);
-        	System.out.println("JJJ isPathCreateCyclicGraphc # intermediateExpressionIds="+intermediateExpressionIds.size());
 
             if (0 == intermediateExpressionIds.size()) {
                 removeAssociation(sourceExpressionId, destExpressionId);
@@ -517,16 +492,12 @@ public class ConstraintsObjectBuilder implements IConstraintsObjectBuilderInterf
             } else {
 
                 for (int i = 0; i < intermediateExpressionIds.size(); i++) {
-                	System.out.println("JJJ isPathCreateCyclicGraphc # removing intermediateExpressions="+i);
-
                     this.removeExpression(intermediateExpressionIds.get(i));
                 }
             }
-        	System.out.println("JJJ isPathCreateCyclicGraphc false");
 
             return false;
         } catch (CyclicException e) {
-        	System.out.println("JJJ isPathCreateCyclicGraphc TRUE");
 
             return true;
         }

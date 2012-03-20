@@ -669,28 +669,10 @@ public class SearchNavigationPanel extends Cab2bPanel implements ActionListener 
 
             Cab2bQuery query = (Cab2bQuery) mainSearchPanel.getQueryObject().getQuery();
             if (CommonUtils.isServiceURLConfigured(query, mainSearchPanel.getParent())) {
-            	System.out.println("JJJ **********TESTING isAnySecure against query1 and 2");
-            	
             	QueryEngineBusinessInterface queryEngineBus =
                     (QueryEngineBusinessInterface) CommonUtils
                         .getBusinessInterface(EjbNamesConstants.QUERY_ENGINE_BEAN, QueryEngineHome.class);
             
-    			try {
-	            	System.out.println("JJJ **********TESTING #ORIG# isAnySecure="+queryEngineBus.anySecureServices(query));
-
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-    		
-    			try {
-	            	System.out.println("JJJ **********TESTING #CLONE# isAnySecure="+queryEngineBus.anySecureServices(new ObjectCloner().clone(query)));
-
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
             	
                 parameterizedQueryMainPanel =
                         new ParameterizedQueryMainPanel(new ParameterizedQueryDataModel(query));

@@ -63,19 +63,16 @@ public class ApplicationFilter implements Filter {
         if (!(request.getMethod().trim().equalsIgnoreCase("GET") || request.getMethod().trim()
             .equalsIgnoreCase("POST"))) {
             //Disable all HTTP methods except GET and POST.      
-        	logger.info("JJJ forbidden");
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
         } else {
             //To make check on cross site scripting (XSS).
             boolean isXssVulnerable = false;
             
             if(request.isRequestedSessionIdFromURL()){
-            	logger.info("JJJ forbidden:  SessionIDFromURL!");
                 response.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
 
-        	logger.info("JJJ NOT forbidden");
 
             //There should not be any parameter appended in the URL (for Non AJAX GET requests).
             //If some parameters are appended in the URL and the call is not AJAX based, then redirect to home page.

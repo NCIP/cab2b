@@ -249,7 +249,6 @@ public class SqlGenerator implements ISqlGenerator {
         String sql = selectPart + " " + fromPart + " " + wherePart;
 
         log(sql);
-        System.out.println("JJJ sql generated in buildQuery:"+sql);
         return sql;
     }
 

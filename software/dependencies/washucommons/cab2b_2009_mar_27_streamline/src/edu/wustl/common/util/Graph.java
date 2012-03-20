@@ -220,7 +220,7 @@ public class Graph<V, W> implements Serializable, Cloneable {
     public boolean addVertex(V vertex) {
         checkNull(vertex);
         if (containsVertex(vertex)){
-        	System.out.println("JJJ Already contains Vertex!!!!!!!!!! return false vertex="+vertex);
+        	System.err.println("Already contains Vertex return false vertex="+vertex);
             return false;
         }
         else {
@@ -356,12 +356,10 @@ public class Graph<V, W> implements Serializable, Cloneable {
      *         this graph.
      */
     public Set<V> getUnreachableVertices() {
-    	logger.info("JJJ getUnreachableVertices");
         Set<V> res = new HashSet<V>();
         for (Map.Entry<V, Map<V, W>> entry : incomingEdgeMap.entrySet()) {
             if (entry.getValue().isEmpty() || Collections.singleton(entry.getKey()).equals(entry.getValue().keySet())) {
-            	logger.info("JJJ getUnreachableVertices added"+entry.getKey()+" entry.value="+entry.getValue()+" entry.val.keyset="+entry.getValue().keySet()+"because empty?"+entry.getValue().isEmpty());
-                logger.info("JJJ add succeeded?"+res.add(entry.getKey()));
+                res.add(entry.getKey());
             }
         }
         return res;

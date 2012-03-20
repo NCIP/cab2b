@@ -74,8 +74,6 @@ public class Query extends AbstractQuery implements IQuery {
         if (constraints == null) {
             constraints = new Constraints();
         }
-    	System.out.println("JJJ %%%GETConstraints with "+constraints.getQueryEntities().size()+" queryEntities and "+constraints.size()+" constraints");
-
         return constraints;
     }
 
@@ -84,7 +82,6 @@ public class Query extends AbstractQuery implements IQuery {
      * @see edu.wustl.common.querysuite.queryobject.IQuery#setConstraints(edu.wustl.common.querysuite.queryobject.IConstraints)
      */
     public void setConstraints(IConstraints constraints) {
-    	System.out.println("JJJ %%%setConstraints with "+constraints.getQueryEntities().size()+" queryEntities ");
         this.constraints = constraints;
     }
 
