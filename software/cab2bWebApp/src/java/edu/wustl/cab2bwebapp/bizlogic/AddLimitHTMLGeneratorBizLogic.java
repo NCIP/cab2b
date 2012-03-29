@@ -352,7 +352,7 @@ public class AddLimitHTMLGeneratorBizLogic {
             if (parameter != null) {
             	//JJJ try forcing anyway
             	//System.out.println("JJJ *******************************WARNING, gonna try forcing HTML generation in generateHTMLForConditions");
-            } //JJJ
+                //JJJ
                 String operator = condition.getRelationalOperator().getStringRepresentation();
                 generatedHTML.append('\n').append(
                                                   generateHTMLForOperators(attribute, operatorsList, operator,
@@ -374,7 +374,7 @@ public class AddLimitHTMLGeneratorBizLogic {
                                                       generateHTMLForTextBox(attribute, isBetween, values,
                                                                              operator, "querylimittext"));
                 }
-            //}
+            }
         } else {
             generatedHTML.append(generateHTMLForConditionNull(attribute, operatorsList, permissibleValues,
                                                               isBetween));
