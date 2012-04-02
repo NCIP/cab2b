@@ -142,7 +142,7 @@
 					<bean:message key="label.searchdatatype"/>
 				</DIV>
 				<DIV>
-					<DIV class="myselect" style="float:left" onmouseover="setDropDown(1);" onmouseout="setDropDown(0);" onblur="setDropDown(0);">		
+					<DIV class="myselect" style="float:left" onmouseover="setDropDown(1);" onmouseout="setDropDown(0);">		
 						<DIV class="myselectbox" onclick="setDropDown(1)">
 							<DIV id="selectshow" class="selectshow"><bean:message key="select.datatype"/></DIV>							
 						</DIV>
