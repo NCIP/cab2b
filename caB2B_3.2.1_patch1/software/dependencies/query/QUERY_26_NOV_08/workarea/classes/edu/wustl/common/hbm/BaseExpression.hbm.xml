@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-lazy="false">
+	<class name="edu.wustl.common.querysuite.queryobject.impl.BaseExpression"
+		abstract="true" table="QUERY_BASE_EXPRESSION">
+		<cache usage="read-write" />
+
+		<id name="id" column="IDENTIFIER" type="long" length="30"
+			unsaved-value="null">
+			<generator class="native">
+				<param name="sequence">QUERY_BASE_EXPRESSION_SEQ</param>
+			</generator>
+		</id>
+
+		<discriminator column="EXPR_TYPE" type="string" />
+
+		<list name="expressionOperands" cascade="all-delete-orphan"
+			table="QUERY_BASE_EXPR_OPND">
+			<cache usage="read-write" />
+			<key column="BASE_EXPRESSION_ID" />
+			<index column="POSITION" />
+			<many-to-many column="OPERAND_ID"
+				class="edu.wustl.common.querysuite.queryobject.IOperand" />
+		</list>
+
+		<list name="connectors" cascade="all-delete-orphan"
+			table="QUERY_BASEEXPR_TO_CONNECTORS">
+			<cache usage="read-write" />
+			<key column="BASE_EXPRESSION_ID" />
+			<index column="POSITION" />
+			<many-to-many column="CONNECTOR_ID"
+				class="edu.wustl.common.querysuite.queryobject.impl.Connector" />
+		</list>
+
+	</class>
+
+</hibernate-mapping>

@@ -1,0 +1,23 @@
+1. ClientQueryBuilder is now the abstract ConstraintsObjectBuilder. 
+	- caTissue can implement the abstract method to throw UnsupportedOperationException for now.
+	- setOutputForQuery is not a part of this class (hence the rename)
+	- cab2b's implementation should implement the abstract method and add methods for setting output.	
+2. Logger statements (e.g. in ConstraintsObjectBuilder) commented.
+
+3. Test cases to be moved from commonpackage.
+
+API design (for Srinath only):
+1. OuputTreeNode, OuputEntity, OuputAttribute... is it useless?
+2. Check catissue's OutputTreeDataNode; might be useful.
+
+New classes:
+Expression
+Term
+CustomFormula
+Literal
+ExpressionAttribute
+DateOffset
+DateOffsetLiteral
+DateOffsetAttribute
+
+ArithmeticOperator

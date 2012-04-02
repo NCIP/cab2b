@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="false" default-lazy="false"
+	package="edu.wustl.common.querysuite.queryobject.impl">
+	<subclass name="ArithmeticOperand" abstract="true"
+		discriminator-value="arOp"
+		extends="edu.wustl.common.querysuite.queryobject.IOperand">
+
+		<subclass name="NumericLiteral" discriminator-value="numlit">
+			<join table="QUERY_ARITHMETIC_OPERAND">
+				<key column="IDENTIFIER" />
+				<property name="number" type="string" column="LITERAL" />
+				<property name="termType" column="TERM_TYPE">
+					<type name="edu.wustl.common.hibernate.EnumType">
+						<param name="enum-name">
+							edu.wustl.common.querysuite.queryobject.TermType
+						</param>
+					</type>
+				</property>
+			</join>
+		</subclass>
+		<subclass name="DateLiteral" discriminator-value="datelit">
+			<join table="QUERY_ARITHMETIC_OPERAND">
+				<key column="IDENTIFIER" />
+				<property name="date" type="date" column="DATE_LITERAL" />
+				<property name="termType" column="TERM_TYPE">
+					<type name="edu.wustl.common.hibernate.EnumType">
+						<param name="enum-name">
+							edu.wustl.common.querysuite.queryobject.TermType
+						</param>
+					</type>
+				</property>
+			</join>
+		</subclass>
+		<subclass name="DateOffsetLiteral" discriminator-value="doLit">
+			<join table="QUERY_ARITHMETIC_OPERAND">
+				<key column="IDENTIFIER" />
+				<property name="timeInterval" column="TIME_INTERVAL">
+					<type name="edu.wustl.common.hibernate.EnumType">
+						<param name="enum-name">
+							edu.wustl.common.querysuite.queryobject.TimeInterval
+						</param>
+					</type>
+				</property>
+				<property name="offset" type="string" column="LITERAL" />
+				<property name="termType" column="TERM_TYPE">
+					<type name="edu.wustl.common.hibernate.EnumType">
+						<param name="enum-name">
+							edu.wustl.common.querysuite.queryobject.TermType
+						</param>
+					</type>
+				</property>
+			</join>
+		</subclass>
+
+		<subclass name="ExpressionAttribute" discriminator-value="exAt">
+			<join table="QUERY_ARITHMETIC_OPERAND">
+				<key column="IDENTIFIER" />
+				<property name="attribute" column="DE_ATTRIBUTE_ID">
+					<type name="edu.wustl.common.hibernate.CanonicalFormType">
+						<param name="canonical-form-provider">
+							edu.wustl.metadata.hibernate.AttributeCanonicalFormProvider
+						</param>
+					</type>
+				</property>
+				<many-to-one name="expression" class="Expression"
+					column="EXPRESSION_ID" cascade="save-update" />
+				<property name="termType" column="TERM_TYPE">
+					<type name="edu.wustl.common.hibernate.EnumType">
+						<param name="enum-name">
+							edu.wustl.common.querysuite.queryobject.TermType
+						</param>
+					</type>
+				</property>
+			</join>
+		</subclass>
+
+		<subclass name="DateOffsetAttribute" discriminator-value="doExAt">
+			<join table="QUERY_ARITHMETIC_OPERAND">
+				<key column="IDENTIFIER" />
+				<property name="timeInterval" column="TIME_INTERVAL">
+					<type name="edu.wustl.common.hibernate.EnumType">
+						<param name="enum-name">
+							edu.wustl.common.querysuite.queryobject.TimeInterval
+						</param>
+					</type>
+				</property>
+				<property name="attribute" column="DE_ATTRIBUTE_ID">
+					<type name="edu.wustl.common.hibernate.CanonicalFormType">
+						<param name="canonical-form-provider">
+							edu.wustl.metadata.hibernate.AttributeCanonicalFormProvider
+						</param>
+					</type>
+				</property>
+				<many-to-one name="expression" class="Expression"
+					column="EXPRESSION_ID" cascade="save-update" />
+				<property name="termType" column="TERM_TYPE">
+					<type name="edu.wustl.common.hibernate.EnumType">
+						<param name="enum-name">
+							edu.wustl.common.querysuite.queryobject.TermType
+						</param>
+					</type>
+				</property>
+			</join>
+		</subclass>
+	</subclass>
+
+</hibernate-mapping>
