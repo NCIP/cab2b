@@ -101,6 +101,7 @@ public class ConstraintsBuilder {
      * @param categoryPreprocessorResult
      */
     public ConstraintsBuilder(ICab2bQuery query, CategoryPreprocessorResult categoryPreprocessorResult) {
+        logger.info("JJJ ConstraintsBuilder");
 
         setQuery(query);
         setCategoryPreprocessorResult(categoryPreprocessorResult);
@@ -116,6 +117,7 @@ public class ConstraintsBuilder {
     public ConstraintsBuilderResult buildConstraints() {
         createDcqlConstraintForExpression(getRootExpr());
         ConstraintsBuilderResult res = getResult();
+        logger.info("JJJ buildConstraints. getResult()="+res);
 
         if (!constrainByParentExpressions) {
             return res;
@@ -132,11 +134,13 @@ public class ConstraintsBuilder {
     private Set<Integer> getCategoryOutputExpressionIds() {
         Set<TreeNode<IExpression>> outputExpressions =
                 getCategoryPreprocessorResult().getExprsSourcedFromCategories().get(getQuery().getOutputEntity());
+        logger.info("JJJ getCategoryOutputExpIds:  getQUery().getOE.name="+getQuery().getOutputEntity().getName()+"  OE.id="+getQuery().getOutputEntity().getId()+" outputExpressions:"+outputExpressions);
         Set<Integer> outputExpressionIds = new HashSet<Integer>(outputExpressions.size());
 
         for (TreeNode<IExpression> exprNode : outputExpressions) {
             outputExpressionIds.add(exprNode.getValue().getExpressionId());
         }
+        logger.info("JJJ getCatOEIds() returning"+outputExpressionIds);
         return outputExpressionIds;
     }
 
@@ -147,6 +151,7 @@ public class ConstraintsBuilder {
     private List<Integer> exprIdList(List<IExpression> exprList) {
         List<Integer> res = new ArrayList<Integer>();
         for (IExpression expr : exprList) {
+            logger.info("JJJ# adding to exprIdList(" + expr.getExpressionId()+" )");
 
             res.add(expr.getExpressionId());
         }
@@ -163,6 +168,7 @@ public class ConstraintsBuilder {
         Set<Integer> currExprIds = new HashSet<Integer>();
         currExprIds.add(getRootExpr().getExpressionId());
         
+        logger.info("JJJ #constnByPtExpr cat?"+isCategoryOutput+" # rootExpr="+currExprIds.size());
 
 
         while (!currExprIds.isEmpty()) {
@@ -170,6 +176,7 @@ public class ConstraintsBuilder {
             for (Integer currExprId : currExprIds) {
 
                 IExpression currExpr = getExpression(currExprId);
+                logger.info("JJJ constByParentExp.getExpression(" + currExprId+" ) QueryEntity=" +currExpr.getQueryEntity());
                 
                 List<Integer> parentExprIds = exprIdList(getJoinGraph().getParentList(currExpr));
                 
@@ -196,6 +203,7 @@ public class ConstraintsBuilder {
         IExpression childExpr = getExpression(childExprId);
         DcqlConstraint childConstraint = getResult().getConstraintForExpression(childExpr);
         
+        logger.info("JJJ constCByP CConstType="+childConstraint.getConstraintType()+" Const"+childConstraint);
 
         LogicalOperator operator = LogicalOperator.And;
         if (query.isKeywordSearch()) {
@@ -209,6 +217,7 @@ public class ConstraintsBuilder {
             IAssociation association = getJoinGraph().getAssociation(parentExpr, childExpr);
             if (!association.isBidirectional()) {
                 logger.warn("Unidirectional association found " + association + ". Results could be incorrect.");
+                logger.info("JJJ#UNI: constCByP: parentId=" + parentExprId+" childId="+childExprId+" not adding reverse assoc");
 
                 continue;
             }
@@ -216,9 +225,11 @@ public class ConstraintsBuilder {
             AbstractAssociationConstraint associationConstraint = createAssociation(association.reverse());
             associationConstraint.addChildConstraint(parentConstraint);
             group.addConstraint(associationConstraint);
+            logger.info("JJJ#constCByP: parentId=" + parentExprId+" childId="+childExprId+" assocConstType="+associationConstraint.getConstraintType());
 
         }
         
+        logger.info("JJJ#constCByP FINALLY puttingConstrt: childExpr=" + childExpr+" childId="+childExprId+" childQueryEntity"+childExpr.getQueryEntity());
 
         getResult().putConstraintForExpression(childExpr, group.getDcqlConstraint(), true);
     }
@@ -240,14 +251,17 @@ public class ConstraintsBuilder {
 
     private DcqlConstraint createDcqlConstraintForExpression(IExpression expr) {
         List<DcqlConstraint> dcqlConstraintsList = new ArrayList<DcqlConstraint>(expr.numberOfOperands());
+        logger.info("JJJ createDcqlConstForExp.  #operands="+expr.numberOfOperands());
         for (int i = 0; i < expr.numberOfOperands(); i++) {
             IExpressionOperand operand = expr.getOperand(i);
             if (operand instanceof IExpression) {
                 IExpression childExpr = (IExpression) operand;
+                logger.info("JJJ createDcqlConstForExp. adding expression with child="+childExpr);
 
                 dcqlConstraintsList.add(createDcqlConstraintForChildExpression(expr.getExpressionId(), childExpr
                     .getExpressionId()));
             } else if (operand instanceof IRule) {
+                logger.info("JJJ createDcqlConstForExp. adding IRule="+operand);
 
                 dcqlConstraintsList.add(createDcqlConstraintForRule((IRule) operand));
             } else {
@@ -282,6 +296,7 @@ public class ConstraintsBuilder {
         IExpression childExpr = getConstraints().getExpression(childExpressionId);
         DcqlConstraint childExprDcqlConstraint;
 
+        logger.info("JJJ createDcqlConstForCHILDExp. adding parentID="+parentExpressionId);
 
         if (getResult().containsExpression(childExpr)) {
             childExprDcqlConstraint = getResult().getConstraintForExpression(childExpr);
@@ -300,6 +315,7 @@ public class ConstraintsBuilder {
 
             dcqlConstraint = associationConstraint;
         }
+        logger.info("JJJ createDcqlConstForCHILDExp. returning"+dcqlConstraint);
 
         return dcqlConstraint;
     }
@@ -318,6 +334,7 @@ public class ConstraintsBuilder {
         if (association instanceof IIntraModelAssociation) {
             dcqlConstraint = createLocalAssociation((IIntraModelAssociation) association);
         } else if (association instanceof IInterModelAssociation) {
+        	logger.info("JJJ calling CREATEASSOCIATIONFOREIGN"+association.toString());
 
             dcqlConstraint = createForeignAssociation((IInterModelAssociation) association);
 
@@ -345,6 +362,7 @@ public class ConstraintsBuilder {
         ForeignAssociation association = new ForeignAssociation();
         JoinCondition joinCondition = new JoinCondition();
         joinCondition.setPredicate(ForeignPredicate.EQUAL_TO);
+        logger.info("JJJ Set:"+interModelAssociation.getTargetEntity().getName()+"s URL to:"+rightServiceUrl);
         foreignObject.setName(interModelAssociation.getTargetEntity().getName());
         association.setTargetServiceURL(rightServiceUrl);
 
@@ -548,6 +566,7 @@ public class ConstraintsBuilder {
      * @return category Preprocessor Result
      */
     public CategoryPreprocessorResult getCategoryPreprocessorResult() {
+    	logger.info("JJJ getCategoryPreProcessResult returning:"+categoryPreprocessorResult);
         return categoryPreprocessorResult;
     }
 

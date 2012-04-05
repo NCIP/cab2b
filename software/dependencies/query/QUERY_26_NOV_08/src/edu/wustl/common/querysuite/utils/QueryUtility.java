@@ -85,7 +85,9 @@ public class QueryUtility {
         for (IParameter<?> parameter : parameters) {
             if (parameter.getParameterizedObject() instanceof ICondition) {
                 paramConditions.add((ICondition) parameter.getParameterizedObject());
-            } 
+            } else {
+            	System.out.println("JJJ getAllParamCond NOT AN ICONDITION!"+parameter.getName()+" param ="+parameter);
+            }
         }
 
         return paramConditions;

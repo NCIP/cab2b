@@ -99,6 +99,11 @@ public class Constraints extends BaseQueryObject implements IConstraints {
 
         exprIdToExpr.put(expression.getExpressionId(), expression);
         expressions.add(expression);
+        System.out.println("JJJ JoinGraph added? "+((JoinGraph) joinGraph).addIExpression(expression));
+        
+        System.out.println("JJJ %%AddedExpression "+expression.getExpressionId()+" queryEntity="+expression.getQueryEntity()+" #expressions="+expressions.size());
+        
+        System.out.println("JJJ %%Added--- exprIdToExpr size="+exprIdToExpr.size());		
         
         return expression;
     }
@@ -109,6 +114,7 @@ public class Constraints extends BaseQueryObject implements IConstraints {
      * @see edu.wustl.common.querysuite.queryobject.IConstraints#removeExpressionWithId(edu.wustl.common.querysuite.queryobject.IExpression)
      */
     public IExpression removeExpressionWithId(int expressionId) {
+    	System.out.println("REMOVE expression id="+expressionId);
         JoinGraph theJoinGraph = (JoinGraph) joinGraph;
         IExpression expression = getExpression(expressionId);
 
@@ -124,6 +130,7 @@ public class Constraints extends BaseQueryObject implements IConstraints {
     }
 
     public void removeExpression(IExpression expr) {
+    	System.out.println("REMOVE expression Entity="+expr.getQueryEntity());
 
         removeExpressionWithId(expr.getExpressionId());
     }
@@ -154,8 +161,10 @@ public class Constraints extends BaseQueryObject implements IConstraints {
 
         ArrayList<IQueryEntity> constraintEntitySet = new ArrayList<IQueryEntity>();
         for (IExpression expression : expressions) {
+        	System.out.println("JJJ getQueryEntities.adding"+expression.getQueryEntity());
             constraintEntitySet.add(expression.getQueryEntity());
         }
+    	System.out.println("JJJ returning"+constraintEntitySet.size());
 
         return constraintEntitySet;
     }

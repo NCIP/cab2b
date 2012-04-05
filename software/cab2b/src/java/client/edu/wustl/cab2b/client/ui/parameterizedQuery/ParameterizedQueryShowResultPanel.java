@@ -166,9 +166,15 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
         }
 
         Collection<ICondition> conditions = QueryUtility.getAllNonParameteriedConditions(cab2bParamQuery);
+        for(ICondition ic : conditions){
+        	System.out.println("JJJ getAllNonPCond ic.val="+ic.getValue()+" ic.id="+ic.getId()+" ic="+ic);
+        }
         
         Collection<ICondition> paramConditions = QueryUtility.getAllParameterizedConditions(cab2bParamQuery);
         
+        for(ICondition ic : paramConditions){
+        	System.out.println("JJJ getAllParamCond ic.val="+ic.getValue()+" ic.id="+ic.getId()+" ic="+ic);
+        }
 
         
         getMaxLabelDimension(conditions, paramConditions);
@@ -230,7 +236,8 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
                 componentPanel.setAttributeDisplayName(parameter.getName());
                 componentPanel.setExpressionId(getExpressionIdForCondition(condition, conditionMap));
                 
-//                System.out.println("JJJ addParamConds param="+parameter+" param.name="+parameter.getName()+" cond.val="+condition.getValue()+" cond.id="+condition.getId()+" cond="+ condition+"exprid="+ getExpressionIdForCondition(condition, conditionMap));
+                System.out.println("JJJ addParamConds param="+parameter+" param.name="+parameter.getName()+" cond.val="+condition.getValue()+" cond.id="+condition.getId()+" cond="+
+                		condition+"exprid="+getExpressionIdForCondition(condition, conditionMap));
 
                 topConditionPanel.add("br ", componentPanel);
             }
@@ -316,6 +323,7 @@ public class ParameterizedQueryShowResultPanel extends ParameterizedQueryPreview
     	
         private void executeQuery(ICab2bQuery cab2bQuery) {
 
+        	logger.info("JJJ parameterizedqueryshowresultspanael.executeQuery");
             // This code is generic and can be used to directly display the
             // executed query results
 

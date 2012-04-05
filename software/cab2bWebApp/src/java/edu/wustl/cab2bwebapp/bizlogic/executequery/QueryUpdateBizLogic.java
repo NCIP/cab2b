@@ -366,6 +366,7 @@ public class QueryUpdateBizLogic {
 			logger.error("IsValidDatePattern : exp : " + exp);
     		return false;
 		}
+    	System.out.println("JJJ checkDate returning:"+result);
     	return result;
     }
 

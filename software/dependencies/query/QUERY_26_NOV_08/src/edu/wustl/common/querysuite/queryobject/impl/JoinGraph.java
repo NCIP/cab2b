@@ -100,6 +100,7 @@ public class JoinGraph extends BaseQueryObject implements IJoinGraph {
         if (graph.willCauseNewCycle(parentExpression, childExpression)) {
             throw new CyclicException("Adding this association causes a cycle in the graph.");
         }
+	System.out.println("JJJ parentExpression,ChildExpression,Association"+parentExpression+","+childExpression+","+association);
         return graph.putEdge(parentExpression, childExpression, association);
     }
 
