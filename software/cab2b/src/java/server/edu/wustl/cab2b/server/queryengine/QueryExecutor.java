@@ -64,6 +64,7 @@ import edu.wustl.common.querysuite.queryobject.IExpression;
 import edu.wustl.common.querysuite.queryobject.LogicalOperator;
 import edu.wustl.common.querysuite.queryobject.RelationalOperator;
 import gov.nih.nci.cagrid.dcql.DCQLQuery;
+import gov.nih.nci.cagrid.dcql.Association;
 import gov.nih.nci.cagrid.dcql.ForeignAssociation;
 import gov.nih.nci.cagrid.dcql.Group;
 import gov.nih.nci.cagrid.dcql.Object;
@@ -308,6 +309,40 @@ public class QueryExecutor {
 	}
 
 
+        private static Collection<ForeignAssociation> getForeignAssociations(Association[] aa){
+                ArrayList<ForeignAssociation> fas=  new ArrayList<ForeignAssociation>();
+
+		for(int y=0;y<aa.length;y++){
+
+	                Group aag = aa[y].getGroup();
+       	        	ForeignAssociation aafa = aa[y].getForeignAssociation();
+
+                	if(aag != null){
+                        	Group[] gr1 = new Group[1];
+	                        gr1[0]=aag;
+                        	fas.addAll(getForeignAssociations(gr1));
+                	}
+
+
+                	if(aafa != null){
+                        	fas.add(aafa);
+                        	fas.addAll(getForeignAssociations(aafa));
+                	}
+
+                        Association a2 = aa[y].getAssociation();
+                        if(a2 != null){
+                                Association[] a2a = new Association[1];
+				a2a[0]= a2;
+                                fas.addAll(getForeignAssociations(a2a));
+                        }
+
+		}
+
+                return fas;
+        }
+
+
+
 	private static Collection<ForeignAssociation> getForeignAssociations(ForeignAssociation faa){	
 		ArrayList<ForeignAssociation> fas=  new ArrayList<ForeignAssociation>();    	
 
@@ -350,6 +385,18 @@ public class QueryExecutor {
 			if(g2.length>0){
 				fas.addAll(getForeignAssociations(g2));
 			}
+
+			// JJJ test existance
+
+			logger.info("faa.lenth="+faa.length+
+		"g.length="+ g.length+ "faa.length="+ faa.length+ "g[y].getAssociation()="+ g[y].getAssociation()+ "g[y].getAttribute()="+
+			g[y].getAttribute());
+
+			Association[] a = g[y].getAssociation();
+			if(a.length>0){
+				fas.addAll(getForeignAssociations(a));
+			}
+
 		}
 		return fas;
 

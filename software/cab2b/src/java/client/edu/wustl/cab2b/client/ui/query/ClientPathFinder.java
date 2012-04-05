@@ -11,8 +11,6 @@
 package edu.wustl.cab2b.client.ui.query;
 
 import java.rmi.RemoteException;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -43,20 +41,6 @@ public class ClientPathFinder implements IPathFinder {
                                                    PathFinderHomeInterface.class);
     }
 
-    
-    private class IPathComparator implements Comparator<IPath> {
-    	  public int compare(IPath p1, IPath p2) {
-    		  	if (p1.toString().length() < p2.toString().length()) {
-    		        return -1;
-    		     } else if (p1.toString().length() > p2.toString().length()) {
-    		        return 1;
-    		     } else {
-    		       return 0;
-    		     }
-    		  }
-    		}
-
-
     /**
      * Finds all possible paths in which the source entity can be connected to a destination entity.
      * Returns list of all possible paths. This method can be used when a new class is added in DAG view.
@@ -67,10 +51,7 @@ public class ClientPathFinder implements IPathFinder {
      */
     public List<IPath> getAllPossiblePaths(EntityInterface source, EntityInterface destination) {
         try {
-        	List<IPath> myIPathList=pathFinder.getAllPossiblePaths(source, destination);
-        	Collections.sort(myIPathList,new IPathComparator());
-        	return myIPathList;
-        	//return pathFinder.getAllPossiblePaths(source, destination);
+            return pathFinder.getAllPossiblePaths(source, destination);
         } catch (LocatorException locExp) {
             locExp.printStackTrace();
         } catch (RemoteException remExp) {
