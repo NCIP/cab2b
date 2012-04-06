@@ -1,5 +1,6 @@
 package edu.wustl.cab2b.client.ui.parameterizedQuery;
 
+
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -88,6 +89,8 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
         maxLabelDimension = CommonUtils.getMaximumLabelDimension(attributeList);
         // Increasing max label width to display expression ID with each label
         maxLabelDimension.width = maxLabelDimension.width + 15;
+        // Increasing max label with to display class name for each
+        maxLabelDimension.width = maxLabelDimension.width + 180;
         return maxLabelDimension;
     }
 
@@ -154,8 +157,16 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
                         componentPanel.createParametrizedPanel(attribute);
                         setConditionValues(componentPanel);
                         componentPanel.setExpressionId(exprId);
-                        componentPanel.setAttributeDisplayName(exprId.intValue() + "."
-                                + componentPanel.getAttributeDisplayName());
+                        
+                        String classLongName=attribute.getEntity().getName();
+                        String classShortName=classLongName;
+                        String [] classNamePartArr=classLongName.split("\\.");
+                        if(classNamePartArr.length>=2){
+                        	classShortName=classNamePartArr[classNamePartArr.length-2]+"."+classNamePartArr[classNamePartArr.length-1];
+                        }
+                        
+                        componentPanel.setAttributeDisplayName(exprId.intValue() + "."+ classShortName+"."+
+                                 componentPanel.getAttributeDisplayName());
                         // check/update that attribute values with show only condition panels
                         updatePanelStatus(componentPanel);
                         allAttributePanel.add("br ", componentPanel);
@@ -263,7 +274,13 @@ public class ParameterizedQueryConditionPanel extends Cab2bTitledPanel {
                        	componentPanel.setExpressionId(key);
 
                         setConditionValues(componentPanel);
-                        componentPanel.setAttributeDisplayName(key.intValue() + "."
+                        String classLongName=condition.getAttribute().getEntity().getName();
+                        String classShortName=classLongName;
+                        String [] classNamePartArr=classLongName.split("\\.");
+                        if(classNamePartArr.length>=2){
+                        	classShortName=classNamePartArr[classNamePartArr.length-2]+"."+classNamePartArr[classNamePartArr.length-1];
+                        }
+                        componentPanel.setAttributeDisplayName(key.intValue() + "." + classShortName+ "."
                                 + componentPanel.getAttributeDisplayName());
                         definedAttributePanel.add("br ", componentPanel);
                     } else {
