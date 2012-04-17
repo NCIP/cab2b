@@ -96,7 +96,10 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
     protected void initTopConditionPanel() {
         if (topConditionPanel.getComponentCount() > 0) {
             JScrollPane topScrollPane = new JScrollPane(topConditionPanel);
-            topScrollPane.getViewport().setBackground(Color.white);
+	    topScrollPane.setPreferredSize( new Dimension( 
+		(int) (MainFrame.getScreenDimension().width * 0.80),
+                    (int) (MainFrame.getScreenDimension().height * 0.20)));
+
             topScrollPane.setBorder(BorderFactory.createEmptyBorder());
             topConditionTitlePanel = new Cab2bTitledPanel("Parameterized Conditions");
             Cab2bPanel topPanelContainer = (Cab2bPanel) topConditionTitlePanel.getContentContainer();
@@ -105,7 +108,7 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
                     (int) (MainFrame.getScreenDimension().width * 0.40),
                     (int) (MainFrame.getScreenDimension().height * 0.35)));
             this.add(topConditionTitlePanel, BorderLayout.NORTH);
-        }
+        } 
     }
 
     /**
@@ -114,9 +117,8 @@ public abstract class ParameterizedQueryPreviewPanel extends Cab2bPanel {
     protected void initBottomConditionPanel() {
         if (bottomConditionPanel.getComponentCount() > 0) {
             JScrollPane bottomScrollPane = new JScrollPane(bottomConditionPanel);
-            bottomScrollPane.getViewport().setBackground(Color.white);
             bottomScrollPane.setBorder(BorderFactory.createEmptyBorder());
-            bottomConditionTitlePanel = new Cab2bTitledPanel("Defined Conditions");
+            bottomConditionTitlePanel = new Cab2bTitledPanel("Defined Conditions JJJ");
             bottomConditionTitlePanel.add(bottomScrollPane);
             this.add(bottomConditionTitlePanel, BorderLayout.CENTER);
         }

@@ -167,8 +167,13 @@ public class ServiceURLOperations {
             session = HibernateUtil.newSession();
             HibernateDatabaseOperations<ServiceURLInterface> dbHandler =
                     new HibernateDatabaseOperations<ServiceURLInterface>(session);
-            dbHandler.insertOrUpdate(serviceURL);
-            urlVsMetadata.put(serviceURL.getUrlLocation(), serviceURL);
+	    if(getServiceURLbyURLLocation(serviceURL.getUrlLocation()) == null){
+            	dbHandler.insertOrUpdate(serviceURL);
+            	urlVsMetadata.put(serviceURL.getUrlLocation(), serviceURL);
+	    } else {
+		logger.error("This serviceURL's URL location has been used:"+serviceURL.getUrlLocation());
+		throw new RuntimeException("This serviceURL's URL location has been used:"+serviceURL.getUrlLocation());
+	    }
         } finally {
             session.flush();
             session.close();

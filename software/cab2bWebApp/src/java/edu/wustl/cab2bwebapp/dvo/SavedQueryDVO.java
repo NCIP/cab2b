@@ -6,6 +6,7 @@ package edu.wustl.cab2bwebapp.dvo;
  */
 public class SavedQueryDVO {
     String name = null;
+    String description = null;
 
     boolean selected = false;
 
@@ -26,6 +27,22 @@ public class SavedQueryDVO {
             name = name.substring(0, name.length() - 1);
         this.name = name;
     }
+
+
+    /**
+     * @return String
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param name
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
 
     /**
      * @return boolean
