@@ -53,7 +53,7 @@ public class AddLimitAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
         String actionForward = null;
-        logger.info("JJJ addlimitaction.java");
+        logger.info("JJJ addlimitaction.java.  REMOVING STUFF");
         HttpSession session = request.getSession();
 
         session.removeAttribute(Constants.SEARCH_RESULTS);
@@ -77,6 +77,7 @@ public class AddLimitAction extends Action {
             SavedQueryBizLogic savedQueryProvider =
                     (SavedQueryBizLogic) request.getSession().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
             if (request.getParameterValues(Constants.MODEL_GROUPS) != null) {
+                logger.info("JJJ MODEL_GROUPS NOT NULL");
 
                 actionForward = Constants.FORWARD_ADD_LIMIT;
                 ActionForward forward = mapping.findForward(actionForward);
@@ -85,17 +86,22 @@ public class AddLimitAction extends Action {
                 return new ActionForward(forward.getName(), forward.getPath(), false);
             } else {
 
+                logger.info("JJJ BEFORE getquery by id  MG is NULL");
                 Long queryId = Long.parseLong(request.getParameter(Constants.QUERY_ID));
                 ICab2bQuery query = savedQueryProvider.getQueryById(queryId);
+
+                logger.info("JJJ set queryDesc to "+query.getDescription());
+		session.setAttribute("queryDesc",query.getDescription());
+		logger.info("JJJ session.getatt"+session.getAttribute("queryDesc"));
                
                 
                 List<IParameter<?>> parameters = query.getParameters();
                 for (IParameter<?> parameter : parameters) {
-                	logger.info("JJJ BEFORE"+parameter.getName());
+//                	logger.info("JJJ BEFORE"+parameter.getName());
                     if (parameter.getParameterizedObject() instanceof ICondition) {
-                    	logger.info("JJJ BEFORE isIcondition "+parameter.getName()+":"+((ICondition)parameter.getParameterizedObject()));
+//                    	logger.info("JJJ BEFORE isIcondition "+parameter.getName()+":"+((ICondition)parameter.getParameterizedObject()));
                     } else {
-                    	logger.info("JJJ BEFORE NOT Icondition "+parameter.getName()+":");
+//                    	logger.info("JJJ BEFORE NOT Icondition "+parameter.getName()+":");
 
                     }
                 }
@@ -104,14 +110,14 @@ public class AddLimitAction extends Action {
                 Collection<ICondition> nonPara = QueryUtility.getAllNonParameteriedConditions(query);
                 
                 for (ICondition icon : nonPara) {
-                	logger.info("JJJ BEFORE NON parameterized condition "+icon.getValue()+" id="+icon.getId());
+//                	logger.info("JJJ BEFORE NON parameterized condition "+icon.getValue()+" id="+icon.getId());
 
                 }
                 
                 Collection<ICondition> paraCond = QueryUtility.getAllParameterizedConditions(query);
                 
                 for (ICondition icon2 : paraCond) {
-                    	logger.info("JJJ BEFORE PARAMETERIZED COND "+icon2.getValue()+": id="+icon2.getId());
+ //                   	logger.info("JJJ BEFORE PARAMETERIZED COND "+icon2.getValue()+": id="+icon2.getId());
                 }
 
                 

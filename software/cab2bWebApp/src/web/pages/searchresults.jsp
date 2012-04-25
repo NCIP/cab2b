@@ -148,7 +148,9 @@ toolTipId = null;
 			</logic:notEqual>
 			<logic:equal name="queryCount" value="1">
 				<logic:iterate name="savedQueries" id="savedSearch">
-					<DIV class="label"><bean:write name="savedSearch" property="name"/>&nbsp;(<SPAN id="resultcount"><bean:write name="savedSearch" property="resultCount"/></SPAN>)[<bean:write name="savedSearch" property="description"/>]</DIV>
+					<DIV class="label"><bean:write name="savedSearch" property="name"/>&nbsp;(<SPAN id="resultcount"><bean:write name="savedSearch" property="resultCount"/></SPAN>)</DIV>
+<DIV class="label"><bean:write name="savedSearch" property="description"/></DIV>
+
 				</logic:iterate>
 			</logic:equal>
 		</DIV>

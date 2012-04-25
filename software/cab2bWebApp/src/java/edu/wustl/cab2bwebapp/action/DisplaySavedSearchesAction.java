@@ -52,6 +52,7 @@ public class DisplaySavedSearchesAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
         String findForward = null;
+	    logger.info("GGG DisplaySavedSearches ");
         try {
             SavedQueryBizLogic savedQueryBizLogic =
                     (SavedQueryBizLogic) request.getSession().getAttribute(Constants.SAVED_QUERY_BIZ_LOGIC);
@@ -65,18 +66,22 @@ public class DisplaySavedSearchesAction extends Action {
                     modelGroupDVOList.get(i).setSelected(false);
                 }
             }
+
+	    logger.info("GGG DisplaySavedSearches before mg.equals");
             	
             request.getSession().setAttribute(Constants.MODEL_GROUP_DVO_LIST, modelGroupDVOList);
             if (!modelGroupName.equals("")) {
                 Collection<EntityGroupInterface> entityGroups =
                         new ModelGroupBizLogic().getEntityGroupsForModel(modelGroupName);
                 Collection<ICab2bQuery> savedSearches = savedQueryBizLogic.getRegularQueries(entityGroups);
+	        logger.info("GGG after mg.equals and savedSearches set");
                 List savedSearchesList = new java.util.ArrayList(savedSearches);
                 Collections.sort(savedSearchesList, new SavedSearchComparator());
                 if (request.getParameter(Constants.FORWARD_ADD_LIMIT) != null) {
                     request.setAttribute(Constants.FORWARD_ADD_LIMIT, Constants.FORWARD_ADD_LIMIT);
                 }
                 request.setAttribute(Constants.SAVED_SEARCHES, savedSearchesList);
+	        logger.info("GGG # savedSearches set in request"+savedSearchesList.size());
             }
             findForward = Constants.FORWARD_SAVED_SEARCHES;
         } catch (Exception e) {

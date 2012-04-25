@@ -49,6 +49,11 @@
 							</logic:iterate>
 						</DIV>
 					</DIV>
+                                        <DIV class="titlebarleftcurve">
+						<DIV class="titlebarrightcurve">
+<DIV id="querydesc" class="label" ><%= session.getAttribute("queryDesc")==null?"":session.getAttribute("queryDesc") %></DIV>
+						</DIV>
+					</DIV>
 				</DIV>
 			</DIV>
 		</DIV>

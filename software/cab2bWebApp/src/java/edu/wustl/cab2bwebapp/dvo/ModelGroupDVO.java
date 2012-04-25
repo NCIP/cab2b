@@ -52,4 +52,5 @@ public class ModelGroupDVO {
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
+
 }

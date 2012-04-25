@@ -176,13 +176,15 @@ public class CsvWriter {
         queryConditions += "\n";
         File file = new File(UserBackgroundQueries.EXPORT_CSV_DIR + File.separator + qStatus.getFileName());
         byte fileContents[] = new byte[(int) file.length()];
-        String updatedFileContents = queryTitle + querydescription + executionDate + executedBy + queryConditions;
+        String updatedFileContents = queryTitle + querydescription + executionDate + executedBy; // + queryConditions;
 
         try {
             RandomAccessFile rafin = new RandomAccessFile(file, "r");
             rafin.readFully(fileContents);
             rafin.close();
             updatedFileContents += new String(fileContents);
+	    updatedFileContents += "\n";
+	    updatedFileContents += queryConditions;
             RandomAccessFile rafout = new RandomAccessFile(file, "rw");
             rafout.setLength(updatedFileContents.length());
             rafout.writeBytes(updatedFileContents);

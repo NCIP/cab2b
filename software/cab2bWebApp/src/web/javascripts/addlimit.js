@@ -15,6 +15,7 @@
 		document.getElementById('queryname').innerHTML = objs[i].innerHTML;
 		processAJAXRequest('AddLimit.do?queryId=' + objs[i].id,	'definelimitspanelbody');
 		document.getElementById("queryId").value = objs[i].id;		
+	  	document.getElementById("querydesc").innerHTML = objs[i].title;
  	  }
 	}
 	setRowsStyle();
@@ -59,6 +60,7 @@
 	  objs[i].className = 'selectedquery';
 	  document.getElementById('queryname').innerHTML = objs[i].innerHTML;
 	  document.getElementById("queryId").value = objs[i].id;
+	  document.getElementById("querydesc").innerHTML = objs[i].title;
 	}
 	 else 
 	{
