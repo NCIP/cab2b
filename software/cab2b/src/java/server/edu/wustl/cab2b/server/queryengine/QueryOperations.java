@@ -332,6 +332,7 @@ public class QueryOperations extends QueryBizLogic<ICab2bQuery> {
     	}
     	query = (Cab2bQuery)session.get(Cab2bQuery.class, queryId);
     	query.getServiceGroups();
+	session.close();
     	return query;
     }
     
@@ -423,13 +424,12 @@ public void deleteQuery(Long id) {
 
 	}
 	
-   		tx.commit();
-   		session.clear();
-   		session.close();
+	tx.commit();
+	session.clear();
+	session.close();
    		
-   		EntityCache.getCache().refreshCache();
-   		
-   		CategoryCache.getInstance().refreshCategoryCache();   	   		
+	EntityCache.getCache().refreshCache();
+	CategoryCache.getInstance().refreshCategoryCache();   	   		
         UtilityOperations.refreshCache();
    		
 }
