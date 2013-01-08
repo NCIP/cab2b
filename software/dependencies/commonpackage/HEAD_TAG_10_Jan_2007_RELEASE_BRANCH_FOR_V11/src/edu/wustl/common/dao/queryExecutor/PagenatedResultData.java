@@ -1,3 +1,10 @@
+/*L
+ * Copyright Georgetown University.
+ *
+ * Distributed under the OSI-approved BSD 3-Clause License.
+ * See http://ncip.github.com/cab2b/LICENSE.txt for details.
+ */
+
 /**
  * <p>Title: PagenatedResultData class</p>
  * <p>Description:  PagenatedResultData class is a class which can hold the Query Results. </p>

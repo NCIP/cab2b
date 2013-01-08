@@ -1,3 +1,10 @@
+/*L
+ * Copyright Georgetown University.
+ *
+ * Distributed under the OSI-approved BSD 3-Clause License.
+ * See http://ncip.github.com/cab2b/LICENSE.txt for details.
+ */
+
 /**
  * <p>Title: HTTPMessage Class>
  * <p>Description:	This is the wrapper class over error messages from the server.</p>

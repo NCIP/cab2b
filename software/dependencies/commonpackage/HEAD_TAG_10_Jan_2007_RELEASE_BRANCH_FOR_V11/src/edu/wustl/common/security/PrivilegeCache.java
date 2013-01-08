@@ -1,3 +1,10 @@
+/*L
+ * Copyright Georgetown University.
+ *
+ * Distributed under the OSI-approved BSD 3-Clause License.
+ * See http://ncip.github.com/cab2b/LICENSE.txt for details.
+ */
+
 /**
  * PrivilegeCache will cache all privileges for a specific user. 
  * An instance of PrivilegeCache will be created for every user who logs in.

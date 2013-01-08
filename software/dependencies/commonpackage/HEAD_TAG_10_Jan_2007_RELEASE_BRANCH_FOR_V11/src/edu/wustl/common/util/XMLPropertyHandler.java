@@ -1,3 +1,10 @@
+/*L
+ * Copyright Georgetown University.
+ *
+ * Distributed under the OSI-approved BSD 3-Clause License.
+ * See http://ncip.github.com/cab2b/LICENSE.txt for details.
+ */
+
 /**
  * <p>Title:XMLPropertyHandler Class>
  * <p>Description:This class parses from caTissue_Properties.xml(includes properties name & value pairs) file using DOM parser.</p>

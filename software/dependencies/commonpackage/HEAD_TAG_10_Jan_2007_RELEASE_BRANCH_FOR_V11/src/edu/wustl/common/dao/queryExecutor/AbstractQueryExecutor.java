@@ -1,3 +1,10 @@
+/*L
+ * Copyright Georgetown University.
+ *
+ * Distributed under the OSI-approved BSD 3-Clause License.
+ * See http://ncip.github.com/cab2b/LICENSE.txt for details.
+ */
+
 /**
  * <p>Title: Query Executor Class </p>
  * <p>Description:  AbstractQueryExecutor class is a base class which contains code to execute the sql query to get the results from database. </p>
