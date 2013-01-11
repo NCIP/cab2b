@@ -1,3 +1,10 @@
+/*L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L*/
+
 alter table CATEGORIAL_CLASS drop constraint FK9651EF32DBFCB7FC;
 alter table CATEGORIAL_CLASS drop constraint FK9651EF32D8D56A33;
 alter table QUERY_INTRA_MODEL_ASSOCIATION drop constraint FKF1EDBDD3BC7298A9;

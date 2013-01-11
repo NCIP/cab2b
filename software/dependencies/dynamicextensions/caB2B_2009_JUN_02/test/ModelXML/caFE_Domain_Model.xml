@@ -1,3 +1,10 @@
+<!--L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L-->
+
 <ns1:DomainModel projectDescription="Function Express Server is a tool that will annotate probes on microarrays using publicly available biomedical databases and will automatically update these annotations on a regular basis. This data can be viewed using a web-based query interface or may be accessed programmatically using the provided Application Programmers Interface (API). Function Express Server can be used to create and populate a database that will store interrelated gene annotation data. The web pages allow the user to display a gene literature network in a tabular format, to search for genes on various annotations like Entrez Gene, UniGene, Gene Ontology term, etc." projectLongName="caFE Server 1.1" projectShortName="caFE Server 1.1" projectVersion="1.1" xmlns:ns1="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.dataservice">
  <ns1:exposedUMLAssociationCollection>
   <ns1:UMLAssociation bidirectional="true">

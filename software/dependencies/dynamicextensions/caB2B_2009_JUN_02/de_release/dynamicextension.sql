@@ -1,3 +1,10 @@
+/*L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L*/
+
 alter table DYEXTN_COLUMN_PROPERTIES drop constraint FK8FCE2B3FBC7298A9
 alter table DYEXTN_COLUMN_PROPERTIES drop constraint FK8FCE2B3FB4C15A36
 alter table DYEXTN_USERDEFINED_DE drop constraint FK630761FFBC7298A9

@@ -1,3 +1,10 @@
+<%--L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L--%>
+
 <!--Begin content area -->
 <%@page import="edu.wustl.cab2b.admin.util.AdminConstants"%>
 <link href="css/cab2b.css" rel="stylesheet" type="text/css" />
