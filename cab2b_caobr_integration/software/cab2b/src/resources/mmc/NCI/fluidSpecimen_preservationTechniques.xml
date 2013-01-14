@@ -1,3 +1,10 @@
+<!--L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L-->
+
 <MultiModelCategory name="Fluid Specimen details based on preservation techniques" description="Fluid Specimen details based on preservation techniques" applicationGroup="Biospecimen Data">
 	<MultiModelCategoryAttributes>
 		<MultiModelCategoryAttribute name="Pathological Status" description="Pathological Status">

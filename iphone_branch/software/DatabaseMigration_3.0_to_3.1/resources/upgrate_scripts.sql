@@ -1,3 +1,10 @@
+/*L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L*/
+
 ALTER TABLE DYEXTN_SEMANTIC_PROPERTY MODIFY CONCEPT_DEFINITION VARCHAR(2048);
 ALTER TABLE DYEXTN_TAGGED_VALUE MODIFY T_KEY VARCHAR(1024);
 ALTER TABLE DYEXTN_TAGGED_VALUE MODIFY T_VALUE VARCHAR(1024);

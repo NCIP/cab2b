@@ -1,3 +1,10 @@
+/*L
+ * Copyright Georgetown University.
+ *
+ * Distributed under the OSI-approved BSD 3-Clause License.
+ * See http://ncip.github.com/cab2b/LICENSE.txt for details.
+ */
+
 /**
  * <p>Title: IClientQueryBuilderInterface interface>
  * <p>Description:  This interface provides APIs for creating the query

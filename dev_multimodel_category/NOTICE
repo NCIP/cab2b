@@ -1,0 +1,15 @@
+caB2B
+Copyright 2012 Georgetown University
+
+This project is distributed under the BSD 3-Clauses License.
+Please see LICENSE file for details.
+
+
+This project was developed as part of the NCI CBITT initiative.
+
+caB2B started as a project of the larger caBIG initiative, with the goal of allowing researchers to integrate, query, report, and analyze significant associations between genetic variations and disease, drug response or other clinical outcomes.
+The project was initially developed by Georgetown University under funding from the CBIIT office of the National Cancer Institute.
+
+In 2012, as part of NCI's Open Source Development Initiative (OSDI), caB2B
+was migrated to a more open environment and pursued a larger community of
+contributors.

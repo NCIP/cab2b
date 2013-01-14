@@ -1,3 +1,10 @@
+/*L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L*/
+
 create table CAB2B_ADDITIONAL_META_DATA (
    AMD_ID bigint not null,
    NAME varchar(50),

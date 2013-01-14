@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
+
+<!--L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L-->
+
 <!--
 This file provides a convenient mapping of the Flash MX 2004 UnicodeTable.xml character ranges
 for use in Macromedia Flex's configuration file. You can copy ranges from this reference list and add

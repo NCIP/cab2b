@@ -1,4 +1,12 @@
 <?xml version="1.0"?>
+
+<!--L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L-->
+
 <flex-sdk-description>
 <name>Flex 2.0.1 Hotfix 2</name>
 <version>2.0.1</version>

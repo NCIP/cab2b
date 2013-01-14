@@ -1,3 +1,10 @@
+/*L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L*/
+
 create table ABSTRACT_CATEGORIAL_ATTRIBUTE (
    ID bigint not null auto_increment,
    CATEGORIAL_CLASS_ID bigint,

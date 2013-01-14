@@ -1239,6 +1239,14 @@ It is file to be shipped with client to provide launching client using ANT
 ================================================================================== -->
 <!--
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L-->
+
 <project name="caB2B" basedir="." default="run.client">
 	<path id="run.classpath">
 	      <pathelement location="conf" />

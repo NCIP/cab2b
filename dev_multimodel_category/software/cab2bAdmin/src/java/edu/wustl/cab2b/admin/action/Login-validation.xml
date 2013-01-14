@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!--L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L-->
+
 <!DOCTYPE validators PUBLIC 
   		"-//OpenSymphony Group//XWork Validator 1.0.2//EN" 
   		"http://www.opensymphony.com/xwork/xwork-validator-1.0.2.dtd">
