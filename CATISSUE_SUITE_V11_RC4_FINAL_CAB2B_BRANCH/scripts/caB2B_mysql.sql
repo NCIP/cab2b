@@ -1,3 +1,10 @@
+/*L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L*/
+
 alter table CAB2B_DATA_CATEGORY drop foreign key FKFA70BDE8A2330820;
 alter table CAB2B_DATA_CATEGORY drop foreign key FKFA70BDE8DF75106F;
 alter table DATA_CATEGORIAL_ATTRIBUTE drop foreign key FK782EFCCB34ED55B7;

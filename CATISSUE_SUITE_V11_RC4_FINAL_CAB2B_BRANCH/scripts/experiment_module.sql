@@ -1,3 +1,10 @@
+/*L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L*/
+
 alter table CAB2B_ADDITIONAL_META_DATA drop foreign key FKC025F1F773486922;
 alter table CAB2B_DATA_LIST drop foreign key FK789CBE883E23832;
 alter table CAB2B_DATALIST_ENTITY drop foreign key FK96B3076FD1F8DDB4;

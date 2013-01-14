@@ -1,3 +1,10 @@
+/*L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L*/
+
 alter table DE_COLL_ATTR_RECORD_VALUES drop foreign key FK847DA57775255CA5;
 alter table DE_FILE_ATTR_RECORD_VALUES drop foreign key FKE68334E74EB991B2;
 alter table DE_OBJECT_ATTR_RECORD_VALUES drop foreign key FK504EADC44EB991B2;

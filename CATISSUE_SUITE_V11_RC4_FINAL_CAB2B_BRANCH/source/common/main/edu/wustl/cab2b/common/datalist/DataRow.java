@@ -1,3 +1,10 @@
+/*L
+ * Copyright Georgetown University.
+ *
+ * Distributed under the OSI-approved BSD 3-Clause License.
+ * See http://ncip.github.com/cab2b/LICENSE.txt for details.
+ */
+
 /**
  * <p>Title: DataRow Class>
  * <p>Description:  Class which represents a row in the data list or the attribute names in the

@@ -1,3 +1,10 @@
+/*L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L*/
+
 alter table ABSTRACT_CATEGORIAL_ATTRIBUTE drop foreign key FK85397F53A5F024A0;
 alter table ABSTRACT_CATEGORIAL_ATTRIBUTE drop foreign key FK85397F5379C8ACDF;
 alter table ABSTRACT_CATEGORIAL_CLASS drop foreign key FK6C8779AF8168C18B;

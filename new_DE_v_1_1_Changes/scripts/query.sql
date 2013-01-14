@@ -1,3 +1,10 @@
+/*L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L*/
+
 alter table COMMONS_GRAPH_TO_EDGES drop foreign key FKA6B0D8BAA0494B1D;
 alter table COMMONS_GRAPH_TO_EDGES drop foreign key FKA6B0D8BAFAEF80D;
 alter table COMMONS_GRAPH_TO_VERTICES drop foreign key FK2C4412F5A0494B1D;
