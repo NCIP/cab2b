@@ -1,3 +1,10 @@
+/*L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L*/
+
 alter table CAB2B_USER_URL_MAPPING drop foreign key FKC64BBF4AAEC86F2D;
 alter table CAB2B_USER_URL_MAPPING drop foreign key FKC64BBF4AB2004842;
 drop table if exists CAB2B_SERVICE_URL;

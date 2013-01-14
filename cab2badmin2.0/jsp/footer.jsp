@@ -1,3 +1,10 @@
+<%--L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L--%>
+
     <table width="100%" height="6%" border="0" align="center" cellpadding="0" cellspacing="0">
       <tr>
         <td height="3%" bgcolor="#eaeaea"><span class="font_wh_b"><img src="images/spacer.gif" width="1" height="1" align="absmiddle" /></span></td>

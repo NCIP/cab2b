@@ -1,3 +1,10 @@
+<%--L
+  Copyright Georgetown University.
+
+  Distributed under the OSI-approved BSD 3-Clause License.
+  See http://ncip.github.com/cab2b/LICENSE.txt for details.
+L--%>
+
 <!--Temporary contents. To be removed when new contents are designed -->
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
