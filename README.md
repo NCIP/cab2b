@@ -18,4 +18,4 @@ You will find more details about caB2B in the following links:
  * Code Repository: http://github.com/NCIP/cab2b
  * Issue Tracker: https://tracker.nci.nih.gov/browse/CAB2B
  * Documentation: https://wiki.nci.nih.gov/x/HQDgAg
- * NCI OSDI: https://wiki.nci.nih.gov/display/caBIGCommunityCode/CBIIT+Open+Source+Development+Initiative
+ 
