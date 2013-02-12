@@ -18,5 +18,5 @@ You will find more details about caB2B in the following links:
  * Code Repository: http://github.com/NCIP/cab2b
  * Issue Tracker: https://tracker.nci.nih.gov/browse/CAB2B
  * Documentation: https://wiki.nci.nih.gov/x/HQDgAg
- * Dowmloads: http://gforge.nci.nih.gov/frs/download.php/9574/caB2B_3.2.1_GA.zip
+ * Downloads: http://gforge.nci.nih.gov/frs/download.php/9574/caB2B_3.2.1_GA.zip
  
