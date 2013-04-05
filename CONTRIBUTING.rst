@@ -17,8 +17,6 @@ Getting Started
 
 * Fork the repository on GitHub to publish any proposed changes
 
-.. If a project uses a tracker, then:
-
 * Submit a ticket for your issue at https://tracker.nci.nih.gov/browse/CAB2B,
   assuming one does not already exist.
 
