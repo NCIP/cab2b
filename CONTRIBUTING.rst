@@ -17,14 +17,16 @@ Getting Started
 
 * Fork the repository on GitHub to publish any proposed changes
 
-* Submit a ticket for your issue at https://tracker.nci.nih.gov/browse/CAB2B,
+* Submit a ticket for your issue at `tracker`_,
   assuming one does not already exist.
 
-  - Click on https://tracker.nci.nih.gov/secure/CreateIssue.jspa?pid=10002&issuetype=8 to get a jira account.
+  - Click on `here`_ to get a jira account.
   - Clearly describe the issue including steps to reproduce when it is a bug.
   - Make sure you fill in the earliest version that you know has the issue.
 
 .. _`GitHub Account`: https://github.com/signup/free
+.. _`tracker`: https://tracker.nci.nih.gov/browse/CAB2B
+.. _`here`: https://tracker.nci.nih.gov/secure/CreateIssue.jspa?pid=10002&issuetype=8
 
 --------------
 Making Changes
@@ -57,7 +59,7 @@ Making Changes
 Submitting Changes
 ------------------
 
-* In general, we require that the OSI-approved `BSD-3-Clause License`_
+* In general, we require that the OSI-approved `BSD 3-Clause License`_
   be applied to code contributions.  There may be cases, however, that
   warrant the use of an alternate OSI-approved license and we will
   evaluate this situations case-by-case.
@@ -68,12 +70,13 @@ Submitting Changes
 
 .. If a project uses a tracker, then:
 
-* Update your https://tracker.nci.nih.gov/browse/CAB2B ticket to mark that you have submitted
+* Update your `tracker`_ ticket to mark that you have submitted
   code and are ready for it to be reviewed.
 
   - Include a link to the pull request in the ticket
 
-.. _`BSD-3-Clause License`: http://opensource.org/licenses/BSD-3-Clause
+.. _`BSD 3-Clause License`: http://opensource.org/licenses/BSD-3-Clause
+.. _`tracker`: https://tracker.nci.nih.gov/browse/CAB2B
 
 --------------------
 Additional Resources
