@@ -14,10 +14,12 @@ Please see the NOTICE and LICENSE files for details.
 
 You will find more details about caB2B in the following links:
 
- * Home Page: https://wiki.nci.nih.gov/x/HQDgAg
- * Code Repository: http://github.com/NCIP/cab2b
- * Issue Tracker: https://tracker.nci.nih.gov/browse/CAB2B
- * Documentation: https://wiki.nci.nih.gov/x/HQDgAg
- * Release Notes: https://gforge.nci.nih.gov/frs/shownotes.php?release_id=4252
- * Installation Package: http://gforge.nci.nih.gov/frs/download.php/9574/caB2B_3.2.1_GA.zip
+ * [Community Wiki] (https://wiki.nci.nih.gov/x/HQDgAg)
+ * [Code Repository] (http://github.com/NCIP/cab2b)
+ * [Issue Tracker] (https://tracker.nci.nih.gov/browse/CAB2B)
+ * [Documentation] (https://wiki.nci.nih.gov/x/HQDgAg)
+ * [Release Notes] (https://gforge.nci.nih.gov/frs/shownotes.php?release_id=4252)
+ * [Installation Package] (http://gforge.nci.nih.gov/frs/download.php/9574/caB2B_3.2.1_GA.zip)
+
+Please join us in further developing and improving  caB2B.
  
